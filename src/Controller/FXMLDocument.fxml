@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="687.0" prefWidth="1274.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.FXMLDocumentController">
+   <children>
+      <Pane layoutY="1.0" prefHeight="687.0" prefWidth="228.0" style="-fx-background-color: rgb(23,52,44); -fx-border-color: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Button layoutX="38.0" layoutY="92.0" mnemonicParsing="false" onAction="#ventanaRelacion" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Relación" />
+            <Button layoutX="33.0" layoutY="458.0" mnemonicParsing="false" onAction="#limpiarPagina" prefHeight="32.0" prefWidth="164.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Limpiar página" textAlignment="CENTER" />
+            <Button layoutX="30.0" layoutY="629.0" mnemonicParsing="false" onAction="#exportarPanel" prefHeight="32.0" prefWidth="171.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Exportar diagrama" />
+            <Button layoutX="38.0" layoutY="47.0" mnemonicParsing="false" onAction="#ventanaEntidad" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Entidad" />
+            <Button layoutX="38.0" layoutY="137.0" mnemonicParsing="false" onAction="#ventanaAtributo" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Atributo" />
+            <CheckBox fx:id="puntosDeControl" layoutX="38.0" layoutY="286.0" mnemonicParsing="false" onAction="#puntosDeControlActivar" prefHeight="19.0" prefWidth="152.0" style="-fx-text-fill: white;" text="Puntos de Control" textFill="WHITE" />
+            <Button layoutX="39.0" layoutY="181.0" mnemonicParsing="false" onAction="#ventanaHerencia" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Herencia" />
+            <Text fill="WHITE" layoutX="99.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Crear" />
+            <Button layoutX="32.0" layoutY="359.0" mnemonicParsing="false" onAction="#ventanaModificarDiagrama" prefHeight="39.0" prefWidth="164.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Modificar y/o eliminar" />
+            <Button layoutX="33.0" layoutY="410.0" mnemonicParsing="false" onAction="#rehacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Undo" />
+            <Button layoutX="121.0" layoutY="410.0" mnemonicParsing="false" onAction="#deshacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Redo" />
+         </children>
+      </Pane>
+      <Pane fx:id="panelDibujo" layoutX="228.0" layoutY="3.0" onMouseClicked="#crear" onMouseDragged="#moverEnPanel" onMouseReleased="#mouseNoPresionado" prefHeight="683.0" prefWidth="1050.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" />
+   </children>
+</AnchorPane>

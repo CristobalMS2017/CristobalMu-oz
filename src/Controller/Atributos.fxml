@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" fx:id="root" prefHeight="369.0" prefWidth="246.0" style="-fx-background-color: rgb(240,255,255);" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.AtributosController">
+   <children>
+      <ComboBox fx:id="destinoAtributo" layoutX="48.0" layoutY="122.0" onAction="#crearAtributoEn" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+      <ComboBox fx:id="entidadesAtributosRelaciones" layoutX="48.0" layoutY="185.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+      <ComboBox fx:id="tiposAtributos" layoutX="48.0" layoutY="244.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+      <TextField fx:id="textoAtributo" layoutX="51.0" layoutY="56.0" style="-fx-border-color: rgb(105,162,146);" />
+      <Text layoutX="80.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Nombre Atributo" />
+      <Button fx:id="cerrarVentana" layoutX="24.0" layoutY="309.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="41.0" prefWidth="98.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Crear atributo" />
+      <Button layoutX="126.0" layoutY="309.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="41.0" prefWidth="98.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
+      <Text layoutX="70.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione destino" />
+      <Text layoutX="47.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione elemento destino" />
+      <Text layoutX="59.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione tipo Atributo" />
+   </children>
+</AnchorPane>
