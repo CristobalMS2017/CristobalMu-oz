@@ -15,7 +15,7 @@ public class Diagrama {
     private ArrayList<Entidad> entidades;
     private ArrayList<Relacion> relaciones;
     private ArrayList<Atributo> atributos;
-
+    private ArrayList<Agregacion> agregaciones;
     private ArrayList<Herencia> herencias; 
     public Diagrama() {
         
@@ -23,7 +23,7 @@ public class Diagrama {
         relaciones = new ArrayList<>();
         atributos = new ArrayList<>();
         herencias = new ArrayList<>();
-
+        agregaciones = new ArrayList<>();
         
     }   
 
@@ -42,6 +42,15 @@ public class Diagrama {
     public void setHerencias(ArrayList<Herencia> herencias) {
         this.herencias = herencias;
     }
+
+    public ArrayList<Agregacion> getAgregaciones() {
+        return agregaciones;
+    }
+
+    public void setAgregaciones(ArrayList<Agregacion> agregaciones) {
+        this.agregaciones = agregaciones;
+    }
+    
     
     
     public void agregarEntidades(ArrayList<Entidad> a){

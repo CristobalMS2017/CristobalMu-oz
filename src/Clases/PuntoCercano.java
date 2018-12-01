@@ -12,7 +12,7 @@ public class PuntoCercano {
     private Figura figura;
     private ArrayList<Integer> ordenIndicesEntidades = new ArrayList<>();
     private ArrayList<Integer> ordenIndicesFigura = new ArrayList<>();
-    
+
 
     public PuntoCercano(Figura figura, ArrayList<Entidad> entidades) {
         this.figura = figura;
@@ -26,8 +26,7 @@ public class PuntoCercano {
     }
     public int pcFigura(int indice){
         return ordenIndicesFigura.get(indice);
-    }
-    
+    }    
     
     private Figura getFigura() {
         return figura;
@@ -43,16 +42,16 @@ public class PuntoCercano {
     
     private void ordenarIndices(){
         if (entidad.size()==1){
-            int i1=puntoCercanoFigura(0);
+            int i1=puntoCercanoFigura(entidad.get(0).posicionesX(),entidad.get(0).posicionesY());
             puntoCercanoEntidad(i1,0);  
-            i1=puntoCercanoFigura(0);
+            i1=puntoCercanoFigura(entidad.get(0).posicionesX(),entidad.get(0).posicionesY());
             puntoCercanoEntidad(i1,0);   
         }
         else{
             for (int i = 0; i<entidad.size(); i++){
-                int i1=puntoCercanoFigura(i);
+                int i1=puntoCercanoFigura(entidad.get(i).posicionesX(),entidad.get(i).posicionesY());
                 puntoCercanoEntidad(i1,i);
-            } 
+            }         
         }
 
     }
@@ -64,10 +63,11 @@ public class PuntoCercano {
             }
             return true;            
     }
-    private int puntoCercanoFigura(int indice){
+    
+    private int puntoCercanoFigura(ArrayList<Integer> x,ArrayList<Integer> y){
         
-        int x1 = this.entidad.get(indice).getFigura().getPosicionesX().get(0);
-        int y1 = this.entidad.get(indice).getFigura().getPosicionesY().get(0); 
+        int x1 = x.get(0);
+        int y1 = y.get(0);
         int x2,y2;
         ArrayList<Integer> distancias = new ArrayList<>();
         ArrayList<Integer> orden = new ArrayList<>();
@@ -77,8 +77,8 @@ public class PuntoCercano {
                 y2 = this.figura.getPosicionesY().get(i); 
                 distancias.add((int)Math.sqrt(((Math.pow(x1-x2, 2)+Math.pow(y2-y1, 2)))));
         }
-        for(int x = 0; x<distancias.size(); x++){
-            for(int i = 0; i<distancias.size()-1-x;i++){
+        for(int w = 0; w<distancias.size(); w++){
+            for(int i = 0; i<distancias.size()-1-w;i++){
                 if (distancias.get(i+1) < distancias.get(i)){
                     int auxIndice = orden.get(i);
                     orden.set(i, orden.get(i+1));
@@ -136,7 +136,8 @@ public class PuntoCercano {
             }
         }        
         this.ordenIndicesEntidades.add(orden.get(0));               
-    }    
+    }     
+    
     
     
 }

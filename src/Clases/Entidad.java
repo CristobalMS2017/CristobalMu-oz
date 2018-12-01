@@ -132,6 +132,16 @@ public class Entidad {
         return orden.get(0);
     }
 
+    public void actualizarPosEntidad(int x, int y){
+        this.posX = x;
+        this.posY = y;
+        this.figura = new Figura();
+        figura.crearFigura(this.debil,-1, this.nombre,this.posX,this.posY);
+        this.crearLineasunionAtributos();
+        
+        
+    }
+    
     public ArrayList<Node> dibujoEntidad(){
         ArrayList<Node> retornar = new ArrayList<>();
         retornar.addAll(this.lineasUnionAtributos);

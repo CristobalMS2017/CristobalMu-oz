@@ -9,12 +9,13 @@ import javafx.scene.shape.Line;
  * @author Cristobal Muñoz Salinas
  */
 public class Relacion {
-    public int posX;
-    public int posY;
-    public String nombre;
+    private int posX;
+    private int posY;
+    private String nombre;
     
-    public ArrayList<Entidad> entidad;
-    public Figura figura;
+    private ArrayList<Entidad> entidad;
+    private ArrayList<Agregacion> agregacion;
+    private Figura figura;
     private ArrayList<Line> lineasRelacion = new ArrayList<>();
     
     private ArrayList<Atributo> atributos = new ArrayList<>();
@@ -28,12 +29,18 @@ public class Relacion {
 
         this.relacionDebil=debil;
         this.entidad = new ArrayList<>();
+        this.agregacion=new ArrayList<>();
         this.figura = new Figura();
     }
     public void AnadirEntidad(Entidad nueva){
         this.entidad.add(nueva);
 
     }
+
+    public ArrayList<Agregacion> getAgregacion() {
+        return agregacion;
+    }
+    
     public int getPosX() {
         return posX;
     }
@@ -116,9 +123,35 @@ public class Relacion {
             
         }        
         else{
-            figura.crearFigura(false,entidad.size(), this.nombre, this.getPosX(), this.getPosY());
-            PuntoCercano pc = new PuntoCercano(this.figura,this.entidad);  
-            if(entidad.size()==1){
+            figura.crearFigura(false,entidad.size()+agregacion.size(), this.nombre, this.getPosX(), this.getPosY());                     
+            if(agregacion.size()==2){
+
+                ArrayList<Entidad> copia = new ArrayList<>();
+                for(int i = 0; i<this.agregacion.size();i++){
+                    Entidad a = new Entidad(true,0,0,"");
+                    a.getFigura().setPosicionesX(agregacion.get(i).getPosicionesX());
+                    a.getFigura().setPosicionesY(agregacion.get(i).getPosicionesY());
+                    copia.add(a);
+                }                
+                
+                PuntoCercano pc = new PuntoCercano(this.figura,copia); 
+                Line linea = new Line(agregacion.get(0).getPosicionesX().get(pc.getOrdenIndicesEntidades().get(0)),agregacion.get(0).getPosicionesY().get(pc.getOrdenIndicesEntidades().get(0)),
+                figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(0)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(0)));
+                lineasRelacion.add(linea); 
+                Line linea2 = new Line(agregacion.get(1).getPosicionesX().get(pc.getOrdenIndicesEntidades().get(1)),agregacion.get(1).getPosicionesY().get(pc.getOrdenIndicesEntidades().get(1)),
+                figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(1)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(1)));
+                lineasRelacion.add(linea2);                      
+            }
+            if(entidad.size()==2){
+                PuntoCercano pc = new PuntoCercano(this.figura,this.entidad); 
+                 for(int i = 0; i<entidad.size();i++){
+                    Line linea = new Line(entidad.get(i).getFigura().getPosicionesX().get(pc.pcEntidad(i)),entidad.get(i).getFigura().getPosicionesY().get(pc.pcEntidad(i)),
+                    figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
+                    lineasRelacion.add(linea);                
+                }               
+            }
+            if(entidad.size()==1&&agregacion.isEmpty()){
+                PuntoCercano pc = new PuntoCercano(this.figura,this.entidad); 
                 for(int i = 0; i<2;i++){
                     Line linea = new Line(entidad.get(0).getFigura().getPosicionesX().get(pc.pcEntidad(i)),entidad.get(0).getFigura().getPosicionesY().get(pc.pcEntidad(i)),
                     figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
@@ -126,13 +159,24 @@ public class Relacion {
 
                 } 
             }
-            else{
-                for(int i = 0; i<entidad.size();i++){
-                    Line linea = new Line(entidad.get(i).getFigura().getPosicionesX().get(pc.pcEntidad(i)),entidad.get(i).getFigura().getPosicionesY().get(pc.pcEntidad(i)),
-                    figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
-                    lineasRelacion.add(linea);                
-                }
+            if((entidad.size()==1)&&(agregacion.size()==1)){
+                ArrayList<Entidad> copia = new ArrayList<>();
+                copia.add(this.entidad.get(0));
+                Entidad a = new Entidad(true,0,0,"");
+                a.getFigura().setPosicionesX(this.agregacion.get(0).getPosicionesX());
+                a.getFigura().setPosicionesY(this.agregacion.get(0).getPosicionesY());
+                copia.add(a);
+                        
+                    PuntoCercano pc = new PuntoCercano(this.figura,copia); 
+                    Line linea2 = new Line(entidad.get(0).getFigura().getPosicionesX().get(pc.getOrdenIndicesEntidades().get(0)),entidad.get(0).getFigura().getPosicionesY().get(pc.getOrdenIndicesEntidades().get(0)),
+                    figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(0)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(0)));
+                    lineasRelacion.add(linea2);    
+
+                    Line linea = new Line(agregacion.get(0).getPosicionesX().get(pc.getOrdenIndicesEntidades().get(1)),agregacion.get(0).getPosicionesY().get(pc.getOrdenIndicesEntidades().get(1)),
+                    figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(1)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(1)));
+                    lineasRelacion.add(linea);                    
             }
+            
         }           
 
     }
@@ -210,5 +254,13 @@ public class Relacion {
         this.entidad.remove(i);
         this.crearRelacion();
         
+    }
+    
+    
+    public void actualizarPosicion(int x,int y){
+        this.posX=x;
+        this.posY=y;
+        this.crearRelacion();
+        this.crearLineasunionAtributos();
     }
 }

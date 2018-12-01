@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Clases.Agregacion;
 import Clases.Diagrama;
 import Clases.Entidad;
 import java.net.URL;
@@ -35,6 +36,7 @@ public class RelacionesController implements Initializable {
    
     @FXML private Button cerrarVentana;
     @FXML ListView<CheckBox> entidadesDisponibles = new ListView<>();
+    @FXML ListView<CheckBox> agregacionesDisponibles = new ListView<>();
     @FXML ComboBox TipoEntidades;
     @FXML private Pane relacionDebil;
     @FXML private Pane relacionFuerte;
@@ -56,7 +58,10 @@ public class RelacionesController implements Initializable {
                 entidadesDisponibles.getItems().add(new CheckBox(diagrama.getEntidades().get(i).getNombre()));
             }
 
-        }        
+        }  
+        for(int i = 0; i<diagrama.getAgregaciones().size();i++){
+            agregacionesDisponibles.getItems().add(new CheckBox(diagrama.getAgregaciones().get(i).getNombre()));
+        }
         for(int i = 0; i<diagrama.getEntidades().size();i++){
             if(diagrama.getEntidades().get(i).isDebil()){
                 entidadDebil.getItems().add(diagrama.getEntidades().get(i).getNombre());
@@ -140,6 +145,7 @@ public class RelacionesController implements Initializable {
 
         if(validarNombreParaRelacion()){
             ArrayList<Entidad> entidadesSeleccionadas = new ArrayList<>();
+            ArrayList<Agregacion> agregacionesSeleccionadas = new ArrayList<>();
             if(tipoDebil){
                 
                 for(int i = 0; i<diagrama.getEntidades().size();i++){
@@ -154,10 +160,9 @@ public class RelacionesController implements Initializable {
                 for(int i = 0; i<diagrama.getEntidades().size();i++){
                         if(entidadDebil.getValue().equals(diagrama.getEntidades().get(i).getNombre())){
                             entidadesSeleccionadas.add(diagrama.getEntidades().get(i));                            
-                        }
-
-                            
-                    }                
+                        }       
+                    }  
+                
             }
             else{
                 for(int i=0;i<this.entidadesDisponibles.getItems().size();i++){
@@ -169,19 +174,33 @@ public class RelacionesController implements Initializable {
                         }
                         
                     }
-                }                
+                }    
+                for(int i=0;i<this.agregacionesDisponibles.getItems().size();i++){
+                    if(this.agregacionesDisponibles.getItems().get(i).isSelected() ){
+                        for(int j = 0; j<diagrama.getAgregaciones().size();j++){
+                            if(agregacionesDisponibles.getItems().get(i).getText().equals(diagrama.getAgregaciones().get(j).getNombre())){
+                                agregacionesSeleccionadas.add(diagrama.getAgregaciones().get(j));
+                            }
+                        }
+                        
+                    }
+                }                 
             }
-            
-            if(textoRelacion.getText().isEmpty()){
-                controlador1.creacionRelacion(tipoDebil,nombreRelacionVacia(),this.diagrama,entidadesSeleccionadas);
-            } 
+            if((agregacionesSeleccionadas.size()+entidadesSeleccionadas.size())<=2){
+                if(textoRelacion.getText().isEmpty()){
+                    controlador1.creacionRelacion(tipoDebil,nombreRelacionVacia(),this.diagrama,entidadesSeleccionadas,agregacionesSeleccionadas);
+                } 
+                else{
+                    controlador1.creacionRelacion(tipoDebil,textoRelacion.getText(),this.diagrama,entidadesSeleccionadas,agregacionesSeleccionadas);
+                }
+
+
+                Stage stage = (Stage)cerrarVentana.getScene().getWindow();
+                stage.close();
+            }
             else{
-                controlador1.creacionRelacion(tipoDebil,textoRelacion.getText(),this.diagrama,entidadesSeleccionadas);
+                mensaje("Solo puede seleccionar un maximo de 2 elementos");
             }
-            
-            
-            Stage stage = (Stage)cerrarVentana.getScene().getWindow();
-            stage.close();
         }
         else{
             mensaje("Nombre ingresado anteriormente. Por favor,\n"

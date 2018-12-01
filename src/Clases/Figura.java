@@ -68,7 +68,7 @@ public class Figura {
             
 
         }
-        if(tipo == 2 || tipo == 1 || tipo==4){//Rombo
+        if(tipo == 2 || tipo == 1){//Rombo
             
             int agrandar=nombre.length()*4;
             puntoMedioX = posX+(50+agrandar)/2;
@@ -104,103 +104,7 @@ public class Figura {
             textoFigura.setTextAlignment(TextAlignment.CENTER);  
             textoFigura.setFont(new Font(14)); 
            
-        }
-        if (tipo == 3){ //Triangulo
-            
-            int agrandar=nombre.length()*8;
-            int sumarXY = (50+agrandar);
-            
-            puntoMedioX= posX + (50+agrandar)/2;
-            puntoMedioY = posY-(sumarXY/3);
-            
-            posicionesX.add(posX);
-            posicionesY.add(posY);
-            posicionesX.add(posX+sumarXY);      
-            posicionesY.add(posY);
-            posicionesX.add(puntoMedioX);
-            posicionesY.add(posY-sumarXY);
-            lineas.add(new Line(posX, posY, posX+sumarXY, posY));
-            lineas.add(new Line(posX+sumarXY, posY, puntoMedioX, posY-sumarXY));
-            lineas.add(new Line(puntoMedioX, posY-sumarXY, posX, posY));
-            
-            
-            crearPuntosDeControl();
-            
-            textoFigura = new Text(posX,puntoMedioY,nombre);
-            textoFigura.setWrappingWidth(sumarXY);
-            textoFigura.setTextAlignment(TextAlignment.CENTER);  
-            textoFigura.setFont(new Font(14));             
-            
-        }
- 
-        if ( tipo == 5){//pentagono
-            int agrandar=nombre.length()*4;
-            
-            puntoMedioX=posX+(100+agrandar)/2;
-            
-            posicionesX.add(posX);
-            posicionesY.add(posY);
-            posicionesX.add(posX+100+agrandar);      
-            posicionesY.add(posY);
-            posicionesX.add(puntoMedioX);
-            posicionesY.add(posY-(100+agrandar)/4);
-            posicionesX.add(puntoMedioX-(100+agrandar)/4);
-            posicionesY.add(posY+(100+agrandar)/2);
-            posicionesX.add(puntoMedioX+(100+agrandar)/4);
-            posicionesY.add(posY+(100+agrandar)/2);    
-            
-            lineas.add(new Line(posX, posY, puntoMedioX, posY-(100+agrandar)/4));
-            lineas.add(new Line(puntoMedioX, posY-(100+agrandar)/4, posX+100+agrandar, posY));
-            lineas.add(new Line(posX+100+agrandar, posY, puntoMedioX+(100+agrandar)/4, posY+(100+agrandar)/2));
-            lineas.add(new Line(puntoMedioX+(100+agrandar)/4, posY+(100+agrandar)/2, puntoMedioX-(100+agrandar)/4, posY+(100+agrandar)/2));
-            lineas.add(new Line(puntoMedioX-(100+agrandar)/4, posY+(100+agrandar)/2, posX, posY)); 
-            
-            
-            crearPuntosDeControl();
-            
-            puntoMedioY = posY+(50+agrandar)/2;
-            textoFigura = new Text(posX+(100+agrandar)/9,posY+(100+agrandar)/8,nombre);
-            textoFigura.setWrappingWidth(100+agrandar-((100+agrandar)/5));
-            textoFigura.setTextAlignment(TextAlignment.CENTER); 
-            textoFigura.setFont(new Font(14));             
-        }
-        if ( tipo == 6){ // Hexagono
-            int agrandar=nombre.length()*4;            
-            puntoMedioX=posX+(100+agrandar)/2;
-            
-            posicionesX.add(posX);//p1
-            posicionesY.add(posY);
-            posicionesX.add(posX+100+agrandar);//p2
-            posicionesY.add(posY);            
-            posicionesX.add(puntoMedioX-(100+agrandar)/4); //p3     
-            posicionesY.add(posY-(100+agrandar)/4);
-            posicionesX.add(puntoMedioX+(100+agrandar)/4);//p4
-            posicionesY.add(posY+(100+agrandar)/4);   
-            posicionesX.add(puntoMedioX+(100+agrandar)/4);
-            posicionesY.add(posY-(100+agrandar)/4);
-
- 
-            posicionesX.add(puntoMedioX-(100+agrandar)/4);
-            posicionesY.add(posY+(100+agrandar)/4);
-            
-            lineas.add(new Line(posX, posY, puntoMedioX-(100+agrandar)/4, posY-(100+agrandar)/4));
-            lineas.add(new Line(puntoMedioX-(100+agrandar)/4, posY-(100+agrandar)/4, puntoMedioX+(100+agrandar)/4, posY-(100+agrandar)/4));
-            lineas.add(new Line(puntoMedioX+(100+agrandar)/4, posY-(100+agrandar)/4, posX+100+agrandar, posY));
-            lineas.add(new Line(posX+100+agrandar, posY, puntoMedioX+(100+agrandar)/4, posY+(100+agrandar)/4));
-            lineas.add(new Line(puntoMedioX+(100+agrandar)/4, posY+(100+agrandar)/4, puntoMedioX-(100+agrandar)/4, posY+(100+agrandar)/4)); 
-            lineas.add(new Line(puntoMedioX-(100+agrandar)/4, posY+(100+agrandar)/4, posX, posY)); 
-
-            crearPuntosDeControl();
-            puntoMedioY = posY;
-            textoFigura = new Text(posX,posY,nombre);
-            textoFigura.setWrappingWidth(100+agrandar);
-            textoFigura.setTextAlignment(TextAlignment.CENTER); 
-            textoFigura.setFont(new Font(14));             
-        }
-
-        
-        
-        
+        }         
     }
     private void crearPuntosDeControl(){
         for(int i=0; i<posicionesX.size();i++){

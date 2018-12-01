@@ -72,6 +72,15 @@ public class AtributosController implements Initializable {
                 entidadesAtributosRelaciones.getItems().add(diagrama.getRelaciones().get(i).getNombre());
             }
         }
+        if(destino.equals("Agregación")){
+            tiposAtributos.getItems().clear();
+            tiposAtributos.getItems().addAll("Generico","Clave","Clave Parcial","Multivaluado","Derivado","Compuesto");
+            entidadesAtributosRelaciones.getItems().clear();
+            entidadesAtributosRelaciones.setValue("Seleccione Agregación");
+            for(int i=0; i<diagrama.getAgregaciones().size();i++){
+                entidadesAtributosRelaciones.getItems().add(diagrama.getAgregaciones().get(i).getNombre());
+            }
+        }        
         if(destino.equals("Atributo")){
             tiposAtributos.getItems().clear();
             tiposAtributos.setValue("Tipo");
@@ -187,7 +196,7 @@ public class AtributosController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
        tiposAtributos.getItems().addAll("Generico","Clave","Clave Parcial","Multivaluado","Derivado","Compuesto");
        tiposAtributos.setValue("Tipo");
-       destinoAtributo.getItems().addAll("Entidad","Relación","Atributo");
+       destinoAtributo.getItems().addAll("Entidad","Relación","Agregación","Atributo");
        destinoAtributo.setValue("Destino");
        textoAtributo.clear();
     }    

@@ -1,4 +1,5 @@
 package Controller;
+import Clases.Agregacion;
 import Clases.Atributo;
 import Clases.Diagrama;
 import Clases.Entidad;
@@ -42,12 +43,13 @@ public class FXMLDocumentController implements Initializable {
       
     
     @FXML private Pane panelDibujo; // panel donde se dibujan las entidades y relaciones.
-    @FXML private String textoEntidad; //guarda el nombre de la entidad ingresada por el usuario.    
-    @FXML private String textoRelacion;  //guarda el nombre de la relacion ingresada por el usuario.   
-    @FXML private String textoAtributo; //Guarda el nombre del atributo ingresado por el usuario.
+    private String textoEntidad; //guarda el nombre de la entidad ingresada por el usuario.    
+    private String textoRelacion;  //guarda el nombre de la relacion ingresada por el usuario.   
+    private String textoAtributo; //Guarda el nombre del atributo ingresado por el usuario.
+    private String textoAgregacion;
     @FXML private CheckBox puntosDeControl; //Activa y desactiva los puntos de control.    
     @FXML private ArrayList<Entidad> entidadesDisponibles;//Guarda las entidades seleccionadas para crear una relación.
-    
+    @FXML private ArrayList<Agregacion> agregacionesDisponibles;
     
     
     private String tipoAtributo;//Guarda el tipo de atributo
@@ -63,10 +65,12 @@ public class FXMLDocumentController implements Initializable {
     private boolean crearRelacion = false;//Permite saber si el usuario seleccionó el botón para crear una relacion.
     private boolean crearAtributo = false;//Permite saber si el usuario seleccionó el botón para crear el atributo.
     private boolean crearHerencia = false;//Permite saber si el usuario seleccionó el botón para crear la herencia.
+    private boolean crearAgregacion = false;
     private boolean atributoEncontradoMover = false;
     private boolean entidadEncontradaMover=false;//Permite saber si el usuario seleccionó una entidad, permitiendo ser movida.
     private boolean relacionEncontradaMover = false;//Permite saber si el usuario seleccionó una relación, permitiendo ser movida.        
     private boolean herenciaEncontradaMover = false;//Permite saber si el usuario seleccionó una herencia, permitiendo ser movida.
+    private boolean agregacionEncontradaMover = false;
     private boolean atributoEnEntidadMover=false; //Permite saber si el atributo se encuentra en una entidad.
     private boolean atributoEnRelacionMover=false; //Permite saber si un atributo se encuentra en una relación.
     private boolean atributoEnAtributoMover=false; //Permite saber si un atributo se encuentra en un atributo    
@@ -76,17 +80,21 @@ public class FXMLDocumentController implements Initializable {
     private String nombreRelacionMover="";//Guarda el nombre de la relación seleccionada para mover.
     private String tipoAtributoMover="";//Guarda el nombre del atributo seleccionado para mover.  
     private String nombreEntidadMover=""; //Guarda el nombre de la entidad seleccionada para mover.
-
+    private String nombreAgregacionMover="";
     
     private int indiceEntidadAtributo; //Guarda la posición en la que se encuentra el atributo en la entidad.
     private int indiceRelacionAtributo;//guarda la posicion en la que se encuentra el atributo en la relación.
     private int indiceRelacionAtributoAtributo;//guarda la posición en la que se encuentra el atributo del atrbuto compuesto de la relación.
     private int indiceEntidadAtributoAtributo;//guarda la posición en la que se encuentra el atributo del atrbuto compuesto de la entidad.   
+    private int indiceAgregacionAtributo;
+    private int indiceAgregacionAtributoAtributo;
+    
     private Entidad  entidadAuxiliar;// Guarda la entidad original antes de ser movida.
     private Atributo atributoAuxiliar; //Guarda el atributo original antes de ser movido.
     private Relacion relacionAuxiliar;//Guarda la relacion seleccionada para mover.
     private Herencia herenciaAuxiliar;//Guarda la herencia original antes de ser movida.
-
+    private Relacion relacionAgregacion; //se guarda la relacion que sera parte de la agregación.
+    private Agregacion agregacionAuxiliar;//Guarda la agregacion original antes de ser movida.
     FXMLDocumentController controlador;
     RespaldoDiagrama listaDiagramas = new RespaldoDiagrama();//Guarda los diagramas con el proposito de rehacer y deshacer.
     int desHacer = 0;//Guarda la posción del diagrama al que se llamó para volver a crearlo o rehacerlo.
@@ -162,8 +170,10 @@ public class FXMLDocumentController implements Initializable {
         if(crearRelacion){
             Relacion nueva = new Relacion(relacionDebil,(int)event.getX(),(int)event.getY(),textoRelacion);
             for(int i = 0; i<entidadesDisponibles.size();i++){
-
                     nueva.getEntidad().add(entidadesDisponibles.get(i));
+            }
+            for(int i =0;i<agregacionesDisponibles.size();i++){
+                nueva.getAgregacion().add(agregacionesDisponibles.get(i));
             }
             nueva.crearRelacion();
             diagrama.getRelaciones().add(nueva);
@@ -175,6 +185,12 @@ public class FXMLDocumentController implements Initializable {
             nueva.crearHerencia();
             diagrama.getHerencias().add(nueva);
             guardarDiagrama(); 
+            
+        }
+        if(crearAgregacion){
+            Agregacion nueva = new Agregacion(relacionAgregacion,textoAgregacion,(int)event.getX(),(int)event.getY());
+            nueva.crearAgregacion();
+            diagrama.getAgregaciones().add(nueva);
             
         }
         if(crearAtributo){
@@ -204,6 +220,17 @@ public class FXMLDocumentController implements Initializable {
                     }
                    
 
+                }
+                if(destinoAtributo.equals("Agregación")){
+                    Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Agregación");
+                    for(int i = 0; i<diagrama.getAgregaciones().size();i++){
+                        if(comboBoxEntidadesRelaciones.equals(diagrama.getAgregaciones().get(i).getNombre())){
+                            diagrama.getAgregaciones().get(i).getAtributos().add(nueva);
+                            diagrama.getAgregaciones().get(i).crearLineasunionAtributos();
+                            diagrama.getAtributos().add(nueva);
+                        }
+                    }
+                    
                 }
                 if(destinoAtributo.equals("Atributo")){
                     
@@ -237,7 +264,7 @@ public class FXMLDocumentController implements Initializable {
         crearRelacion = false;
         crearAtributo = false;
         crearHerencia = false;
-
+        crearAgregacion = false;
     }
 
     /**
@@ -254,24 +281,26 @@ public class FXMLDocumentController implements Initializable {
             int posX = (int)event.getX();
             int posY = (int)event.getY();
             if (0<=posX && posX<=1050 && 0<=posY && posY<= 687){
-                if(relacionEncontradaMover == entidadEncontradaMover && herenciaEncontradaMover == atributoEncontradoMover){
+                if((relacionEncontradaMover == entidadEncontradaMover)&&herenciaEncontradaMover == atributoEncontradoMover&&atributoEncontradoMover==agregacionEncontradaMover){
 
                     //Busqueda de entidad en el panel de dibujo
                     for (int i=0; i<diagrama.getEntidades().size();i++){
-                        ArrayList<Integer> x=diagrama.getEntidades().get(i).posicionesX();
-                        ArrayList<Integer> y=diagrama.getEntidades().get(i).posicionesY();
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(0) < posY && y.get(x.size()-1) > posY) {
-                            entidadDebil = diagrama.getEntidades().get(i).isDebil();
-                            nombreEntidadMover=diagrama.getEntidades().get(i).getNombre();
-                            
-                            entidadAuxiliar=diagrama.getEntidades().get(i);
-                            diagrama.getEntidades().remove(i);
-                            entidadEncontradaMover = true;
-                        } 
+                        if(!entidadEnAgregacion(diagrama.getEntidades().get(i))){
+                            ArrayList<Integer> x=diagrama.getEntidades().get(i).posicionesX();
+                            ArrayList<Integer> y=diagrama.getEntidades().get(i).posicionesY();
+                            if (x.get(0) < posX && x.get(1) > posX && y.get(0) < posY && y.get(x.size()-1) > posY) {
+                                entidadDebil = diagrama.getEntidades().get(i).isDebil();
+                                nombreEntidadMover=diagrama.getEntidades().get(i).getNombre();
+
+                                entidadAuxiliar=diagrama.getEntidades().get(i);
+                                diagrama.getEntidades().remove(i);
+                                entidadEncontradaMover = true;
+                            }
+                        }
                     }
                     //Busqueda de relaciones en el panel  de dubujo
                     for(int i=0; i<diagrama.getRelaciones().size();i++){
-                        if(areaFiguras((int)event.getX(), (int)event.getY(), i)){
+                        if(areaFiguras((int)event.getX(), (int)event.getY(), i)& !relacionEnAgregacion(diagrama.getRelaciones().get(i))){
                             relacionDebil = diagrama.getRelaciones().get(i).isRelacionDebil();
                             nombreRelacionMover = diagrama.getRelaciones().get(i).getNombre();
                             relacionAuxiliar = diagrama.getRelaciones().get(i);
@@ -366,7 +395,22 @@ public class FXMLDocumentController implements Initializable {
                             
                         }
                     }
-                    
+
+                    //Busqueda de agregacion en el panel de dibujo
+                    for (int i=0; i<diagrama.getAgregaciones().size();i++){
+
+                            ArrayList<Integer> x=diagrama.getAgregaciones().get(i).getPosicionesX();
+                            ArrayList<Integer> y=diagrama.getAgregaciones().get(i).getPosicionesY();
+                            if (x.get(0) < posX && x.get(1) > posX && y.get(0) < posY && y.get(x.size()-1) > posY) {
+
+                                nombreAgregacionMover=diagrama.getAgregaciones().get(i).getNombre();
+                                relacionAgregacion = diagrama.getAgregaciones().get(i).getRelacion();
+                                agregacionAuxiliar=diagrama.getAgregaciones().get(i);
+                                diagrama.getAgregaciones().remove(i);
+                                agregacionEncontradaMover = true;
+                            }
+                        
+                    }                    
                     
                     //Atributos de atributos compuestos de entidades
                     for(int i=0; i< diagrama.getEntidades().size();i++){
@@ -424,6 +468,9 @@ public class FXMLDocumentController implements Initializable {
                         for(int i = 0; i<relacionAuxiliar.getEntidad().size();i++){
                             nueva.getEntidad().add(relacionAuxiliar.getEntidad().get(i));
                         }
+                        for(int i = 0; i<relacionAuxiliar.getAgregacion().size();i++){
+                            nueva.getAgregacion().add(relacionAuxiliar.getAgregacion().get(i));
+                        }
                         nueva.crearRelacion();
                          
                         for(int i = 0; i<relacionAuxiliar.getAtributos().size();i++){
@@ -461,6 +508,22 @@ public class FXMLDocumentController implements Initializable {
                             
                         }                        
                     }
+                    if(agregacionEncontradaMover){
+                                                
+                        Agregacion nueva = new Agregacion(relacionAgregacion,nombreAgregacionMover,(int)event.getX(),(int)event.getY());
+                        
+                        nueva.crearAgregacion();
+
+
+                            moverAgregacionEnElementos(nueva);
+                            diagrama.getAgregaciones().add(nueva);
+                            actualizarPanel();
+                            agregacionAuxiliar=nueva;
+                            diagrama.getAgregaciones().remove(diagrama.getAgregaciones().size()-1);                       
+                        
+
+                                              
+                    }                    
                     if(atributoEncontradoMover){
                         if(atributoEnEntidadMover){
                             if(atributoEnAtributoMover){
@@ -580,6 +643,14 @@ public class FXMLDocumentController implements Initializable {
         for(int i = 0; i<diagrama.getHerencias().size();i++){
             panelDibujo.getChildren().addAll(diagrama.getHerencias().get(i).dibujoHerencia());
         }
+        for(int i = 0; i< diagrama.getAgregaciones().size();i++){
+            panelDibujo.getChildren().addAll(diagrama.getAgregaciones().get(i).dibujoAgregacion());
+            if(puntosDeControl.isSelected()){
+                panelDibujo.getChildren().addAll(diagrama.getAgregaciones().get(i).getPuntosDeControl());
+            }             
+            
+            
+        }
         for(int i = 0; i<diagrama.getAtributos().size();i++){
             panelDibujo.getChildren().addAll(diagrama.getAtributos().get(i).dibujoAtributo());
             if(puntosDeControl.isSelected()){
@@ -593,7 +664,38 @@ public class FXMLDocumentController implements Initializable {
 
     }   
     
-    
+    /**
+     * Revisa si una entidad esta agregada en una agregacion.
+     * @param entidad Entidad que se busca en las agregaciones.
+     * @return true si la encuentra y false si no la encuentra.
+     */
+    private boolean entidadEnAgregacion(Entidad entidad){
+         
+        for(int i = 0; i<diagrama.getAgregaciones().size();i++){
+            Agregacion agregacion = diagrama.getAgregaciones().get(i);
+            if((agregacion.getRelacion().getEntidad().get(0).equals(entidad))||(agregacion.getRelacion().getEntidad().get(1).equals(entidad))){
+                return true;
+            }  
+        }
+        return false;
+        
+    }
+    /**
+     * Revisa si una relacion esta agregada en una agregacion.
+     * @param relacion Relacion que se busca en las agregaciones.
+     * @return true si la encuentra y false si no la encuentra.
+     */    
+    private boolean relacionEnAgregacion(Relacion relacion){
+         
+        for(int i = 0; i<diagrama.getAgregaciones().size();i++){
+            Agregacion agregacion = diagrama.getAgregaciones().get(i);
+            if(agregacion.getRelacion().equals(relacion)){
+                return true;
+            }  
+        }
+        return false;
+        
+    }    
     
     /**
      * Una vez que el usuario deja de presionar el elemento en el panel, este se guarda oficialmente
@@ -625,6 +727,15 @@ public class FXMLDocumentController implements Initializable {
                 tipoHerenciaMover = "";
                 
             }
+            if(agregacionEncontradaMover){
+
+                diagrama.getAgregaciones().add(agregacionAuxiliar);
+                actualizarPanel();                                             
+
+                nombreAgregacionMover = "";   
+
+                
+            }            
             if(atributoEncontradoMover){
 
                 if(atributoEnEntidadMover){   
@@ -670,7 +781,7 @@ public class FXMLDocumentController implements Initializable {
             entidadEncontradaMover= false;
             atributoEncontradoMover = false;
             herenciaEncontradaMover = false;
-            
+            agregacionEncontradaMover = false;
             guardarDiagrama();
         }
         
@@ -703,8 +814,30 @@ public class FXMLDocumentController implements Initializable {
         }
         return false;
     }    
-    
-    
+    private boolean dentroDelPanel(ArrayList<Integer> x,ArrayList<Integer> y){
+        int contador = 0;
+        for(int i = 0; i<x.size();i++){
+            if(0<=x.get(i) && x.get(i)<=1050 && 0<=y.get(i) && y.get(i)<= 687){
+                contador++;
+            }            
+        }
+        return contador==x.size();
+        
+
+    }
+
+    private void moverAgregacionEnElementos(Agregacion agregacion){
+        for(int i =0; i<diagrama.getRelaciones().size();i++){
+            for(int j = 0; j<diagrama.getRelaciones().get(i).getAgregacion().size(); j++){
+                if(diagrama.getRelaciones().get(i).getAgregacion().get(j).getNombre().equals(agregacion.getNombre())){
+                    
+                    diagrama.getRelaciones().get(i).getAgregacion().remove(j);
+                    diagrama.getRelaciones().get(i).getAgregacion().add(agregacion);
+                    diagrama.getRelaciones().get(i).crearRelacion();
+                }
+            }
+        }        
+    }
     private void moverEntidadEnElementos(Entidad entidad){
         for(int i =0; i<diagrama.getRelaciones().size();i++){
             for(int j = 0; j<diagrama.getRelaciones().get(i).getEntidad().size(); j++){
@@ -748,6 +881,7 @@ public class FXMLDocumentController implements Initializable {
             diagrama.getRelaciones().clear();
             diagrama.getAtributos().clear();  
             diagrama.getHerencias().clear(); 
+            diagrama.getAgregaciones().clear();
         }
         else{
             mensaje("Ya esta todo limpio...");
@@ -1093,7 +1227,7 @@ public class FXMLDocumentController implements Initializable {
         moverFiguras = false; 
         crearRelacion=false; 
         crearAtributo = false;
-        
+        crearAgregacion = false;
         
     }
 
@@ -1102,6 +1236,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void ventanaEntidad() throws IOException{
         Stage stage = new Stage();
+        stage.setTitle("Entidad");
         stage.setResizable(false);
         FXMLLoader loader = new FXMLLoader();
         AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Entidad.fxml").openStream());
@@ -1116,7 +1251,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     
-    public void creacionRelacion(boolean debil,String nombreRelacion,Diagrama diagrama,ArrayList<Entidad> entidades){
+    public void creacionRelacion(boolean debil,String nombreRelacion,Diagrama diagrama,ArrayList<Entidad> entidades,ArrayList<Agregacion> agregaciones){
         if(debil){
             this.entidadesDisponibles = new ArrayList<>();
             entidadesDisponibles.add(entidades.get(0));
@@ -1124,6 +1259,7 @@ public class FXMLDocumentController implements Initializable {
         }
         else{
             this.entidadesDisponibles = entidades;
+            this.agregacionesDisponibles=agregaciones;
         }
         
        
@@ -1135,7 +1271,7 @@ public class FXMLDocumentController implements Initializable {
             crearRelacion=true;    
             crearAtributo = false;
             crearHerencia = false;
-        
+            crearAgregacion = false;
     } 
 
     @FXML
@@ -1143,6 +1279,7 @@ public class FXMLDocumentController implements Initializable {
         
         if(!diagrama.getEntidades().isEmpty()){
             Stage stage = new Stage();
+            stage.setTitle("Relación");
             stage.setResizable(false);
             FXMLLoader loader = new FXMLLoader();
             AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Relaciones.fxml").openStream());
@@ -1166,6 +1303,7 @@ public class FXMLDocumentController implements Initializable {
         
         if(!diagrama.getEntidades().isEmpty()){
             Stage stage = new Stage();
+            stage.setTitle("Atributo");
             stage.setResizable(false);
             FXMLLoader loader = new FXMLLoader();
             AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Atributos.fxml").openStream());
@@ -1189,6 +1327,7 @@ public class FXMLDocumentController implements Initializable {
         
         if(diagrama.getEntidades().size()>=2){
             Stage stage = new Stage();
+            stage.setTitle("Herencia");
             stage.setResizable(false);
             FXMLLoader loader = new FXMLLoader();
             AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Herencia.fxml").openStream());
@@ -1220,13 +1359,15 @@ public class FXMLDocumentController implements Initializable {
             crearRelacion=false;
             crearAtributo = true;
             crearHerencia = false;
-
+            crearAgregacion = false;
     }    
 
     @FXML
     private void ventanaModificarDiagrama() throws IOException{
         
             Stage stage = new Stage();
+            stage.setResizable(false);
+            stage.setTitle("Modificar Diagrama");
             FXMLLoader loader = new FXMLLoader();
             AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("ModificarDiagrama.fxml").openStream());
             ModificarDiagramaController instanciaControlador = (ModificarDiagramaController)loader.getController();
@@ -1237,6 +1378,24 @@ public class FXMLDocumentController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();              
     }
+    @FXML
+    private void ventanaAgregacion() throws IOException{
+        
+            Stage stage = new Stage();
+            stage.setResizable(false);
+            stage.setTitle("Agregación");
+            FXMLLoader loader = new FXMLLoader();
+            AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Agregacion.fxml").openStream());
+            AgregacionController instanciaControlador = (AgregacionController)loader.getController();
+            instanciaControlador.recibirParametros(controlador,diagrama);
+            Scene scene = new Scene(root1);
+            stage.setScene(scene);
+            stage.alwaysOnTopProperty();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();              
+    }    
+    
+    
     public void creacionHerencia(Entidad padre,ArrayList<Entidad> hijas,String tipo){
         herenciaAuxiliar = new Herencia(padre,hijas,tipo,0,0);
             crearEntidad=false;
@@ -1244,8 +1403,19 @@ public class FXMLDocumentController implements Initializable {
             crearRelacion=false;
             crearAtributo = false;
             crearHerencia = true;
+            crearAgregacion = false;
     }
-
+    public void crearAgregacion(Relacion relacion,String nombre){
+        this.relacionAgregacion=relacion;
+        this.textoAgregacion=nombre;
+            crearEntidad=false;
+            moverFiguras = false; 
+            crearRelacion=false;
+            crearAtributo = false;
+            crearHerencia = false;
+            crearAgregacion = true;
+        
+    }
     public void modificarDiagrama(Diagrama diagrama){
         this.diagrama=diagrama;
         this.actualizarPanel();
