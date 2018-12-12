@@ -50,8 +50,11 @@ public class HerenciaController implements Initializable {
         this.controlador1=controlador;
         this.solapamiento();
         
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
-            entidadPadre.getItems().add(diagrama.getEntidades().get(i).getNombre());         
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                entidadPadre.getItems().add(diagrama.getElementos().get(i).getNombre()); 
+            }
+                    
         }       
     }    
     
@@ -62,9 +65,9 @@ public class HerenciaController implements Initializable {
     @FXML
     private void eliminarPadreDeHijas(){
         entidadesHijas.getItems().clear();
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
-            if(!diagrama.getEntidades().get(i).getNombre().equals((String)entidadPadre.getValue())){
-                entidadesHijas.getItems().add(new CheckBox(diagrama.getEntidades().get(i).getNombre()));                 
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(!diagrama.getElementos().get(i).getNombre().equals((String)entidadPadre.getValue())){
+                entidadesHijas.getItems().add(new CheckBox(diagrama.getElementos().get(i).getNombre()));                 
             }
             else{
                 indicePadre = i;
@@ -102,10 +105,13 @@ public class HerenciaController implements Initializable {
         ArrayList<Entidad> entidades = new ArrayList<>();
         for(int i = 0; i<entidadesHijas.getItems().size();i++){
             if(entidadesHijas.getItems().get(i).isSelected() ){
-                for(int j=0; j<diagrama.getEntidades().size();j++){
-                    if(entidadesHijas.getItems().get(i).getText().equals(diagrama.getEntidades().get(j).getNombre())){
-                        entidades.add(diagrama.getEntidades().get(j));
+                for(int j=0; j<diagrama.getElementos().size();j++){
+                    if(diagrama.getElementos().get(i) instanceof Entidad){
+                        if(entidadesHijas.getItems().get(i).getText().equals(diagrama.getElementos().get(j).getNombre())){
+                            entidades.add((Entidad)diagrama.getElementos().get(j));
+                        }
                     }
+
                 }
             }    
         }
@@ -129,7 +135,7 @@ public class HerenciaController implements Initializable {
         if(!entidadesHijas().isEmpty()){
             
         
-            controlador1.creacionHerencia(diagrama.getEntidades().get(indicePadre), entidadesHijas(), tipoHerencia);
+            controlador1.creacionHerencia((Entidad)diagrama.getElementos().get(indicePadre), entidadesHijas(), tipoHerencia);
 
 
             Stage stage = (Stage)cerrarVentana.getScene().getWindow();

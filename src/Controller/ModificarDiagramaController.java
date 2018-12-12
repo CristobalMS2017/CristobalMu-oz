@@ -6,6 +6,7 @@
 package Controller;
 
 import Clases.Diagrama;
+import Clases.Entidad;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -72,8 +73,11 @@ public class ModificarDiagramaController implements Initializable {
     public void recibirParametros(FXMLDocumentController controlador,Diagrama diagrama){
         this.diagrama=diagrama;
         this.controlador1=controlador;
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
-            comboBoxEntidad.getItems().add(diagrama.getEntidades().get(i).getNombre());
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                comboBoxEntidad.getItems().add(diagrama.getElementos().get(i).getNombre());
+            }
+            
         }
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
             comboBoxRelacion.getItems().add(diagrama.getRelaciones().get(i).getNombre());
@@ -94,8 +98,11 @@ public class ModificarDiagramaController implements Initializable {
         origenAtributo.getItems().clear();
         if(tipoOrigenAtributo!=null){
             if(tipoOrigenAtributo.getValue().equals("Entidad")){
-                for(int i = 0; i<diagrama.getEntidades().size();i++){
-                    origenAtributo.getItems().add(diagrama.getEntidades().get(i).getNombre());
+                for(int i = 0; i<diagrama.getElementos().size();i++){
+                    if(diagrama.getElementos().get(i) instanceof Entidad){
+                        origenAtributo.getItems().add(diagrama.getElementos().get(i).getNombre());
+                    }
+                    
                 }            
 
             }
@@ -143,10 +150,10 @@ public class ModificarDiagramaController implements Initializable {
         if(tipoOrigenAtributo.getValue()!=null){
             comboBoxAtributo.getItems().clear();
             if(((String)tipoOrigenAtributo.getValue()).equals("Entidad")&tipoOrigenAtributo.getValue()!=null){
-                for(int i = 0; i<diagrama.getEntidades().size();i++){
-                    if(((String)origenAtributo.getValue()).equals(diagrama.getEntidades().get(i).getNombre())){
-                        for(int j = 0; j<diagrama.getEntidades().get(i).getAtributos().size();j++){
-                            comboBoxAtributo.getItems().add(diagrama.getEntidades().get(i).getAtributos().get(j).getNombre());
+                for(int i = 0; i<diagrama.getElementos().size();i++){
+                    if(((String)origenAtributo.getValue()).equals(diagrama.getElementos().get(i).getNombre())){
+                        for(int j = 0; j<diagrama.getElementos().get(i).getAtributos().size();j++){
+                            comboBoxAtributo.getItems().add(diagrama.getElementos().get(i).getAtributos().get(j).getNombre());
                         }
                     }
 
@@ -212,8 +219,8 @@ public class ModificarDiagramaController implements Initializable {
             listaEntidadesRelacion.getItems().clear();
             for(int i = 0; i<diagrama.getRelaciones().size();i++){
                 if(comboBoxRelacion.getValue().equals(diagrama.getRelaciones().get(i).getNombre())){
-                    for(int j = 0; j<diagrama.getRelaciones().get(i).getEntidad().size();j++){
-                        CheckBox nuevo = new CheckBox(diagrama.getRelaciones().get(i).getEntidad().get(j).getNombre());
+                    for(int j = 0; j<diagrama.getRelaciones().get(i).getElementos().size();j++){
+                        CheckBox nuevo = new CheckBox(diagrama.getRelaciones().get(i).getElementos().get(j).getNombre());
                         nuevo.setSelected(true);
                         listaEntidadesRelacion.getItems().add(nuevo);
                     }
@@ -271,13 +278,15 @@ public class ModificarDiagramaController implements Initializable {
     private void seccionEntidad(){
         listaAtributosEntidad.getItems().clear();
         if(((String)comboBoxEntidad.getValue())!=null){
-            for(int i = 0; i<diagrama.getEntidades().size();i++){
-                if(((String)comboBoxEntidad.getValue()).equals(diagrama.getEntidades().get(i).getNombre())){
-                    entidadSeleccionada = i;
-                    for(int j = 0; j<diagrama.getEntidades().get(i).getAtributos().size();j++){
-                        CheckBox nuevo = new CheckBox(diagrama.getEntidades().get(i).getAtributos().get(j).getNombre());
-                        nuevo.setSelected(true);
-                        listaAtributosEntidad.getItems().add(nuevo);
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Entidad){
+                    if(((String)comboBoxEntidad.getValue()).equals(diagrama.getElementos().get(i).getNombre())){
+                        entidadSeleccionada = i;
+                        for(int j = 0; j<diagrama.getElementos().get(i).getAtributos().size();j++){
+                            CheckBox nuevo = new CheckBox(diagrama.getElementos().get(i).getAtributos().get(j).getNombre());
+                            nuevo.setSelected(true);
+                            listaAtributosEntidad.getItems().add(nuevo);
+                        }
                     }
                 }
             }           
@@ -307,9 +316,9 @@ public class ModificarDiagramaController implements Initializable {
     private void eliminarEntidad(){
         
         if(!((String)comboBoxEntidad.getValue()).isEmpty()){
-            for(int i =0; i<diagrama.getEntidades().size();i++){
-                if(comboBoxEntidad.getValue().equals(diagrama.getEntidades().get(i).getNombre())){
-                    diagrama.eliminarEntidad(diagrama.getEntidades().get(i));
+            for(int i =0; i<diagrama.getElementos().size();i++){
+                if(comboBoxEntidad.getValue().equals(diagrama.getElementos().get(i).getNombre())){
+                    diagrama.eliminarEntidad((Entidad)diagrama.getElementos().get(i));
                 }
 
             }
@@ -317,8 +326,10 @@ public class ModificarDiagramaController implements Initializable {
             comboBoxEntidad.getItems().clear();
             comboBoxEntidad.setValue("");
             modificarNombreEntidad.clear();
-            for(int i = 0; i<diagrama.getEntidades().size();i++){
-                comboBoxEntidad.getItems().add(diagrama.getEntidades().get(i).getNombre());
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Entidad){
+                    comboBoxEntidad.getItems().add(diagrama.getElementos().get(i).getNombre());
+                }
             }        
             this.controlador1.actualizarPanel();
 
@@ -391,26 +402,29 @@ public class ModificarDiagramaController implements Initializable {
      */
     @FXML
     private void modificarEntidad(){
-        for(int i = 0; i<diagrama.getEntidades().get(entidadSeleccionada).getAtributos().size();i++){
+        for(int i = 0; i<diagrama.getElementos().get(entidadSeleccionada).getAtributos().size();i++){
             if(listaAtributosEntidad.getItems().get(i).isSelected()==false){
-                diagrama.eliminarAtributo(diagrama.getEntidades().get(entidadSeleccionada).getAtributos().get(i));
-                diagrama.getEntidades().get(entidadSeleccionada).getAtributos().remove(i);
+                diagrama.eliminarAtributo(diagrama.getElementos().get(entidadSeleccionada).getAtributos().get(i));
+                diagrama.getElementos().get(entidadSeleccionada).getAtributos().remove(i);
                 
             }
             
         }
-        diagrama.getEntidades().get(entidadSeleccionada).crearLineasunionAtributos();
+        diagrama.getElementos().get(entidadSeleccionada).crearLineasunionAtributos();
         String nombre = (String)modificarNombreEntidad.getText();
         if(!"".equals(nombre)){ 
-            diagrama.getEntidades().get(entidadSeleccionada).setNombre(nombre);   
+            diagrama.getElementos().get(entidadSeleccionada).setNombre(nombre);   
             diagrama.actualizarUnionesFiguras();
         }
         listaAtributosEntidad.getItems().clear();
         comboBoxEntidad.getItems().clear();
         comboBoxEntidad.setValue("");
         modificarNombreEntidad.clear();
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
-            comboBoxEntidad.getItems().add(diagrama.getEntidades().get(i).getNombre());
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                comboBoxEntidad.getItems().add(diagrama.getElementos().get(i).getNombre());
+            }
+            
         }        
         this.controlador1.actualizarPanel();
 
@@ -432,9 +446,9 @@ public class ModificarDiagramaController implements Initializable {
             }
             
         } 
-        for(int i = 0; i<diagrama.getRelaciones().get(relacionSeleccionada).getEntidad().size();i++){
+        for(int i = 0; i<diagrama.getRelaciones().get(relacionSeleccionada).getElementos().size();i++){
             if(listaEntidadesRelacion.getItems().get(i).isSelected()==false){
-                diagrama.getRelaciones().get(relacionSeleccionada).getEntidad().remove(i);
+                diagrama.getRelaciones().get(relacionSeleccionada).getElementos().remove(i);
                 
             } 
         }
@@ -445,7 +459,7 @@ public class ModificarDiagramaController implements Initializable {
         }
         diagrama.getRelaciones().get(relacionSeleccionada).crearRelacion();
         diagrama.getRelaciones().get(relacionSeleccionada).crearLineasunionAtributos();
-        if(diagrama.getRelaciones().get(relacionSeleccionada).getEntidad().isEmpty()){
+        if(diagrama.getRelaciones().get(relacionSeleccionada).getElementos().isEmpty()){
             diagrama.getRelaciones().remove(relacionSeleccionada);
         }
         
@@ -593,12 +607,14 @@ public class ModificarDiagramaController implements Initializable {
     private void eliminarAtributo(){
 
             if(tipoOrigenAtributo.getValue().equals("Entidad")){
-                for(int i = 0; i< diagrama.getEntidades().size();i++){
-                    if(diagrama.getEntidades().get(i).getNombre().equals(origenAtributo.getValue())){
-                        for(int j = 0; j<diagrama.getEntidades().get(i).getAtributos().size();j++){
-                            if(diagrama.getEntidades().get(i).getAtributos().get(j).getNombre().equals(comboBoxAtributo.getValue())){
-                                diagrama.getEntidades().get(i).getAtributos().remove(j);
-                                diagrama.getEntidades().get(i).crearLineasunionAtributos();
+                for(int i = 0; i< diagrama.getElementos().size();i++){
+                    if(diagrama.getElementos().get(i) instanceof Entidad){
+                        if(diagrama.getElementos().get(i).getNombre().equals(origenAtributo.getValue())){
+                            for(int j = 0; j<diagrama.getElementos().get(i).getAtributos().size();j++){
+                                if(diagrama.getElementos().get(i).getAtributos().get(j).getNombre().equals(comboBoxAtributo.getValue())){
+                                    diagrama.getElementos().get(i).getAtributos().remove(j);
+                                    diagrama.getElementos().get(i).crearLineasunionAtributos();
+                                }
                             }
                         }
                     }

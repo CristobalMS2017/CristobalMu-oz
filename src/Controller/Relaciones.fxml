@@ -8,29 +8,28 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" fx:id="root" prefHeight="445.0" prefWidth="288.0" style="-fx-background-color: rgb(240,255,255);" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RelacionesController">
+<AnchorPane id="AnchorPane" fx:id="root" prefHeight="372.0" prefWidth="232.0" style="-fx-background-color: rgb(240,255,255);" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.RelacionesController">
    <children>
-      <Text layoutX="98.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Nombre Relación" />
-      <TextField fx:id="textoRelacion" layoutX="73.0" layoutY="31.0" style="-fx-border-color: rgb(105,162,146);" />
-      <ComboBox fx:id="tipoRelacion" layoutX="73.0" layoutY="93.0" onAction="#tipoRelacion" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
-      <Button fx:id="cerrarVentana" layoutX="63.0" layoutY="395.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Aceptar" />
-      <Button layoutX="158.0" layoutY="395.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
-      <Pane fx:id="relacionFuerte" disable="true" layoutX="34.0" layoutY="131.0" prefHeight="250.0" prefWidth="219.0" visible="false">
+      <Text layoutX="70.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Nombre Relación" />
+      <TextField fx:id="textoRelacion" layoutX="40.0" layoutY="45.0" style="-fx-border-color: rgb(105,162,146);" />
+      <ComboBox fx:id="tipoRelacion" layoutX="41.0" layoutY="107.0" onAction="#tipoRelacion" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+      <Button fx:id="cerrarVentana" layoutX="33.0" layoutY="317.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Aceptar" />
+      <Button layoutX="124.0" layoutY="317.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
+      <Pane fx:id="relacionFuerte" disable="true" layoutX="32.0" layoutY="144.0" prefHeight="129.0" prefWidth="184.0" visible="false">
          <children>
-            <ListView fx:id="entidadesDisponibles" layoutX="14.0" layoutY="21.0" prefHeight="94.0" prefWidth="191.0" style="-fx-border-color: rgb(105,162,146);" />
-            <Text layoutX="54.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione entidades" />
-            <Text layoutX="44.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione agregaciones" />
-            <ListView fx:id="agregacionesDisponibles" layoutX="13.0" layoutY="149.0" prefHeight="94.0" prefWidth="191.0" style="-fx-border-color: rgb(105,162,146);" />
+            <ListView fx:id="entidadesDisponibles" layoutX="11.0" layoutY="21.0" onEditStart="#elementosSeleccionadosParaRelacion" prefHeight="94.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+            <Text layoutX="31.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione entidades" />
          </children>
       </Pane>
-      <Pane fx:id="relacionDebil" cacheShape="false" layoutX="44.0" layoutY="128.0" prefHeight="250.0" prefWidth="200.0" visible="false">
+      <Pane fx:id="relacionDebil" cacheShape="false" layoutX="25.0" layoutY="144.0" prefHeight="129.0" prefWidth="184.0" visible="false">
          <children>
-            <ComboBox fx:id="entidadFuerte" layoutX="25.0" layoutY="53.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
-            <Text layoutX="63.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Entidad fuerte" />
-            <ComboBox fx:id="entidadDebil" layoutX="25.0" layoutY="155.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
-            <Text layoutX="65.0" layoutY="151.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Entidad débil" />
+            <ComboBox fx:id="entidadFuerte" layoutX="14.0" layoutY="30.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+            <Text layoutX="52.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Entidad fuerte" />
+            <ComboBox fx:id="entidadDebil" layoutX="14.0" layoutY="87.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
+            <Text layoutX="54.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Entidad débil" />
          </children>
       </Pane>
-      <Text layoutX="114.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Tipo relación" />
+      <Text layoutX="82.0" layoutY="103.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Tipo relación" />
+      <Button layoutX="35.0" layoutY="273.0" mnemonicParsing="false" onAction="#ventanaParticipacion" prefHeight="27.0" prefWidth="162.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Participacion" />
    </children>
 </AnchorPane>

@@ -8,15 +8,15 @@ import java.util.ArrayList;
  * @author Cristobal Muñoz Salinas
  */
 public class PuntoCercano {
-    private ArrayList<Entidad> entidad ;
+    private ArrayList<Elemento> elementos ;
     private Figura figura;
     private ArrayList<Integer> ordenIndicesEntidades = new ArrayList<>();
     private ArrayList<Integer> ordenIndicesFigura = new ArrayList<>();
 
 
-    public PuntoCercano(Figura figura, ArrayList<Entidad> entidades) {
+    public PuntoCercano(Figura figura, ArrayList<Elemento> elementos) {
         this.figura = figura;
-        this.entidad=entidades;
+        this.elementos=elementos;
         ordenarIndices();
     }
 
@@ -41,15 +41,15 @@ public class PuntoCercano {
     }
     
     private void ordenarIndices(){
-        if (entidad.size()==1){
-            int i1=puntoCercanoFigura(entidad.get(0).posicionesX(),entidad.get(0).posicionesY());
+        if (elementos.size()==1){
+            int i1=puntoCercanoFigura(elementos.get(0).getPosicionesX(),elementos.get(0).getPosicionesY());
             puntoCercanoEntidad(i1,0);  
-            i1=puntoCercanoFigura(entidad.get(0).posicionesX(),entidad.get(0).posicionesY());
+            i1=puntoCercanoFigura(elementos.get(0).getPosicionesX(),elementos.get(0).getPosicionesY());
             puntoCercanoEntidad(i1,0);   
         }
         else{
-            for (int i = 0; i<entidad.size(); i++){
-                int i1=puntoCercanoFigura(entidad.get(i).posicionesX(),entidad.get(i).posicionesY());
+            for (int i = 0; i<elementos.size(); i++){
+                int i1=puntoCercanoFigura(elementos.get(i).getPosicionesX(),elementos.get(i).getPosicionesY());
                 puntoCercanoEntidad(i1,i);
             }         
         }
@@ -112,10 +112,10 @@ public class PuntoCercano {
         int x2,y2;
         ArrayList<Integer> distancias = new ArrayList<>();
         ArrayList<Integer> orden = new ArrayList<>();
-        for(int i=0; i< this.entidad.get(numeroEntidad).getFigura().getPosicionesX().size();i++){
+        for(int i=0; i< this.elementos.get(numeroEntidad).getPosicionesX().size();i++){
             orden.add(i);
-            x2 = this.entidad.get(numeroEntidad).getFigura().getPosicionesX().get(i);
-            y2 = this.entidad.get(numeroEntidad).getFigura().getPosicionesY().get(i);
+            x2 = this.elementos.get(numeroEntidad).getPosicionesX().get(i);
+            y2 = this.elementos.get(numeroEntidad).getPosicionesY().get(i);
                 distancias.add((int)Math.sqrt(((Math.pow(x1-x2, 2)+Math.pow(y2-y1, 2)))));
         }
                 

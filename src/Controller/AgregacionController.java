@@ -61,11 +61,11 @@ public class AgregacionController implements Initializable {
     private String nombreAgregacionVacia(){
         boolean disponible=true;
         
-        for(int i = 0; i<diagrama.getAgregaciones().size();i++){
+        for(int i = 0; i<diagrama.getElementos().size();i++){
             String nombre = "Agregación "+(i+1);
-            for(int j=0;j<diagrama.getAgregaciones().size();j++){
-                if(diagrama.getAgregaciones().get(j).getNombre().equals(nombre)){
-                    j=diagrama.getAgregaciones().size();
+            for(int j=0;j<diagrama.getElementos().size();j++){
+                if(diagrama.getElementos().get(j).getNombre().equals(nombre)){
+                    j=diagrama.getElementos().size();
                     disponible=false;
                 }
             }

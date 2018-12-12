@@ -66,6 +66,7 @@ public class Figura {
             
             
             
+            
 
         }
         if(tipo == 2 || tipo == 1){//Rombo

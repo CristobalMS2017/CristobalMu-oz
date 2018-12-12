@@ -169,10 +169,10 @@ public class Herencia {
         for(int i=0;i<EntidadesHijas.size();i++){            
             int indice= puntoCercano(posY,posX,EntidadesHijas.get(i));            
             if(i!=EntidadesHijas.size()-1){
-                semicircunferencia(EntidadesHijas.get(i).getFigura().getPosicionesX().get(indice),EntidadesHijas.get(i).getFigura().getPosicionesY().get(indice));            
+                semicircunferencia(EntidadesHijas.get(i).getPosicionesX().get(indice),EntidadesHijas.get(i).getPosicionesY().get(indice));            
             }        
-            Line nueva = new Line(posX+15,posY,EntidadesHijas.get(i).getFigura().getPosicionesX().get(indice),
-                                  EntidadesHijas.get(i).getFigura().getPosicionesY().get(indice));
+            Line nueva = new Line(posX+15,posY,EntidadesHijas.get(i).getPosicionesX().get(indice),
+                                  EntidadesHijas.get(i).getPosicionesY().get(indice));
             
             unionesEntidades.add(nueva);
             
@@ -200,10 +200,10 @@ public class Herencia {
         ArrayList<Integer> distancias = new ArrayList<>();
         ArrayList<Integer> orden = new ArrayList<>();
         int x2,y2;
-        for(int i=0; i< entidad.getFigura().getPosicionesX().size();i++){
+        for(int i=0; i< entidad.getPosicionesX().size();i++){
             orden.add(i);
-            x2 = entidad.getFigura().getPosicionesX().get(i);
-            y2 = entidad.getFigura().getPosicionesY().get(i);
+            x2 = entidad.getPosicionesX().get(i);
+            y2 = entidad.getPosicionesY().get(i);
                 distancias.add((int)Math.sqrt(((Math.pow(x1-x2, 2)+Math.pow(y2-y1, 2)))));
         }
                 

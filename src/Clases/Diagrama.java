@@ -12,25 +12,20 @@ import java.util.ArrayList;
  * @author Cristobal Muñoz Salinas
  */
 public class Diagrama {
-    private ArrayList<Entidad> entidades;
+    private ArrayList<Elemento> elementos;
+
     private ArrayList<Relacion> relaciones;
     private ArrayList<Atributo> atributos;
-    private ArrayList<Agregacion> agregaciones;
+
     private ArrayList<Herencia> herencias; 
     public Diagrama() {
         
-        entidades = new ArrayList<>();
         relaciones = new ArrayList<>();
         atributos = new ArrayList<>();
         herencias = new ArrayList<>();
-        agregaciones = new ArrayList<>();
+        elementos = new ArrayList<>();
         
     }   
-
-    public void setEntidades(ArrayList<Entidad> entidades) {
-        this.entidades = entidades;
-    }
-
     public void setRelaciones(ArrayList<Relacion> relaciones) {
         this.relaciones = relaciones;
     }
@@ -42,21 +37,7 @@ public class Diagrama {
     public void setHerencias(ArrayList<Herencia> herencias) {
         this.herencias = herencias;
     }
-
-    public ArrayList<Agregacion> getAgregaciones() {
-        return agregaciones;
-    }
-
-    public void setAgregaciones(ArrayList<Agregacion> agregaciones) {
-        this.agregaciones = agregaciones;
-    }
-    
-    
-    
-    public void agregarEntidades(ArrayList<Entidad> a){
-        entidades =a;
-    }
-    public void agregarHerencias(ArrayList<Herencia> a){
+        public void agregarHerencias(ArrayList<Herencia> a){
         herencias =a;
     }   
     public void agregarRelaciones(ArrayList<Relacion> a){
@@ -70,28 +51,11 @@ public class Diagrama {
     public ArrayList<Herencia> getHerencias() {
         return herencias;
     }
-
-
-    
-    public  ArrayList<Entidad> getEntidades() {
-        return entidades;
-    }
-
     public  ArrayList<Relacion> getRelaciones() {
         return relaciones;
     }
-    public void agregarEntidad(Entidad nuevo){
-        this.getEntidades().add(nuevo);
-    }
-    
-    public Entidad obtenerEntidad(int i){
-        return (Entidad)entidades.get(i);
-    }
     public Relacion obtenerRelacion(int i){
         return relaciones.get(i);
-    }
-    public int cantidadEntidad(){
-        return this.entidades.size();
     }
     public int cantidadRelacion(){
         return this.getRelaciones().size();
@@ -114,19 +78,19 @@ public class Diagrama {
     
     public void eliminarEntidad(Entidad entidad){
         eliminarArregloDeAtributos(entidad.getAtributos());
-        for(int i = 0; i<this.getEntidades().size();i++){
-            if(entidad.equals(this.entidades.get(i))){
-                this.entidades.remove(i);
+        for(int i = 0; i<this.elementos.size();i++){
+            if(entidad.equals(this.elementos.get(i))){
+                this.elementos.remove(i);
             }            
         }
         for(int i = 0; i<this.relaciones.size();i++){
-            if(this.relaciones.get(i).getEntidad().size()==1 && this.relaciones.get(i).getEntidad().get(0).equals(entidad)){
+            if(this.relaciones.get(i).getElementos().size()==1 && this.relaciones.get(i).getElementos().get(0).equals(entidad)){
                 this.relaciones.remove(i);
             }
             else{
-                for(int j = 0; j<this.getRelaciones().get(i).getEntidad().size();j++){
-                    if(this.relaciones.get(i).getEntidad().get(j).equals(entidad)){
-                        this.relaciones.get(i).eliminarEntidad(j);
+                for(int j = 0; j<this.getRelaciones().get(i).getElementos().size();j++){
+                    if(this.relaciones.get(i).getElementos().get(j).equals(entidad)){
+                        this.relaciones.get(i).getElementos().remove(j);
                     }
                 }
             }
@@ -189,8 +153,8 @@ public class Diagrama {
     }
     
     public void actualizarUnionesFiguras(){
-        for(int i = 0; i< this.entidades.size();i++){
-            this.entidades.get(i).crearLineasunionAtributos();
+        for(int i = 0; i< this.elementos.size();i++){
+            this.elementos.get(i).crearLineasunionAtributos();
         }
         for(int i = 0; i<this.relaciones.size();i++){
             this.relaciones.get(i).crearRelacion();
@@ -215,7 +179,17 @@ public class Diagrama {
         
         
     }
+
+    public void setElementos(ArrayList<Elemento> elementos) {
+        this.elementos = elementos;
+    }
     
+    public ArrayList<Elemento> getElementos() {
+        return elementos;
+    }
     
+    public int cantidadElementosDiagrama(){
+        return (this.getAtributos().size()+this.getElementos().size()+this.getHerencias().size()+this.getRelaciones().size());
+    }
     
 }

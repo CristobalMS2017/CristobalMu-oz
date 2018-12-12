@@ -49,8 +49,8 @@ public class EntidadController implements Initializable {
      */
     private boolean validarNombreParaEntidad(){
         
-        for(int i=0;i<diagrama.getEntidades().size();i++){
-            if(diagrama.getEntidades().get(i).getNombre().equals(textoEntidad.getText())){
+        for(int i=0;i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i).getNombre().equals(textoEntidad.getText())){
                 return false;
             }
         }
@@ -65,11 +65,11 @@ public class EntidadController implements Initializable {
     private String nombreEntidadVacia(){
         boolean disponible=true;
         
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
+        for(int i = 0; i<diagrama.getElementos().size();i++){
             String nombre = "Entidad "+(i+1);
-            for(int j=0;j<diagrama.getEntidades().size();j++){
-                if(diagrama.getEntidades().get(j).getNombre().equals(nombre)){
-                    j=diagrama.getEntidades().size();
+            for(int j=0;j<diagrama.getElementos().size();j++){
+                if(diagrama.getElementos().get(j).getNombre().equals(nombre)){
+                    j=diagrama.getElementos().size();
                     disponible=false;
                 }
             }

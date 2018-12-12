@@ -7,12 +7,16 @@ package Controller;
 
 import Clases.Agregacion;
 import Clases.Diagrama;
+import Clases.Elemento;
 import Clases.Entidad;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -20,6 +24,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 
@@ -44,7 +49,8 @@ public class RelacionesController implements Initializable {
     @FXML private ComboBox entidadDebil;
     @FXML private ComboBox tipoRelacion;
     private boolean tipoDebil=false;
-    
+    private ArrayList<String> participacion = new ArrayList<>();
+    RelacionesController controladorRelacion;
     /**
      * Se recibe el controlador y diagrama principal.
      * @param controlador
@@ -53,27 +59,32 @@ public class RelacionesController implements Initializable {
     public void recibirParametros(FXMLDocumentController controlador,Diagrama diagrama){
         this.diagrama=diagrama;
         this.controlador1=controlador;   
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
-            if(!diagrama.getEntidades().get(i).isDebil()){
-                entidadesDisponibles.getItems().add(new CheckBox(diagrama.getEntidades().get(i).getNombre()));
-            }
-
-        }  
-        for(int i = 0; i<diagrama.getAgregaciones().size();i++){
-            agregacionesDisponibles.getItems().add(new CheckBox(diagrama.getAgregaciones().get(i).getNombre()));
-        }
-        for(int i = 0; i<diagrama.getEntidades().size();i++){
-            if(diagrama.getEntidades().get(i).isDebil()){
-                entidadDebil.getItems().add(diagrama.getEntidades().get(i).getNombre());
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                if(!((Entidad)diagrama.getElementos().get(i)).isDebil()){
+                    entidadesDisponibles.getItems().add(new CheckBox(diagrama.getElementos().get(i).getNombre()));
+                }                
             }
             else{
-                entidadFuerte.getItems().add(diagrama.getEntidades().get(i).getNombre());
+                entidadesDisponibles.getItems().add(new CheckBox(diagrama.getElementos().get(i).getNombre()));
             }
+
+
+        }  
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                if(((Entidad)diagrama.getElementos().get(i)).isDebil()){
+                    entidadDebil.getItems().add(diagrama.getElementos().get(i).getNombre());
+                }
+                else{
+                    entidadFuerte.getItems().add(diagrama.getElementos().get(i).getNombre());
+                }
         }
         
-        tipoRelacion.getItems().addAll("Fuerte","Débil");
+       
+        }
+         tipoRelacion.getItems().addAll("Fuerte","Débil");
     }
-    
     /**
      * Se revisa que tipo de relación se quiere hacer, si relación débil o fuerte,
      * habilitando la creación de relación seleccionada.
@@ -109,7 +120,9 @@ public class RelacionesController implements Initializable {
         }
         return true;
     }     
-    
+    public void obtenerParticipacion(ArrayList<String> participacion){
+        this.participacion=participacion;
+    }
     /**
      * Se crea un nombre por defecto si es que el usuario no ingresó uno para la relación.
      * @return 
@@ -133,7 +146,40 @@ public class RelacionesController implements Initializable {
         return "Relación 0";
     }
 
-    
+    private ArrayList<Elemento> elementosSeleccionados(){
+            ArrayList<Elemento> elementosSeleccionados = new ArrayList<>();
+            if(tipoDebil){
+                
+                for(int i = 0; i<diagrama.getElementos().size();i++){
+                    if(entidadFuerte.getValue().equals(diagrama.getElementos().get(i).getNombre())){
+                        elementosSeleccionados.add((Entidad)diagrama.getElementos().get(i));
+                    }
+                        
+
+                        
+                }
+
+                for(int i = 0; i<diagrama.getElementos().size();i++){
+                        if(entidadDebil.getValue().equals(diagrama.getElementos().get(i).getNombre())){
+                            elementosSeleccionados.add(diagrama.getElementos().get(i));                            
+                        }       
+                    }  
+                
+            }
+            else{
+                for(int i=0;i<this.entidadesDisponibles.getItems().size();i++){
+                    if(this.entidadesDisponibles.getItems().get(i).isSelected() ){
+                        for(int j = 0; j<diagrama.getElementos().size();j++){
+                            if(entidadesDisponibles.getItems().get(i).getText().equals(diagrama.getElementos().get(j).getNombre())){
+                                elementosSeleccionados.add(diagrama.getElementos().get(j));
+                            }
+                        }
+                        
+                    }
+                }                    
+            }  
+        return elementosSeleccionados;    
+    }
 
     
     /**
@@ -144,54 +190,14 @@ public class RelacionesController implements Initializable {
         
 
         if(validarNombreParaRelacion()){
-            ArrayList<Entidad> entidadesSeleccionadas = new ArrayList<>();
-            ArrayList<Agregacion> agregacionesSeleccionadas = new ArrayList<>();
-            if(tipoDebil){
-                
-                for(int i = 0; i<diagrama.getEntidades().size();i++){
-                    if(entidadFuerte.getValue().equals(diagrama.getEntidades().get(i).getNombre())){
-                        entidadesSeleccionadas.add(diagrama.getEntidades().get(i));
-                    }
-                        
+            ArrayList<Elemento> elementosSeleccionados = elementosSeleccionados();
 
-                        
-                }
-
-                for(int i = 0; i<diagrama.getEntidades().size();i++){
-                        if(entidadDebil.getValue().equals(diagrama.getEntidades().get(i).getNombre())){
-                            entidadesSeleccionadas.add(diagrama.getEntidades().get(i));                            
-                        }       
-                    }  
-                
-            }
-            else{
-                for(int i=0;i<this.entidadesDisponibles.getItems().size();i++){
-                    if(this.entidadesDisponibles.getItems().get(i).isSelected() ){
-                        for(int j = 0; j<diagrama.getEntidades().size();j++){
-                            if(entidadesDisponibles.getItems().get(i).getText().equals(diagrama.getEntidades().get(j).getNombre())){
-                                entidadesSeleccionadas.add(diagrama.getEntidades().get(j));
-                            }
-                        }
-                        
-                    }
-                }    
-                for(int i=0;i<this.agregacionesDisponibles.getItems().size();i++){
-                    if(this.agregacionesDisponibles.getItems().get(i).isSelected() ){
-                        for(int j = 0; j<diagrama.getAgregaciones().size();j++){
-                            if(agregacionesDisponibles.getItems().get(i).getText().equals(diagrama.getAgregaciones().get(j).getNombre())){
-                                agregacionesSeleccionadas.add(diagrama.getAgregaciones().get(j));
-                            }
-                        }
-                        
-                    }
-                }                 
-            }
-            if((agregacionesSeleccionadas.size()+entidadesSeleccionadas.size())<=2){
+            if((elementosSeleccionados.size())<=2){
                 if(textoRelacion.getText().isEmpty()){
-                    controlador1.creacionRelacion(tipoDebil,nombreRelacionVacia(),this.diagrama,entidadesSeleccionadas,agregacionesSeleccionadas);
+                    controlador1.creacionRelacion(tipoDebil,nombreRelacionVacia(),this.participacion,this.diagrama,elementosSeleccionados);
                 } 
                 else{
-                    controlador1.creacionRelacion(tipoDebil,textoRelacion.getText(),this.diagrama,entidadesSeleccionadas,agregacionesSeleccionadas);
+                    controlador1.creacionRelacion(tipoDebil,textoRelacion.getText(),this.participacion,this.diagrama,elementosSeleccionados);
                 }
 
 
@@ -208,7 +214,22 @@ public class RelacionesController implements Initializable {
             textoRelacion.clear();
         }
     }
-    
+    @FXML
+    private void ventanaParticipacion() throws IOException{
+        Stage stage = new Stage();
+        stage.setTitle("Participación");
+        stage.setResizable(false);
+        FXMLLoader loader = new FXMLLoader();
+        AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("ParticipacionRelacion.fxml").openStream());
+        ParticipacionRelacionController instanciaControlador = (ParticipacionRelacionController)loader.getController();
+        instanciaControlador.recibirParametros(this.controladorRelacion,elementosSeleccionados(),this.textoRelacion.getText());
+        Scene scene = new Scene(root1);
+        stage.setScene(scene);
+        stage.alwaysOnTopProperty();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
+        
+    }    
     /**
      * Solamente se cierra la ventana.
      */
@@ -225,14 +246,23 @@ public class RelacionesController implements Initializable {
     private void mensaje(String texto){
         JOptionPane.showMessageDialog(null, texto);
     }     
-    
-    
-    
-    
-    
-    
-    
-    
+    @FXML
+    private void elementosSeleccionadosParaRelacion(){
+        int contador=0;
+        for(int i = 0; i<this.entidadesDisponibles.getItems().size();i++){
+            if(this.entidadesDisponibles.getItems().get(i).isSelected()){
+                contador++;
+            }
+        }
+        for(int i = 0; i<this.agregacionesDisponibles.getItems().size();i++){
+            if(this.agregacionesDisponibles.getItems().get(i).isSelected()){
+                contador++;
+            }
+        }  
+        if(contador>2){
+            mensaje("Solo puede seleccionar 2 elementos");
+        }
+    }
     /**
      * Initializes the controller class.
      * @param url
@@ -240,8 +270,9 @@ public class RelacionesController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        controladorRelacion = this;
 
         
     }    
-    
+   
 }

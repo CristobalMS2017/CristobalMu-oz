@@ -5,7 +5,9 @@
  */
 package Controller;
 
+import Clases.Agregacion;
 import Clases.Diagrama;
+import Clases.Entidad;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -59,8 +61,11 @@ public class AtributosController implements Initializable {
             tiposAtributos.getItems().addAll("Generico","Clave","Clave Parcial","Multivaluado","Derivado","Compuesto");
             entidadesAtributosRelaciones.getItems().clear();
             entidadesAtributosRelaciones.setValue("Seleccione Entidad");
-            for(int i=0; i<diagrama.getEntidades().size();i++){
-                entidadesAtributosRelaciones.getItems().add(diagrama.getEntidades().get(i).getNombre());
+            for(int i=0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Entidad){
+                    entidadesAtributosRelaciones.getItems().add(diagrama.getElementos().get(i).getNombre());
+                }
+                
             }
         }
         if(destino.equals("Relación")){
@@ -77,8 +82,11 @@ public class AtributosController implements Initializable {
             tiposAtributos.getItems().addAll("Generico","Clave","Clave Parcial","Multivaluado","Derivado","Compuesto");
             entidadesAtributosRelaciones.getItems().clear();
             entidadesAtributosRelaciones.setValue("Seleccione Agregación");
-            for(int i=0; i<diagrama.getAgregaciones().size();i++){
-                entidadesAtributosRelaciones.getItems().add(diagrama.getAgregaciones().get(i).getNombre());
+            for(int i=0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    entidadesAtributosRelaciones.getItems().add(diagrama.getElementos().get(i).getNombre());
+                }
+                
             }
         }        
         if(destino.equals("Atributo")){
@@ -94,10 +102,10 @@ public class AtributosController implements Initializable {
                     }
                 }
             }
-            for(int i=0;i<diagrama.getEntidades().size();i++){
-                for(int j=0; j<diagrama.getEntidades().get(i).getAtributos().size();j++){
-                    if("Compuesto".equals(diagrama.getEntidades().get(i).getAtributos().get(j).getTipoAtributo())){
-                        entidadesAtributosRelaciones.getItems().add(diagrama.getEntidades().get(i).getAtributos().get(j).getNombre());
+            for(int i=0;i<diagrama.getElementos().size();i++){
+                for(int j=0; j<diagrama.getElementos().get(i).getAtributos().size();j++){
+                    if("Compuesto".equals(diagrama.getElementos().get(i).getAtributos().get(j).getTipoAtributo())){
+                        entidadesAtributosRelaciones.getItems().add(diagrama.getElementos().get(i).getAtributos().get(j).getNombre());
                     }
                 }
             }

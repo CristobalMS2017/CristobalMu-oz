@@ -40,26 +40,28 @@ public class RespaldoDiagrama {
      */
     public Diagrama crearCopiaDiagrama(Diagrama diagrama){
         ArrayList<Atributo> copiaAtributos = new ArrayList<>();
-        ArrayList<Entidad> copiaEntidades = new ArrayList<>();
+        ArrayList<Elemento> copiaElementos = new ArrayList<>();
         ArrayList<Relacion> copiaRelaciones = new ArrayList<>();
         ArrayList<Herencia> copiaHerencias = new ArrayList<>();
         
         for(int i =0; i< diagrama.getAtributos().size();i++){
             copiaAtributos.add(copiaAtributo(diagrama.getAtributos().get(i)));
         }
-        for(int i = 0;i<diagrama.getEntidades().size();i++){
-            copiaEntidades.add(copiarEntidad(diagrama.getEntidades().get(i),copiaAtributos));
+        for(int i = 0;i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                copiaElementos.add(copiarEntidad((Entidad)diagrama.getElementos().get(i),copiaAtributos));
+            }
         }
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
-            copiaRelaciones.add(copiaRelacion(diagrama.getRelaciones().get(i),copiaAtributos,copiaEntidades));
+            copiaRelaciones.add(copiaRelacion(diagrama.getRelaciones().get(i),copiaAtributos,copiaElementos));
         }
         for(int i = 0; i< diagrama.getHerencias().size();i++){
-            copiaHerencias.add(copiaHerencia(diagrama.getHerencias().get(i),copiaEntidades));
+            copiaHerencias.add(copiaHerencia(diagrama.getHerencias().get(i),copiaElementos));
         }
         
         Diagrama agregar = new Diagrama();
         agregar.setAtributos(copiaAtributos);
-        agregar.setEntidades(copiaEntidades);
+        agregar.setElementos(copiaElementos);
         agregar.setHerencias(copiaHerencias);
         agregar.setRelaciones(copiaRelaciones);
         
@@ -70,26 +72,26 @@ public class RespaldoDiagrama {
         }
         return agregar;
     }
-    private Herencia copiaHerencia(Herencia herencia,ArrayList<Entidad> entidadesDiagrama){
-        Entidad padre = null;
+    private Herencia copiaHerencia(Herencia herencia,ArrayList<Elemento> elementosDiagrama){
+        Elemento padre = null;
         ArrayList<Entidad> hijas = new ArrayList<>();
         String tipo = herencia.getTipoHerencia();
         int x = herencia.getPosX();
         int y = herencia.getPosY();
-        for(int i = 0; i<entidadesDiagrama.size();i++){
-            if(entidadesDiagrama.get(i).getNombre().equals(herencia.getEntidadPadre().getNombre())){
-                padre = entidadesDiagrama.get(i);
+        for(int i = 0; i<elementosDiagrama.size();i++){
+            if(elementosDiagrama.get(i).getNombre().equals(herencia.getEntidadPadre().getNombre())){
+                padre = elementosDiagrama.get(i);
             }
         }
         
         for(int i = 0; i<herencia.getEntidadesHijas().size();i++){
-            for(int j = 0; j<entidadesDiagrama.size();j++){
-                if(herencia.getEntidadesHijas().get(i).getNombre().equals(entidadesDiagrama.get(j).getNombre())){
-                    hijas.add(entidadesDiagrama.get(j));
+            for(int j = 0; j<elementosDiagrama.size();j++){
+                if(herencia.getEntidadesHijas().get(i).getNombre().equals(elementosDiagrama.get(j).getNombre())){
+                    hijas.add((Entidad)elementosDiagrama.get(j));
                 }
             }
         }
-        Herencia copia = new Herencia(padre,hijas,tipo,x,y);
+        Herencia copia = new Herencia((Entidad)padre,hijas,tipo,x,y);
         copia.crearHerencia();
         return copia;
             
@@ -99,7 +101,7 @@ public class RespaldoDiagrama {
         
         
     }
-    private Relacion copiaRelacion(Relacion relacion, ArrayList<Atributo> atributosDiagrama,ArrayList<Entidad> entidadesDiagrama){
+    private Relacion copiaRelacion(Relacion relacion, ArrayList<Atributo> atributosDiagrama,ArrayList<Elemento> entidadesDiagrama){
         boolean debil = relacion.isRelacionDebil();
         int x = relacion.getPosX();
         int y = relacion.getPosY();
@@ -107,10 +109,15 @@ public class RespaldoDiagrama {
 
         Relacion copia = new Relacion(debil,x,y,nombre);
         
-        for(int i = 0; i<relacion.getEntidad().size();i++){
+        ArrayList<String> cardinalidades = new ArrayList<>();
+        cardinalidades.add(relacion.getStringCardinalidades().get(0));
+        cardinalidades.add(relacion.getStringCardinalidades().get(1));
+        copia.setStringCardinalidades(cardinalidades);
+        
+        for(int i = 0; i<relacion.getElementos().size();i++){
             for(int j = 0; j<entidadesDiagrama.size();j++){
-                if(relacion.getEntidad().get(i).getNombre().equals(entidadesDiagrama.get(j).getNombre())){
-                    copia.getEntidad().add(entidadesDiagrama.get(j));
+                if(relacion.getElementos().get(i).getNombre().equals(entidadesDiagrama.get(j).getNombre())){
+                    copia.getElementos().add(entidadesDiagrama.get(j));
                 }
             }
         }

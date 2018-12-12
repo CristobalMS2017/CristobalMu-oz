@@ -3,6 +3,8 @@ package Clases;
 import java.util.ArrayList;
 import javafx.scene.Node;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 /**
  * Clase Relación.
@@ -12,35 +14,29 @@ public class Relacion {
     private int posX;
     private int posY;
     private String nombre;
-    
-    private ArrayList<Entidad> entidad;
-    private ArrayList<Agregacion> agregacion;
+    private ArrayList<Elemento> elementos;
     private Figura figura;
     private ArrayList<Line> lineasRelacion = new ArrayList<>();
-    
+    private ArrayList<String> participacion = new ArrayList<>();
     private ArrayList<Atributo> atributos = new ArrayList<>();
     private ArrayList<Line> lineasUnionAtributos = new ArrayList<>();
-
+    private ArrayList<Text> cardinalidades  = new ArrayList<>();
+    private ArrayList<String> stringCardinalidades  = new ArrayList<>();    
     private boolean relacionDebil;
+    private String tipoCardinalidad;
     public Relacion(boolean debil,int posX, int posY,String nombre) {
         this.posX = posX;
         this.posY = posY;
         this.nombre=nombre;
-
         this.relacionDebil=debil;
-        this.entidad = new ArrayList<>();
-        this.agregacion=new ArrayList<>();
+        this.elementos=new ArrayList<>();
         this.figura = new Figura();
-    }
-    public void AnadirEntidad(Entidad nueva){
-        this.entidad.add(nueva);
-
-    }
-
-    public ArrayList<Agregacion> getAgregacion() {
-        return agregacion;
-    }
-    
+        this.elementos=new ArrayList<>();
+        stringCardinalidades.add("1");
+        stringCardinalidades.add("1");
+        
+        
+    }    
     public int getPosX() {
         return posX;
     }
@@ -62,6 +58,18 @@ public class Relacion {
         this.posY = posY;
     }
 
+    public ArrayList<Elemento> getElementos() {
+        return elementos;
+    }
+
+    public ArrayList<String> getParticipacion() {
+        return participacion;
+    }
+
+    public void setParticipacion(ArrayList<String> participacion) {
+        this.participacion = participacion;
+    }
+    
     public String getNombre() {
         return nombre;
     }
@@ -70,115 +78,129 @@ public class Relacion {
         this.nombre = nombre;
         this.crearRelacion();
     }
-
-    public ArrayList<Entidad> getEntidad() {
-        return entidad;
-    }
-
-    public void setEntidad(ArrayList<Entidad> entidad) {
-        this.entidad = entidad;
-    }
-
     public Figura getFigura() {
         return figura;
     }
 
     public void setFigura(Figura figura) {
         this.figura = figura;
-    }
+    }       
     /**
      * Según la cantidad de entidades agregadas a la relacion
      * se creara la figura junto con las lineas de union de la figura con las entidades.
      */
     public void crearRelacion(){
+        
         figura = new Figura();
+
         this.lineasRelacion.clear();
+        this.cardinalidades.clear();
         if(this.relacionDebil){
-            if(!entidad.get(0).isDebil()){
-                Entidad auxiliar = entidad.get(0);
-                entidad.remove(0);
-                entidad.add(auxiliar);
+            if(!((Entidad)elementos.get(0)).isDebil()){
+                Entidad auxiliar = ((Entidad)elementos.get(0));
+                elementos.remove(0);
+                elementos.add(auxiliar);
             }
-            if(entidad.get(1).isDebil()){
-                Entidad auxiliar = entidad.get(1);
-                entidad.remove(1);
-                entidad.add(auxiliar);                
+            if(((Entidad)elementos.get(1)).isDebil()){
+                Entidad auxiliar = ((Entidad)elementos.get(1));
+                elementos.remove(1);
+                elementos.add(auxiliar);                
             }
-            figura.crearFigura(true,entidad.size(), this.nombre, this.getPosX(), this.getPosY());
-            PuntoCercano pc = new PuntoCercano(this.figura,this.entidad);  
+            figura.crearFigura(true,elementos.size(), this.nombre, this.getPosX(), this.getPosY());
+            PuntoCercano pc = new PuntoCercano(this.figura,this.elementos);  
             
-            Line linea = new Line(entidad.get(0).getFigura().getPosicionesX().get(pc.pcEntidad(0)),entidad.get(0).getFigura().getPosicionesY().get(pc.pcEntidad(0)),
+            Line linea = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(0)),elementos.get(0).getPosicionesY().get(pc.pcEntidad(0)),
             figura.getPosicionesX().get(pc.pcFigura(0)),figura.getPosicionesY().get(pc.pcFigura(0)));
-              
-            Line linea2 = new Line(entidad.get(0).getFigura().getPosicionesX().get(pc.pcEntidad(0))+3,entidad.get(0).getFigura().getPosicionesY().get(pc.pcEntidad(0)),
+                     int puntoCuartoX = (elementos.get(0).getPosicionesX().get(pc.pcEntidad(0))-figura.getPosicionesX().get(pc.pcFigura(0)))/8;
+                    int puntoCuartoY = (elementos.get(0).getPosicionesY().get(pc.pcEntidad(0))-figura.getPosicionesY().get(pc.pcFigura(0)))/8;
+                    cardinalidades.add(new Text(figura.getPosicionesX().get(pc.pcFigura(0))+puntoCuartoX+7,figura.getPosicionesY().get(pc.pcFigura(0))+puntoCuartoY,stringCardinalidades.get(0)));
+                    ;                
+            Line linea2 = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(0))+3,elementos.get(0).getPosicionesY().get(pc.pcEntidad(0)),
             figura.getPosicionesX().get(pc.pcFigura(0))+3,figura.getPosicionesY().get(pc.pcFigura(0)));
-            
-            Line linea3 = new Line(entidad.get(1).getFigura().getPosicionesX().get(pc.pcEntidad(1)),entidad.get(1).getFigura().getPosicionesY().get(pc.pcEntidad(1)),
+       
+            Line linea3 = new Line(elementos.get(1).getPosicionesX().get(pc.pcEntidad(1)),elementos.get(1).getPosicionesY().get(pc.pcEntidad(1)),
             figura.getPosicionesX().get(pc.pcFigura(1)),figura.getPosicionesY().get(pc.pcFigura(1)));            
+                    puntoCuartoY = (elementos.get(1).getPosicionesY().get(pc.pcEntidad(1))-figura.getPosicionesY().get(pc.pcFigura(1)))/8;
+                    cardinalidades.add(new Text(figura.getPosicionesX().get(pc.pcFigura(1)),figura.getPosicionesY().get(pc.pcFigura(1))+puntoCuartoY,stringCardinalidades.get(1)));
+                                    
+            
+            
             lineasRelacion.add(linea3);
             lineasRelacion.add(linea2);
             lineasRelacion.add(linea);       
-            
+         
             
             
         }        
         else{
-            figura.crearFigura(false,entidad.size()+agregacion.size(), this.nombre, this.getPosX(), this.getPosY());                     
-            if(agregacion.size()==2){
+            figura.crearFigura(false,elementos.size(), this.nombre, this.getPosX(), this.getPosY());                     
+           
 
-                ArrayList<Entidad> copia = new ArrayList<>();
-                for(int i = 0; i<this.agregacion.size();i++){
-                    Entidad a = new Entidad(true,0,0,"");
-                    a.getFigura().setPosicionesX(agregacion.get(i).getPosicionesX());
-                    a.getFigura().setPosicionesY(agregacion.get(i).getPosicionesY());
-                    copia.add(a);
-                }                
-                
-                PuntoCercano pc = new PuntoCercano(this.figura,copia); 
-                Line linea = new Line(agregacion.get(0).getPosicionesX().get(pc.getOrdenIndicesEntidades().get(0)),agregacion.get(0).getPosicionesY().get(pc.getOrdenIndicesEntidades().get(0)),
-                figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(0)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(0)));
-                lineasRelacion.add(linea); 
-                Line linea2 = new Line(agregacion.get(1).getPosicionesX().get(pc.getOrdenIndicesEntidades().get(1)),agregacion.get(1).getPosicionesY().get(pc.getOrdenIndicesEntidades().get(1)),
-                figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(1)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(1)));
-                lineasRelacion.add(linea2);                      
-            }
-            if(entidad.size()==2){
-                PuntoCercano pc = new PuntoCercano(this.figura,this.entidad); 
-                 for(int i = 0; i<entidad.size();i++){
-                    Line linea = new Line(entidad.get(i).getFigura().getPosicionesX().get(pc.pcEntidad(i)),entidad.get(i).getFigura().getPosicionesY().get(pc.pcEntidad(i)),
-                    figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
-                    lineasRelacion.add(linea);                
+            if(elementos.size()==2){
+                PuntoCercano pc = new PuntoCercano(this.figura,this.elementos); 
+                 for(int i = 0; i<elementos.size();i++){
+                    Line linea = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i)),elementos.get(i).getPosicionesY().get(pc.pcEntidad(i)),
+                                            figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
+                    if(this.participacion.get(i).equals("Total")){
+                        if(figura.getPosicionesX().get(pc.pcFigura(i))<elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))){
+                            
+                                Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))-3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+3,
+                                                   figura.getPosicionesX().get(pc.pcFigura(i))-3,figura.getPosicionesY().get(pc.pcFigura(i))+3);                        
+                               this.lineasRelacion.add(linea2);                                
+
+                            
+                           
+                        }
+                        else{
+                            Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))+3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+3,
+                                                figura.getPosicionesX().get(pc.pcFigura(i))+3,figura.getPosicionesY().get(pc.pcFigura(i))+3);                        
+                            this.lineasRelacion.add(linea2);                            
+                        }
+
+                    
+                    }
+                    
+                    
+                    int puntoCuartoX = (elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))-figura.getPosicionesX().get(pc.pcFigura(i)))/8;
+                    int puntoCuartoY = (elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))-figura.getPosicionesY().get(pc.pcFigura(i)))/8;
+                    cardinalidades.add(new Text(figura.getPosicionesX().get(pc.pcFigura(i))+puntoCuartoX+7,figura.getPosicionesY().get(pc.pcFigura(i))+puntoCuartoY,stringCardinalidades.get(i)));
+                    this.lineasRelacion.add(linea);
+                                   
                 }               
             }
-            if(entidad.size()==1&&agregacion.isEmpty()){
-                PuntoCercano pc = new PuntoCercano(this.figura,this.entidad); 
+            if(elementos.size()==1){
+                PuntoCercano pc = new PuntoCercano(this.figura,this.elementos); 
                 for(int i = 0; i<2;i++){
-                    Line linea = new Line(entidad.get(0).getFigura().getPosicionesX().get(pc.pcEntidad(i)),entidad.get(0).getFigura().getPosicionesY().get(pc.pcEntidad(i)),
+                    Line linea = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(i)),elementos.get(0).getPosicionesY().get(pc.pcEntidad(i)),
                     figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
-                    lineasRelacion.add(linea);  
+                    int puntoCuartoX = (elementos.get(0).getPosicionesX().get(pc.pcEntidad(i))-figura.getPosicionesX().get(pc.pcFigura(i)))/8;
+                    int puntoCuartoY = (elementos.get(0).getPosicionesY().get(pc.pcEntidad(i))-figura.getPosicionesY().get(pc.pcFigura(i)))/8;
+                    cardinalidades.add(new Text(figura.getPosicionesX().get(pc.pcFigura(i))+puntoCuartoX+7,figura.getPosicionesY().get(pc.pcFigura(i))+puntoCuartoY,stringCardinalidades.get(i)));                    
+                    lineasRelacion.add(linea);
+                    
+                    if(this.participacion.get(i).equals("Total")){
+                        if(figura.getPosicionesX().get(pc.pcFigura(i))<elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))){
+                            
+                                Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))-3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+3,
+                                                   figura.getPosicionesX().get(pc.pcFigura(i))-3,figura.getPosicionesY().get(pc.pcFigura(i))+3);                        
+                               this.lineasRelacion.add(linea2);                                
+
+                            
+                           
+                        }
+                        else{
+                            Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))+3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+3,
+                                                figura.getPosicionesX().get(pc.pcFigura(i))+3,figura.getPosicionesY().get(pc.pcFigura(i))+3);                        
+                            this.lineasRelacion.add(linea2);                            
+                        }
+
+                    
+                    }             
+                    
 
                 } 
-            }
-            if((entidad.size()==1)&&(agregacion.size()==1)){
-                ArrayList<Entidad> copia = new ArrayList<>();
-                copia.add(this.entidad.get(0));
-                Entidad a = new Entidad(true,0,0,"");
-                a.getFigura().setPosicionesX(this.agregacion.get(0).getPosicionesX());
-                a.getFigura().setPosicionesY(this.agregacion.get(0).getPosicionesY());
-                copia.add(a);
-                        
-                    PuntoCercano pc = new PuntoCercano(this.figura,copia); 
-                    Line linea2 = new Line(entidad.get(0).getFigura().getPosicionesX().get(pc.getOrdenIndicesEntidades().get(0)),entidad.get(0).getFigura().getPosicionesY().get(pc.getOrdenIndicesEntidades().get(0)),
-                    figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(0)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(0)));
-                    lineasRelacion.add(linea2);    
-
-                    Line linea = new Line(agregacion.get(0).getPosicionesX().get(pc.getOrdenIndicesEntidades().get(1)),agregacion.get(0).getPosicionesY().get(pc.getOrdenIndicesEntidades().get(1)),
-                    figura.getPosicionesX().get(pc.getOrdenIndicesFigura().get(1)),figura.getPosicionesY().get(pc.getOrdenIndicesFigura().get(1)));
-                    lineasRelacion.add(linea);                    
-            }
-            
+            }            
         }           
-
     }
 
     public ArrayList<Line> getLineasRelacion() {
@@ -244,17 +266,30 @@ public class Relacion {
         retornar.addAll(this.figura.getLineas());
         retornar.addAll(this.lineasRelacion);
         retornar.add(this.figura.getTextoFigura());
+        retornar.addAll(cardinalidades);
         return retornar;
     }    
     public ArrayList<Atributo> retornarAtributosDeAtributos(int i){
         return this.atributos.get(i).getAtributos();
     }
     
-    public void eliminarEntidad(int i){
-        this.entidad.remove(i);
-        this.crearRelacion();
-        
+    public ArrayList<Text> getCardinalidades() {
+        return cardinalidades;
     }
+    
+    public String getTipoCardinalidad() {
+        return tipoCardinalidad;
+    }
+
+    public ArrayList<String> getStringCardinalidades() {
+        return stringCardinalidades;
+    }
+
+    public void setStringCardinalidades(ArrayList<String> stringCardinalidades) {
+        this.stringCardinalidades = stringCardinalidades;
+    }
+
+    
     
     
     public void actualizarPosicion(int x,int y){
