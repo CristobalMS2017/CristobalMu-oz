@@ -19,8 +19,8 @@
             <Button layoutX="39.0" layoutY="181.0" mnemonicParsing="false" onAction="#ventanaHerencia" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Herencia" />
             <Text fill="WHITE" layoutX="99.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Crear" />
             <Button layoutX="32.0" layoutY="397.0" mnemonicParsing="false" onAction="#ventanaModificarDiagrama" prefHeight="39.0" prefWidth="164.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Modificar y/o eliminar" />
-            <Button layoutX="32.0" layoutY="442.0" mnemonicParsing="false" onAction="#rehacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Undo" />
-            <Button layoutX="120.0" layoutY="442.0" mnemonicParsing="false" onAction="#deshacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Redo" />
+            <Button disable="true" layoutX="32.0" layoutY="442.0" mnemonicParsing="false" onAction="#rehacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Undo" />
+            <Button disable="true" layoutX="120.0" layoutY="442.0" mnemonicParsing="false" onAction="#deshacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Redo" />
             <Button layoutX="38.0" layoutY="224.0" mnemonicParsing="false" onAction="#ventanaAgregacion" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Agregación" />
          </children>
       </Pane>

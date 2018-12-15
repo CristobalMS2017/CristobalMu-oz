@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Clases.Atributo;
 import Clases.Diagrama;
 import Clases.Entidad;
 import java.net.URL;
@@ -118,7 +119,18 @@ public class HerenciaController implements Initializable {
         
         return entidades;
     }
+    private void eliminarAtributoEnDiagrama(Atributo atributo){
         
+        for(int i=0;i<diagrama.getAtributos().size();i++){
+            if(diagrama.getAtributos().get(i).getNombreOrigenAtributo().equals(atributo.getNombreOrigenAtributo())){
+                if(diagrama.getAtributos().get(i).getGuardadoEn().equals(atributo.getGuardadoEn())){
+                    if(diagrama.getAtributos().get(i).getNombre().equals(atributo.getNombre()));
+                        diagrama.getAtributos().remove(i);
+                }
+            }
+        }
+        
+    }    
     /**
      * Funcion que permite crear una ventana de alerta
      * @param texto: mensaje que se quiere escribir en la ventana. 
@@ -126,14 +138,29 @@ public class HerenciaController implements Initializable {
     public void mensaje(String texto){
         JOptionPane.showMessageDialog(null, texto);
     }
-    
+    private void verificarAtributos(ArrayList<Entidad> hijas){
+        Entidad padre = (Entidad)diagrama.getElementos().get(indicePadre);
+        for(int i = 0;i<padre.getAtributos().size();i++){
+            for(int j=0;j<hijas.size();j++){
+                for(int k=0;k<hijas.get(j).getAtributos().size();k++){
+                    if(padre.getAtributos().get(i).getNombre().equals(hijas.get(j).getAtributos().get(k).getNombre())){
+                        eliminarAtributoEnDiagrama(hijas.get(j).getAtributos().get(k));
+                        hijas.get(j).getAtributos().remove(k);
+                        hijas.get(j).crearLineasunionAtributos();
+                    }
+                
+            }
+            }
+        }
+        
+    }
     /**
      * Se cierra la ventana y se envian los datos para crear la herencia.
      */
     public void Aceptar(){
         
         if(!entidadesHijas().isEmpty()){
-            
+            verificarAtributos(entidadesHijas());
         
             controlador1.creacionHerencia((Entidad)diagrama.getElementos().get(indicePadre), entidadesHijas(), tipoHerencia);
 

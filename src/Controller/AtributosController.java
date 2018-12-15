@@ -5,7 +5,7 @@
  */
 package Controller;
 
-import Clases.Agregacion;
+import Clases.Atributo;
 import Clases.Diagrama;
 import Clases.Entidad;
 import java.net.URL;
@@ -76,19 +76,7 @@ public class AtributosController implements Initializable {
             for(int i=0; i<diagrama.getRelaciones().size();i++){
                 entidadesAtributosRelaciones.getItems().add(diagrama.getRelaciones().get(i).getNombre());
             }
-        }
-        if(destino.equals("Agregación")){
-            tiposAtributos.getItems().clear();
-            tiposAtributos.getItems().addAll("Generico","Clave","Clave Parcial","Multivaluado","Derivado","Compuesto");
-            entidadesAtributosRelaciones.getItems().clear();
-            entidadesAtributosRelaciones.setValue("Seleccione Agregación");
-            for(int i=0; i<diagrama.getElementos().size();i++){
-                if(diagrama.getElementos().get(i) instanceof Agregacion){
-                    entidadesAtributosRelaciones.getItems().add(diagrama.getElementos().get(i).getNombre());
-                }
-                
-            }
-        }        
+        }     
         if(destino.equals("Atributo")){
             tiposAtributos.getItems().clear();
             tiposAtributos.setValue("Tipo");
@@ -114,6 +102,78 @@ public class AtributosController implements Initializable {
     }
     private boolean validarNombreParaAtributo(){
         
+        
+        
+        
+        
+        
+        
+        if(destinoAtributo.getValue().equals("Entidad")){
+            Entidad entidad = null;
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
+                    entidad=(Entidad)diagrama.getElementos().get(i);
+                }
+            }
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
+                    for(int j=0;j<diagrama.getElementos().get(i).getAtributos().size();j++){
+                        if(diagrama.getElementos().get(i).getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
+                            mensaje("Nombre registrado anteriormente en atributos del elemento seleccionado"
+                                    + "\nPor favor, intente nuevamente.");
+                            return false;
+                        }
+                    }
+                }
+            }
+            boolean enHerencia=false;
+            for(int i = 0; i<diagrama.getHerencias().size();i++){
+                for(int j = 0 ; j<diagrama.getHerencias().get(i).getEntidadesHijas().size();j++){
+                    if(diagrama.getHerencias().get(i).getEntidadesHijas().get(j).getNombre().equals(entidadesAtributosRelaciones.getValue())){
+                        enHerencia=true;
+                    }
+                    
+                }
+                if(enHerencia==true){
+                    for(int j = 0; j<diagrama.getHerencias().get(i).getEntidadPadre().getAtributos().size();j++){
+                        if(diagrama.getHerencias().get(i).getEntidadPadre().getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
+                            mensaje("Hay un atributo con el nombre registrado en \nla herencia de la entidad "+
+                                    diagrama.getHerencias().get(i).getEntidadPadre().getNombre());
+                            return false;
+                        }
+                        
+                    }
+                }
+            }
+            
+            for(int i = 0; i< diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
+                    for(int j = 0; j<diagrama.getHerencias().size();j++){
+                        if(diagrama.getHerencias().get(j).getEntidadPadre().getNombre().equals(diagrama.getElementos().get(i).getNombre())){
+                            for(int k = 0; k<diagrama.getHerencias().get(j).getEntidadesHijas().size();k++){
+                                for(int l = 0; l<diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().size();l++){
+                                    if(diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().get(l).getNombre().equals(textoAtributo.getText())){
+                                        this.removerAtributoEnDiagrama(diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().get(l));
+                                        diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().remove(l);
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+            
+        }
+        if(destinoAtributo.getValue().equals("Relación")){
+            
+        }
+        if(destinoAtributo.getValue().equals("Atributo")){
+            
+        }
+        /*
         for(int i=0;i<diagrama.getAtributos().size();i++){
             if(diagrama.getAtributos().get(i).getNombre().equals(textoAtributo.getText())){
                 return false;
@@ -124,9 +184,24 @@ public class AtributosController implements Initializable {
                 }
             }
             
-        }
+        }*/
         return true;
-    }     
+    } 
+    private void removerAtributoEnDiagrama(Atributo atributo){
+
+            for(int i  = 0; i<diagrama.getAtributos().size(); i++){
+                if(atributo.getGuardadoEn().equals(diagrama.getAtributos().get(i).getGuardadoEn())){
+                    if(atributo.getNombreOrigenAtributo().equals(diagrama.getAtributos().get(i).getNombreOrigenAtributo())){
+                        if(atributo.getNombre().equals(diagrama.getAtributos().get(i).getNombre())){
+                            diagrama.getAtributos().remove(i);
+                        }
+                    }
+                }
+            }            
+        
+        
+
+    }
     /**
      * Se crea un nombre por defecto si es que el usuario no ingresó un nombre para el atributo.
      * @return retorna el nombre por defecto.
@@ -170,10 +245,6 @@ public class AtributosController implements Initializable {
             Stage stage = (Stage)cerrarVentana.getScene().getWindow();
             stage.close();            
         }    
-        else{
-            mensaje("Nombre registrado anteriormente. Intente con otro.");
-        }
-
         
 
     }
@@ -204,7 +275,7 @@ public class AtributosController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
        tiposAtributos.getItems().addAll("Generico","Clave","Clave Parcial","Multivaluado","Derivado","Compuesto");
        tiposAtributos.setValue("Tipo");
-       destinoAtributo.getItems().addAll("Entidad","Relación","Agregación","Atributo");
+       destinoAtributo.getItems().addAll("Entidad","Relación","Atributo");
        destinoAtributo.setValue("Destino");
        textoAtributo.clear();
     }    

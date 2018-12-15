@@ -74,9 +74,9 @@ public class ModificarDiagramaController implements Initializable {
         this.diagrama=diagrama;
         this.controlador1=controlador;
         for(int i = 0; i<diagrama.getElementos().size();i++){
-            if(diagrama.getElementos().get(i) instanceof Entidad){
+
                 comboBoxEntidad.getItems().add(diagrama.getElementos().get(i).getNombre());
-            }
+            
             
         }
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
@@ -279,7 +279,7 @@ public class ModificarDiagramaController implements Initializable {
         listaAtributosEntidad.getItems().clear();
         if(((String)comboBoxEntidad.getValue())!=null){
             for(int i = 0; i<diagrama.getElementos().size();i++){
-                if(diagrama.getElementos().get(i) instanceof Entidad){
+
                     if(((String)comboBoxEntidad.getValue()).equals(diagrama.getElementos().get(i).getNombre())){
                         entidadSeleccionada = i;
                         for(int j = 0; j<diagrama.getElementos().get(i).getAtributos().size();j++){
@@ -288,7 +288,7 @@ public class ModificarDiagramaController implements Initializable {
                             listaAtributosEntidad.getItems().add(nuevo);
                         }
                     }
-                }
+                
             }           
         }
 
@@ -327,15 +327,15 @@ public class ModificarDiagramaController implements Initializable {
             comboBoxEntidad.setValue("");
             modificarNombreEntidad.clear();
             for(int i = 0; i<diagrama.getElementos().size();i++){
-                if(diagrama.getElementos().get(i) instanceof Entidad){
+
                     comboBoxEntidad.getItems().add(diagrama.getElementos().get(i).getNombre());
-                }
+                
             }        
             this.controlador1.actualizarPanel();
 
         }
         else{
-            mensaje("Debe seleccionar una entidad para realizar la acción");
+            mensaje("Debe seleccionar un elemento para realizar la acción");
         }
     }
     
@@ -421,9 +421,9 @@ public class ModificarDiagramaController implements Initializable {
         comboBoxEntidad.setValue("");
         modificarNombreEntidad.clear();
         for(int i = 0; i<diagrama.getElementos().size();i++){
-            if(diagrama.getElementos().get(i) instanceof Entidad){
+
                 comboBoxEntidad.getItems().add(diagrama.getElementos().get(i).getNombre());
-            }
+            
             
         }        
         this.controlador1.actualizarPanel();

@@ -121,12 +121,13 @@ public class FXMLDocumentController implements Initializable {
      */
     @FXML
     private void deshacer(){
+        /*
         desHacer++;
         if(desHacer>=listaDiagramas.tamano()){
             desHacer = listaDiagramas.tamano()-1;
         }        
         diagrama =listaDiagramas.retornarDiagrama(desHacer);
-        actualizarPanel();        
+        actualizarPanel();   */     
     }
     /**
      * Se decrementa la variable desHacer y
@@ -134,6 +135,7 @@ public class FXMLDocumentController implements Initializable {
      */    
     @FXML
     private void rehacer(){
+        /*
         desHacer--;
         if(desHacer<0){
             desHacer=0;
@@ -141,7 +143,7 @@ public class FXMLDocumentController implements Initializable {
 
         diagrama =listaDiagramas.retornarDiagrama(desHacer);
         actualizarPanel();
-        
+        */
     }
     
     private void modificarCardinalidad(int posX,int posY){
@@ -229,7 +231,7 @@ public class FXMLDocumentController implements Initializable {
             
                 if(destinoAtributo.equals("Entidad")){
                     
-                    Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Entidad");
+                    Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Entidad",comboBoxEntidadesRelaciones);
                     for(int i=0;i<diagrama.getElementos().size();i++){
                         if(comboBoxEntidadesRelaciones.equals(diagrama.getElementos().get(i).getNombre())){
                             diagrama.getElementos().get(i).agregarAtributo(nueva);
@@ -242,7 +244,7 @@ public class FXMLDocumentController implements Initializable {
                 }
                 if(destinoAtributo.equals("Relación")){
 
-                    Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Relación");
+                    Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Relación",comboBoxEntidadesRelaciones);
                     for(int i=0;i<diagrama.getRelaciones().size();i++){
                         if(comboBoxEntidadesRelaciones.equals(diagrama.getRelaciones().get(i).getNombre())){
                             diagrama.getRelaciones().get(i).agregarAtributo(nueva);
@@ -253,20 +255,9 @@ public class FXMLDocumentController implements Initializable {
                    
 
                 }
-                if(destinoAtributo.equals("Agregación")){
-                    Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Agregación");
-                    for(int i = 0; i<diagrama.getElementos().size();i++){
-                        if(comboBoxEntidadesRelaciones.equals(diagrama.getElementos().get(i).getNombre())){
-                            diagrama.getElementos().get(i).getAtributos().add(nueva);
-                            diagrama.getElementos().get(i).crearLineasunionAtributos();
-                            diagrama.getAtributos().add(nueva);
-                        }
-                    }
-                    
-                }
                 if(destinoAtributo.equals("Atributo")){
                     
-                    Atributo nueva = new Atributo((String)tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Compuesto");
+                    Atributo nueva = new Atributo((String)tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Compuesto",comboBoxEntidadesRelaciones);
 
                     for(int i=0; i< diagrama.getElementos().size();i++){
                         for(int j = 0; j < diagrama.getElementos().get(i).getAtributos().size();j++){
@@ -355,6 +346,7 @@ public class FXMLDocumentController implements Initializable {
                                 tipoAtributoMover = diagrama.getElementos().get(i).getAtributos().get(j).getTipoAtributo();
                                 nombreAtributoMover=diagrama.getElementos().get(i).getAtributos().get(j).getNombre();
                                 atributoAuxiliar = diagrama.getElementos().get(i).getAtributos().get(j);
+                                comboBoxEntidadesRelaciones=diagrama.getElementos().get(i).getAtributos().get(j).getNombreOrigenAtributo();
                                  removerAtributoEnDiagrama(atributoAuxiliar);
 
                                 diagrama.getElementos().get(i).getAtributos().remove(j);
@@ -379,6 +371,7 @@ public class FXMLDocumentController implements Initializable {
                                 tipoAtributoMover = diagrama.getRelaciones().get(i).getAtributos().get(j).getTipoAtributo();
                                 nombreAtributoMover=diagrama.getRelaciones().get(i).getAtributos().get(j).getNombre();
                                 atributoAuxiliar = diagrama.getRelaciones().get(i).getAtributos().get(j);
+                                comboBoxEntidadesRelaciones=diagrama.getRelaciones().get(i).getAtributos().get(j).getNombreOrigenAtributo();
                                 removerAtributoEnDiagrama(atributoAuxiliar);
 
                                 diagrama.getRelaciones().get(i).getAtributos().remove(j);
@@ -404,6 +397,7 @@ public class FXMLDocumentController implements Initializable {
                                     tipoAtributoMover = diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getTipoAtributo();
                                     nombreAtributoMover=diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getNombre();
                                     atributoAuxiliar = diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k);
+                                    comboBoxEntidadesRelaciones=diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getNombreOrigenAtributo();
                                     removerAtributoEnDiagrama(atributoAuxiliar);
                                     diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().remove(k);
                                     atributoEncontradoMover = true;
@@ -463,6 +457,7 @@ public class FXMLDocumentController implements Initializable {
                                     tipoAtributoMover = diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getTipoAtributo();
                                     nombreAtributoMover=diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getNombre();
                                     atributoAuxiliar = diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k);
+                                    comboBoxEntidadesRelaciones=diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getNombreOrigenAtributo();
                                     diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().remove(k);
                                     atributoEncontradoMover = true;
                                     indiceEntidadAtributo=i;
@@ -479,6 +474,7 @@ public class FXMLDocumentController implements Initializable {
                     }
                 }
                 else{
+                    
                     if(entidadEncontradaMover){
                                                 
                         Entidad nueva = new Entidad(entidadDebil,(int)event.getX(),(int)event.getY(),nombreEntidadMover);
@@ -566,7 +562,7 @@ public class FXMLDocumentController implements Initializable {
                     if(atributoEncontradoMover){
                         if(atributoEnEntidadMover){
                             if(atributoEnAtributoMover){
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Compuesto");
+                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Compuesto",comboBoxEntidadesRelaciones);
                                     
                                 if(sobreposicionAtributo(nueva)){
  
@@ -583,7 +579,7 @@ public class FXMLDocumentController implements Initializable {
                                 }
  
                             }else{
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Entidad");
+                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Entidad",comboBoxEntidadesRelaciones);
                                 for(int i = 0;i<atributoAuxiliar.getAtributos().size();i++){
                                     nueva.getAtributos().add(atributoAuxiliar.getAtributos().get(i));
                                 }
@@ -607,7 +603,7 @@ public class FXMLDocumentController implements Initializable {
                         }
                         if(atributoEnRelacionMover){
                             if(atributoEnAtributoMover){
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Compuesto");
+                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Compuesto",comboBoxEntidadesRelaciones);
 
                                 if(sobreposicionAtributo(nueva)){
 
@@ -627,7 +623,7 @@ public class FXMLDocumentController implements Initializable {
 
                             }
                             else{
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Relación");
+                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Relación",comboBoxEntidadesRelaciones);
 
                                 for(int i = 0;i<atributoAuxiliar.getAtributos().size();i++){
                                     nueva.getAtributos().add(atributoAuxiliar.getAtributos().get(i));
@@ -667,13 +663,16 @@ public class FXMLDocumentController implements Initializable {
     public void actualizarPanel(){
         panelDibujo.getChildren().clear();
         for(int i = 0; i<diagrama.getElementos().size();i++){
+            diagrama.getElementos().get(i).crearLineasunionAtributos();
             panelDibujo.getChildren().addAll(diagrama.getElementos().get(i).getDibujoFigura());
+            
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(diagrama.getElementos().get(i).getPuntosDeControl());
             }
         }
         
         for(int i = 0; i < diagrama.getRelaciones().size();i++){
+            diagrama.getRelaciones().get(i).crearLineasunionAtributos();
             panelDibujo.getChildren().addAll(diagrama.getRelaciones().get(i).dibujoRelacion());
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(diagrama.getRelaciones().get(i).getFigura().getPuntosControl());
@@ -683,6 +682,7 @@ public class FXMLDocumentController implements Initializable {
             panelDibujo.getChildren().addAll(diagrama.getHerencias().get(i).dibujoHerencia());
         }
         for(int i = 0; i<diagrama.getAtributos().size();i++){
+            diagrama.getAtributos().get(i).crearLineasunionAtributos();
             panelDibujo.getChildren().addAll(diagrama.getAtributos().get(i).dibujoAtributo());
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(diagrama.getAtributos().get(i).getFigura().getPuntosControl());
@@ -905,7 +905,6 @@ public class FXMLDocumentController implements Initializable {
                 if(diagrama.getHerencias().get(i).getEntidadesHijas().get(j).getNombre().equals(entidad.getNombre())){
                     
                     diagrama.getHerencias().get(i).getEntidadesHijas().set(j, entidad);
-                    diagrama.getHerencias().get(i).getEntidadesHijas().add(entidad);
                     diagrama.getHerencias().get(i).crearHerencia();
                 }
             }
@@ -938,8 +937,12 @@ public class FXMLDocumentController implements Initializable {
     private void removerAtributoEnDiagrama(Atributo atributo){
 
             for(int i  = 0; i<diagrama.getAtributos().size(); i++){
-                if(atributo.getNombre().equals(diagrama.getAtributos().get(i).getNombre())){
-                    diagrama.getAtributos().remove(i);
+                if(atributo.getGuardadoEn().equals(diagrama.getAtributos().get(i).getGuardadoEn())){
+                    if(atributo.getNombreOrigenAtributo().equals(diagrama.getAtributos().get(i).getNombreOrigenAtributo())){
+                        if(atributo.getNombre().equals(diagrama.getAtributos().get(i).getNombre())){
+                            diagrama.getAtributos().remove(i);
+                        }
+                    }
                 }
             }            
         

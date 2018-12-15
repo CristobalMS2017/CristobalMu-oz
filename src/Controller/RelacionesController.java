@@ -84,6 +84,8 @@ public class RelacionesController implements Initializable {
        
         }
          tipoRelacion.getItems().addAll("Fuerte","Débil");
+         this.participacion.add("Parcial");
+         this.participacion.add("Parcial");
     }
     /**
      * Se revisa que tipo de relación se quiere hacer, si relación débil o fuerte,

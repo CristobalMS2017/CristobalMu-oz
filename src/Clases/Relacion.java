@@ -65,7 +65,7 @@ public class Relacion {
     public ArrayList<String> getParticipacion() {
         return participacion;
     }
-
+    
     public void setParticipacion(ArrayList<String> participacion) {
         this.participacion = participacion;
     }

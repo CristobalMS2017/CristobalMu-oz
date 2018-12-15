@@ -23,18 +23,24 @@ public class Atributo {
     private ArrayList<Line> lineasUnionAtributos = new ArrayList<>();
     
     private String guardadoEn;
+    private String nombreOrigenAtributo;
     
     
     
-    public Atributo(String tipoAtributo,int posX, int posY, String nombre,String guardadoEn) {
+    public Atributo(String tipoAtributo,int posX, int posY, String nombre,String guardadoEn,String nombreOrigenAtributo) {
         this.posX = posX;
         this.posY = posY;
         this.nombre = nombre;
         this.tipoAtributo=tipoAtributo;
         this.guardadoEn=guardadoEn;
+        this.nombreOrigenAtributo=nombreOrigenAtributo;
         this.figura = new FiguraAtributos(this.tipoAtributo,this.nombre,this.posX,this.posY);
     }
 
+    public String getNombreOrigenAtributo() {
+        return nombreOrigenAtributo;
+    }
+    
     public String getNombre() {
         return nombre;
     }
