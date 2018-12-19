@@ -274,7 +274,12 @@ public class Herencia {
         
     }
     
-    
+    public void actualizarPosicion(int x, int y){
+        this.posX=x;
+        this.posY=y;
+        this.crearHerencia();
+        
+    }    
     
     
     

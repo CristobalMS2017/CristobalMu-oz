@@ -45,7 +45,7 @@ public class FiguraAtributos {
         int agrandar = nombre.length()*5;
             
             int sumaH=(100+agrandar)/20;
-            int sumaV = (100+agrandar/3)/4;
+            int sumaV = (100+agrandar/5)/4;
             
         posicionesX.add(posX);
         posicionesY.add(posY);

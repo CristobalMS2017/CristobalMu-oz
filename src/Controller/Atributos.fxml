@@ -13,8 +13,8 @@
       <ComboBox fx:id="tiposAtributos" layoutX="48.0" layoutY="244.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
       <TextField fx:id="textoAtributo" layoutX="51.0" layoutY="56.0" style="-fx-border-color: rgb(105,162,146);" />
       <Text layoutX="80.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Nombre Atributo" />
-      <Button fx:id="cerrarVentana" layoutX="24.0" layoutY="309.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="41.0" prefWidth="98.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Crear atributo" />
-      <Button layoutX="126.0" layoutY="309.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="41.0" prefWidth="98.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
+      <Button layoutX="24.0" layoutY="309.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="41.0" prefWidth="98.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Crear atributo" />
+      <Button fx:id="cerrarVentana" layoutX="126.0" layoutY="309.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="41.0" prefWidth="98.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
       <Text layoutX="70.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione destino" />
       <Text layoutX="47.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione elemento destino" />
       <Text layoutX="59.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione tipo Atributo" />

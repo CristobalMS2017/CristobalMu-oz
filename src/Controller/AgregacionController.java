@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Clases.Agregacion;
 import Clases.Diagrama;
 import Clases.Relacion;
 import java.net.URL;
@@ -38,7 +39,19 @@ public class AgregacionController implements Initializable {
         this.controlador1=controlador;
         
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
-            comboBoxRelaciones.getItems().add(diagrama.getRelaciones().get(i).getNombre());
+            boolean verdadero=true;
+            for(int j = 0; j<diagrama.getElementos().size();j++){
+                if(diagrama.getElementos().get(j) instanceof Agregacion){
+                    if(((Agregacion)diagrama.getElementos().get(j)).getRelacion().equals(diagrama.getRelaciones().get(i))){
+                        verdadero=false;
+                    }
+                }
+
+            }
+            if(verdadero){
+               comboBoxRelaciones.getItems().add(diagrama.getRelaciones().get(i).getNombre());
+            }
+
         }
         
         

@@ -48,7 +48,25 @@ public class AtributosController implements Initializable {
         
         
     }    
-    
+    public void EntidadRecibirParametros(FXMLDocumentController controlador,Diagrama diagrama,String nombre,boolean debil){
+        this.diagrama=diagrama;
+        this.controlador1=controlador;
+        this.destinoAtributo.setValue("Entidad");
+        this.destinoAtributo.setDisable(true);
+        this.entidadesAtributosRelaciones.setValue(nombre);
+        this.entidadesAtributosRelaciones.setDisable(true);
+        if(debil){
+            this.tiposAtributos.setValue("Clave Parcial");
+        }
+        else{
+            this.tiposAtributos.setValue("Clave");
+        }
+
+        this.tiposAtributos.setDisable(true);
+
+        this.cerrarVentana.setDisable(true);
+        
+    }     
     
     /**
      * Se utiliza para saber si se quiere crear un atributo en una entidad, relación o atributo compuesto.
@@ -91,11 +109,13 @@ public class AtributosController implements Initializable {
                 }
             }
             for(int i=0;i<diagrama.getElementos().size();i++){
-                for(int j=0; j<diagrama.getElementos().get(i).getAtributos().size();j++){
-                    if("Compuesto".equals(diagrama.getElementos().get(i).getAtributos().get(j).getTipoAtributo())){
-                        entidadesAtributosRelaciones.getItems().add(diagrama.getElementos().get(i).getAtributos().get(j).getNombre());
+                if(diagrama.getElementos().get(i) instanceof Entidad){
+                for(int j=0; j<((Entidad)diagrama.getElementos().get(i)).getAtributos().size();j++){
+                    if("Compuesto".equals(((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).getTipoAtributo())){
+                        entidadesAtributosRelaciones.getItems().add(((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).getNombre());
                     }
                 }
+            }
             }
             
         }
@@ -109,16 +129,10 @@ public class AtributosController implements Initializable {
         
         
         if(destinoAtributo.getValue().equals("Entidad")){
-            Entidad entidad = null;
             for(int i = 0; i<diagrama.getElementos().size();i++){
                 if(diagrama.getElementos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
-                    entidad=(Entidad)diagrama.getElementos().get(i);
-                }
-            }
-            for(int i = 0; i<diagrama.getElementos().size();i++){
-                if(diagrama.getElementos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
-                    for(int j=0;j<diagrama.getElementos().get(i).getAtributos().size();j++){
-                        if(diagrama.getElementos().get(i).getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
+                    for(int j=0;j<((Entidad)diagrama.getElementos().get(i)).getAtributos().size();j++){
+                        if(((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
                             mensaje("Nombre registrado anteriormente en atributos del elemento seleccionado"
                                     + "\nPor favor, intente nuevamente.");
                             return false;

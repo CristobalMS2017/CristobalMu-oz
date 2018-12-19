@@ -140,14 +140,14 @@ public class Atributo {
     public void cambiarNombre(String nuevoNombre){
         this.nombre=nuevoNombre;  
     }
-    private void actualizarAtributo(){
+    public void crearAtributo(){
         this.figura=new FiguraAtributos(this.tipoAtributo,this.nombre,this.posX,this.posY);
         crearLineasunionAtributos();        
     }
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-        actualizarAtributo();
+        crearAtributo();
     }
     
     
@@ -166,5 +166,11 @@ public class Atributo {
         
         return false;
     }
+    public void actualizarPosicion(int x, int y){
+        this.posX=x;
+        this.posY=y;
+        this.crearAtributo();
+        
+    }    
     
 }

@@ -122,11 +122,8 @@ public class HerenciaController implements Initializable {
     private void eliminarAtributoEnDiagrama(Atributo atributo){
         
         for(int i=0;i<diagrama.getAtributos().size();i++){
-            if(diagrama.getAtributos().get(i).getNombreOrigenAtributo().equals(atributo.getNombreOrigenAtributo())){
-                if(diagrama.getAtributos().get(i).getGuardadoEn().equals(atributo.getGuardadoEn())){
-                    if(diagrama.getAtributos().get(i).getNombre().equals(atributo.getNombre()));
-                        diagrama.getAtributos().remove(i);
-                }
+            if(diagrama.getAtributos().get(i).equals(atributo)){
+                diagrama.getAtributos().remove(i);
             }
         }
         
@@ -140,6 +137,8 @@ public class HerenciaController implements Initializable {
     }
     private void verificarAtributos(ArrayList<Entidad> hijas){
         Entidad padre = (Entidad)diagrama.getElementos().get(indicePadre);
+
+        
         for(int i = 0;i<padre.getAtributos().size();i++){
             for(int j=0;j<hijas.size();j++){
                 for(int k=0;k<hijas.get(j).getAtributos().size();k++){
@@ -147,6 +146,7 @@ public class HerenciaController implements Initializable {
                         eliminarAtributoEnDiagrama(hijas.get(j).getAtributos().get(k));
                         hijas.get(j).getAtributos().remove(k);
                         hijas.get(j).crearLineasunionAtributos();
+                        k=k-1;
                     }
                 
             }

@@ -51,6 +51,28 @@ public class RelacionesController implements Initializable {
     private boolean tipoDebil=false;
     private ArrayList<String> participacion = new ArrayList<>();
     RelacionesController controladorRelacion;
+    
+    
+    
+    
+    public void recibirParametrosEntidadDebil(FXMLDocumentController controlador,Diagrama diagrama,String entidadDebil){
+        this.diagrama=diagrama;
+        this.controlador1=controlador;
+        tipoRelacion.setValue("Débil");
+        tipoRelacion.setDisable(true);
+        this.tipoRelacion();
+        this.cerrarVentana.setDisable(true);
+        this.entidadDebil.setValue(entidadDebil);
+        this.entidadDebil.setDisable(true);
+        for(int i = 0; i<diagrama.getElementos().size();i++){
+            if(diagrama.getElementos().get(i) instanceof Entidad){
+                if(!((Entidad)diagrama.getElementos().get(i)).isDebil()){
+                    this.entidadFuerte.getItems().add(diagrama.getElementos().get(i).getNombre());
+                }
+            }
+        }        
+        
+    }
     /**
      * Se recibe el controlador y diagrama principal.
      * @param controlador

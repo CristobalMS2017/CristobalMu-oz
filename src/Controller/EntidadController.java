@@ -6,6 +6,7 @@
 package Controller;
 
 import Clases.Diagrama;
+import Clases.Entidad;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -80,20 +81,40 @@ public class EntidadController implements Initializable {
         }
         return "Entidad 0";
     }
-
+    private boolean validarEntidadDebil(){
+        if(this.entidadDebil.isSelected()){
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Entidad){
+                    if(!((Entidad)diagrama.getElementos().get(i)).isDebil()){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return true;
+    }
     /**
      * Se cierra la ventana y se envian los datos para crear la entdad.
      */
     public void Aceptar(){
         if(validarNombreParaEntidad()){
-            if(textoEntidad.getText().isEmpty()){
-                controlador1.obtenerEntidad(nombreEntidadVacia(), entidadDebil.isSelected(),this.diagrama);
-            } 
-            else{
-                controlador1.obtenerEntidad(textoEntidad.getText(), entidadDebil.isSelected(),this.diagrama);
+            if(validarEntidadDebil()){
+                if(textoEntidad.getText().isEmpty()){
+                    controlador1.obtenerEntidad(nombreEntidadVacia(), entidadDebil.isSelected(),this.diagrama);
+                } 
+                else{
+                    controlador1.obtenerEntidad(textoEntidad.getText(), entidadDebil.isSelected(),this.diagrama);
+                }
+                Stage stage = (Stage)cerrarVentana.getScene().getWindow();
+                stage.close();
             }
-            Stage stage = (Stage)cerrarVentana.getScene().getWindow();
-            stage.close();
+            else{
+                mensaje("Debe crear una entidad fuerte para poder crear"
+                        + "\n        una entidad débil");
+                Stage stage = (Stage)cerrarVentana.getScene().getWindow();
+                stage.close();                
+            }
         }
         else{
             mensaje("Nombre ingresado anteriormente. Por favor,\n"

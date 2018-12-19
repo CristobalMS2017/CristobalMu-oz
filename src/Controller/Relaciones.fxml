@@ -13,8 +13,8 @@
       <Text layoutX="70.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Nombre Relación" />
       <TextField fx:id="textoRelacion" layoutX="40.0" layoutY="45.0" style="-fx-border-color: rgb(105,162,146);" />
       <ComboBox fx:id="tipoRelacion" layoutX="41.0" layoutY="107.0" onAction="#tipoRelacion" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />
-      <Button fx:id="cerrarVentana" layoutX="33.0" layoutY="317.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Aceptar" />
-      <Button layoutX="124.0" layoutY="317.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
+      <Button layoutX="33.0" layoutY="317.0" mnemonicParsing="false" onAction="#Aceptar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Aceptar" />
+      <Button fx:id="cerrarVentana" layoutX="124.0" layoutY="317.0" mnemonicParsing="false" onAction="#Cancelar" prefHeight="34.0" prefWidth="75.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Cancelar" />
       <Pane fx:id="relacionFuerte" disable="true" layoutX="32.0" layoutY="144.0" prefHeight="129.0" prefWidth="184.0" visible="false">
          <children>
             <ListView fx:id="entidadesDisponibles" layoutX="11.0" layoutY="21.0" onEditStart="#elementosSeleccionadosParaRelacion" prefHeight="94.0" prefWidth="150.0" style="-fx-border-color: rgb(105,162,146);" />

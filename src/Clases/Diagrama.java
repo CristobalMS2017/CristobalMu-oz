@@ -76,48 +76,54 @@ public class Diagrama {
     }
     
     
-    public void eliminarEntidad(Entidad entidad){
-        eliminarArregloDeAtributos(entidad.getAtributos());
-        for(int i = 0; i<this.elementos.size();i++){
-            if(entidad.equals(this.elementos.get(i))){
-                this.elementos.remove(i);
-            }            
-        }
-        for(int i = 0; i<this.relaciones.size();i++){
-            if(this.relaciones.get(i).getElementos().size()==1 && this.relaciones.get(i).getElementos().get(0).equals(entidad)){
-                this.relaciones.remove(i);
+    public void eliminarElemento(Elemento elemento){
+        if(elemento instanceof Entidad){
+            Entidad entidad=(Entidad)elemento;
+            eliminarArregloDeAtributos(entidad.getAtributos());
+            for(int i = 0; i<this.elementos.size();i++){
+                if(entidad.equals(this.elementos.get(i))){
+                    this.elementos.remove(i);
+                }            
             }
-            else{
-                for(int j = 0; j<this.getRelaciones().get(i).getElementos().size();j++){
-                    if(this.relaciones.get(i).getElementos().get(j).equals(entidad)){
-                        this.relaciones.get(i).getElementos().remove(j);
+            for(int i = 0; i<this.relaciones.size();i++){
+                if(this.relaciones.get(i).getElementos().size()==1 && this.relaciones.get(i).getElementos().get(0).equals(entidad)){
+                    this.relaciones.remove(i);
+                }
+                else{
+                    for(int j = 0; j<this.getRelaciones().get(i).getElementos().size();j++){
+                        if(this.relaciones.get(i).getElementos().get(j).equals(entidad)){
+                            this.relaciones.get(i).getElementos().remove(j);
+                        }
                     }
                 }
             }
-        }
-        
-        for(int i = 0; i<this.herencias.size();i++){
-            if(this.herencias.get(i).getEntidadPadre().equals(entidad)){
-                this.herencias.remove(i);
-                i=0;
-            }            
-        }
+
+            for(int i = 0; i<this.herencias.size();i++){
+                if(this.herencias.get(i).getEntidadPadre().equals(entidad)){
+                    this.herencias.remove(i);
+                    i=0;
+                }            
+            }
 
 
-        for(int i = 0; i<this.herencias.size();i++){
-            if(this.herencias.get(i).getEntidadesHijas().size()==1 &this.herencias.get(i).getEntidadesHijas().get(0).equals(entidad)){
-                this.herencias.remove(i);
-                i=0;
+            for(int i = 0; i<this.herencias.size();i++){
+                if(this.herencias.get(i).getEntidadesHijas().size()==1 &this.herencias.get(i).getEntidadesHijas().get(0).equals(entidad)){
+                    this.herencias.remove(i);
+                    i=0;
+                }  
+            }    
+            for(int i = 0; i<this.herencias.size();i++){
+                for(int j =0; j<this.herencias.get(i).getEntidadesHijas().size();j++){
+                    if(this.herencias.get(i).getEntidadesHijas().get(j).equals(entidad)){
+                        this.herencias.get(i).eliminarEntidadHija(i);
+                        this.herencias.get(i).crearHerencia();
+                    }
+                }            
             }  
-        }    
-        for(int i = 0; i<this.herencias.size();i++){
-            for(int j =0; j<this.herencias.get(i).getEntidadesHijas().size();j++){
-                if(this.herencias.get(i).getEntidadesHijas().get(j).equals(entidad)){
-                    this.herencias.get(i).eliminarEntidadHija(i);
-                    this.herencias.get(i).crearHerencia();
-                }
-            }            
-        }    
+        }
+        else{
+            this.elementos.remove(elemento);
+        }
     }
     
     public void modificarNombreEntidad(){
@@ -154,7 +160,7 @@ public class Diagrama {
     
     public void actualizarUnionesFiguras(){
         for(int i = 0; i< this.elementos.size();i++){
-            this.elementos.get(i).crearLineasunionAtributos();
+            this.elementos.get(i).crearFigura();
         }
         for(int i = 0; i<this.relaciones.size();i++){
             this.relaciones.get(i).crearRelacion();

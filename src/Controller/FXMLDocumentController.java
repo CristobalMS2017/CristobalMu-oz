@@ -72,25 +72,8 @@ public class FXMLDocumentController implements Initializable {
     private boolean entidadEncontradaMover=false;//Permite saber si el usuario seleccionó una entidad, permitiendo ser movida.
     private boolean relacionEncontradaMover = false;//Permite saber si el usuario seleccionó una relación, permitiendo ser movida.        
     private boolean herenciaEncontradaMover = false;//Permite saber si el usuario seleccionó una herencia, permitiendo ser movida.
-    private boolean agregacionEncontradaMover = false;
-    private boolean atributoEnEntidadMover=false; //Permite saber si el atributo se encuentra en una entidad.
-    private boolean atributoEnRelacionMover=false; //Permite saber si un atributo se encuentra en una relación.
-    private boolean atributoEnAtributoMover=false; //Permite saber si un atributo se encuentra en un atributo    
-    private boolean entidadDebil = false;//Permite saber si la entidad que se quiere crear es debil o fuerte.
-    private String tipoHerenciaMover="";//Guarda el tipo de herencia de la entidad seleccionada o creada.
-    private String nombreAtributoMover = "";//Guarda el nombre del atributo seleccionado para mover.
-    private String nombreRelacionMover="";//Guarda el nombre de la relación seleccionada para mover.
-    private String tipoAtributoMover="";//Guarda el nombre del atributo seleccionado para mover.  
-    private String nombreEntidadMover=""; //Guarda el nombre de la entidad seleccionada para mover.
-    private String nombreAgregacionMover="";
-    
-    private int indiceEntidadAtributo; //Guarda la posición en la que se encuentra el atributo en la entidad.
-    private int indiceRelacionAtributo;//guarda la posicion en la que se encuentra el atributo en la relación.
-    private int indiceRelacionAtributoAtributo;//guarda la posición en la que se encuentra el atributo del atrbuto compuesto de la relación.
-    private int indiceEntidadAtributoAtributo;//guarda la posición en la que se encuentra el atributo del atrbuto compuesto de la entidad.   
-    private int indiceAgregacionAtributo;
-    private int indiceAgregacionAtributoAtributo;
-    
+    private boolean agregacionEncontradaMover = false;  
+    private boolean entidadDebil = false;//Permite saber si la entidad que se quiere crear es debil o fuerte.    
     private Entidad  entidadAuxiliar;// Guarda la entidad original antes de ser movida.
     private Atributo atributoAuxiliar; //Guarda el atributo original antes de ser movido.
     private Relacion relacionAuxiliar;//Guarda la relacion seleccionada para mover.
@@ -102,6 +85,7 @@ public class FXMLDocumentController implements Initializable {
     int desHacer = 0;//Guarda la posción del diagrama al que se llamó para volver a crearlo o rehacerlo.
     private boolean relacionDebil;
     ArrayList<String> participacion;
+    boolean figuraEnMovimiento=false;
     
     
     
@@ -146,12 +130,12 @@ public class FXMLDocumentController implements Initializable {
         */
     }
     
-    private void modificarCardinalidad(int posX,int posY){
+    private void modificarCardinalidad(double posX,double posY){
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
             for(int j=0; j<diagrama.getRelaciones().get(i).getCardinalidades().size();j++){
                 double x=diagrama.getRelaciones().get(i).getCardinalidades().get(j).getX();
                 double y=diagrama.getRelaciones().get(i).getCardinalidades().get(j).getY();
-                if((x-1)<=posX &&(x+5)>=posX&&(y)>=posY&&(y-5)<=posY){
+                if((x-10)<=posX &&(x+20)>=posX&&(y+10)>=posY&&(y-20)<=posY){
                     if(diagrama.getRelaciones().get(i).getCardinalidades().get(j).getText().equals("N")){
                         diagrama.getRelaciones().get(i).getStringCardinalidades().set(j,"1");
                         diagrama.getRelaciones().get(i).getCardinalidades().get(j).setText("1");
@@ -165,12 +149,6 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    private void actualizarRelacionesDiagrama(){
-        for(int i =0; i<diagrama.getRelaciones().size();i++){
-            diagrama.getRelaciones().get(i).crearLineasunionAtributos();
-            diagrama.getRelaciones().get(i).crearRelacion();
-        }
-    }
 
     /**
      * Crea las entidades, relaciones, atributos y herencias una ves conocida la posicion
@@ -179,11 +157,11 @@ public class FXMLDocumentController implements Initializable {
      * @param event 
      */
     @FXML
-    private void crear(MouseEvent event){  
+    private void crear(MouseEvent event) throws IOException{  
         
         if(event.getButton().equals(MouseButton.PRIMARY)){
             if(event.getClickCount()==2){
-                modificarCardinalidad((int)event.getX(),(int)event.getY());
+                modificarCardinalidad(event.getX(),event.getY());
             }
         }
         
@@ -192,13 +170,16 @@ public class FXMLDocumentController implements Initializable {
             
             if(entidadDebil){
                 nueva = new Entidad(true,(int)event.getX(),(int)event.getY(),textoEntidad); 
-                entidadDebil=false;
+                
             }
+            
             nueva.crearFigura();
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(nueva.getPuntosDeControl());
             }
             diagrama.getElementos().add(nueva);  
+            ventanaAtributosEntidad(textoEntidad,entidadDebil); 
+
             guardarDiagrama(); 
             
         }
@@ -234,9 +215,15 @@ public class FXMLDocumentController implements Initializable {
                     Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Entidad",comboBoxEntidadesRelaciones);
                     for(int i=0;i<diagrama.getElementos().size();i++){
                         if(comboBoxEntidadesRelaciones.equals(diagrama.getElementos().get(i).getNombre())){
-                            diagrama.getElementos().get(i).agregarAtributo(nueva);
-                            diagrama.getElementos().get(i).crearLineasunionAtributos();  
+                            ((Entidad)diagrama.getElementos().get(i)).agregarAtributo(nueva);
+                            diagrama.getElementos().get(i).crearFigura();
+                            atributoAnadidoEntidadAgregacion(((Entidad)diagrama.getElementos().get(i)),nueva);
                             diagrama.getAtributos().add(nueva);
+                            if(entidadDebil){
+                                relacionEntidadDebil(comboBoxEntidadesRelaciones);
+                                entidadDebil=false;
+                            }
+                            
                         }
                     }
                     
@@ -247,8 +234,10 @@ public class FXMLDocumentController implements Initializable {
                     Atributo nueva = new Atributo(tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Relación",comboBoxEntidadesRelaciones);
                     for(int i=0;i<diagrama.getRelaciones().size();i++){
                         if(comboBoxEntidadesRelaciones.equals(diagrama.getRelaciones().get(i).getNombre())){
+                            
                             diagrama.getRelaciones().get(i).agregarAtributo(nueva);
-                            diagrama.getRelaciones().get(i).crearLineasunionAtributos();  
+                            diagrama.getRelaciones().get(i).crearLineasunionAtributos(); 
+                            atributoAnadidoRelacionAgregacion(diagrama.getRelaciones().get(i),nueva);
                             diagrama.getAtributos().add(nueva);
                         }
                     }
@@ -260,11 +249,14 @@ public class FXMLDocumentController implements Initializable {
                     Atributo nueva = new Atributo((String)tipoAtributo,(int)event.getX(),(int)event.getY(),textoAtributo,"Compuesto",comboBoxEntidadesRelaciones);
 
                     for(int i=0; i< diagrama.getElementos().size();i++){
-                        for(int j = 0; j < diagrama.getElementos().get(i).getAtributos().size();j++){
-                            if(diagrama.getElementos().get(i).getAtributos().get(j).getNombre().equals(comboBoxEntidadesRelaciones)){
-                                diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().add(nueva);
-                                diagrama.getElementos().get(i).getAtributos().get(j).crearLineasunionAtributos();
+                        if(diagrama.getElementos().get(i) instanceof Entidad){
+                            for(int j = 0; j < ((Entidad)diagrama.getElementos().get(i)).getAtributos().size();j++){
+                                if(((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).getNombre().equals(comboBoxEntidadesRelaciones)){
+                                    ((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).getAtributos().add(nueva);
+                                    ((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).crearLineasunionAtributos();
+                                    atributoAnadidoEntidadAgregacion(((Entidad)diagrama.getElementos().get(i)),nueva);
 
+                                }
                             }
                         }
                     }
@@ -273,9 +265,11 @@ public class FXMLDocumentController implements Initializable {
                             if(diagrama.getRelaciones().get(i).getAtributos().get(j).getNombre().equals(comboBoxEntidadesRelaciones)){
                                 diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().add(nueva);
                                 diagrama.getRelaciones().get(i).getAtributos().get(j).crearLineasunionAtributos();
+                                atributoAnadidoRelacionAgregacion(diagrama.getRelaciones().get(i),nueva);
                             }
                         }
-                    }                    
+                    }
+                    diagrama.getAtributos().add(nueva);
                 }
                 guardarDiagrama(); 
         }
@@ -290,12 +284,54 @@ public class FXMLDocumentController implements Initializable {
         crearAgregacion = false;
     }
 
+    private void atributoAnadidoRelacionAgregacion(Relacion relacion,Atributo atributo){
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    if(((Agregacion)diagrama.getElementos().get(i)).getRelacion().equals(relacion)){
+                        if(atributo.getPosX()<((Agregacion)diagrama.getElementos().get(i)).getPosX()){
+                            int sumar=((Agregacion)diagrama.getElementos().get(i)).getPosX()-atributo.getPosX();
+                            atributo.actualizarPosicion(atributo.getPosX()+sumar, atributo.getPosY());
+                        }
+                        if(atributo.getPosY()<((Agregacion)diagrama.getElementos().get(i)).getPosY()){
+                            int sumar=((Agregacion)diagrama.getElementos().get(i)).getPosY()-atributo.getPosY();
+                            atributo.actualizarPosicion(atributo.getPosX(), atributo.getPosY()+sumar+30);
+                        }                        
+                    }
+                }
+            }         
+    }
+    private void atributoAnadidoEntidadAgregacion(Entidad entidad,Atributo atributo){
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    for(int j = 0; j<((Agregacion)diagrama.getElementos().get(i)).getRelacion().getElementos().size();j++){
+                        if(((Agregacion)diagrama.getElementos().get(i)).getRelacion().getElementos().get(j) instanceof Entidad){
+                            if(((Entidad)((Agregacion)diagrama.getElementos().get(i)).getRelacion().getElementos().get(j)).equals(entidad)){
+                                if(atributo.getPosX()<((Agregacion)diagrama.getElementos().get(i)).getPosX()){
+                                    int sumar=((Agregacion)diagrama.getElementos().get(i)).getPosX()-atributo.getPosX();
+                                    atributo.actualizarPosicion(atributo.getPosX()+sumar, atributo.getPosY());
+                                }
+                                if(atributo.getPosY()<((Agregacion)diagrama.getElementos().get(i)).getPosY()){
+                                    int sumar=((Agregacion)diagrama.getElementos().get(i)).getPosY()-atributo.getPosY();
+                                    atributo.actualizarPosicion(atributo.getPosX(), atributo.getPosY()+sumar+30);
+                                }                        
+                            
+                            }
+                        }
+                    }
+                }
+            }
+        
+    }
+    
+    
+    
+    
+    
     /**
-     * Encuentra el elemento donde el usuario esta presionó en el panel de dibujo. Al encontrar el elemento,
-     * este se elimina del diagrama, se guarda un auxiliar el elemento. Tambien
-     * se desactivan los if que encuentran elementos. Finalmente, se genera el movimiento del elemento
-     * creando el elemento y eliminandolo, actualizando el panel de dibujo de manera simultanea
-     * generando el movimiento del elemento.
+     * Se mueve la figura seleccionada.
+     * Primero se revisa si en la posicion en la que se encuentra el mouse(cuando se presiona el boton izquierdo), hay
+     * un elemento. si es así, se guarda el elemento en una variable auxiliar y se le asigna true a la variable boleana correspondiente al tipo de figura a mover.
+     * Finalmente, se actualiza la posición de la figura hasta que el usuario deje de presionar el boton izquierdo del mouse.
      * @param event 
      */
     @FXML
@@ -305,355 +341,93 @@ public class FXMLDocumentController implements Initializable {
             int posY = (int)event.getY();
             if (0<=posX && posX<=1050 && 0<=posY && posY<= 687){
                 if((relacionEncontradaMover == entidadEncontradaMover)&&herenciaEncontradaMover == atributoEncontradoMover&&atributoEncontradoMover==agregacionEncontradaMover){
-
-                    //Busqueda de entidad en el panel de dibujo
                     for (int i=0; i<diagrama.getElementos().size();i++){
                         if(diagrama.getElementos().get(i) instanceof Entidad){
-                            if(!entidadEnAgregacion((Entidad)diagrama.getElementos().get(i))){
+                            if(entidadEnAgregacion((Entidad)diagrama.getElementos().get(i),posX,posY,0)){
                                 ArrayList<Integer> x=diagrama.getElementos().get(i).getPosicionesX();
                                 ArrayList<Integer> y=diagrama.getElementos().get(i).getPosicionesY();
                                 if (x.get(0) < posX && x.get(1) > posX && y.get(0) < posY && y.get(x.size()-1) > posY) {
-                                    entidadDebil = ((Entidad)diagrama.getElementos().get(i)).isDebil();
-                                    nombreEntidadMover=diagrama.getElementos().get(i).getNombre();
-
                                     entidadAuxiliar=(Entidad)diagrama.getElementos().get(i);
-                                    diagrama.getElementos().remove(i);
                                     entidadEncontradaMover = true;
+                                    figuraEnMovimiento=true;
                                 }
                             }
                         }
                     }
-                    //Busqueda de relaciones en el panel  de dubujo
                     for(int i=0; i<diagrama.getRelaciones().size();i++){
-                        if(areaFiguras((int)event.getX(), (int)event.getY(), i)& !relacionEnAgregacion(diagrama.getRelaciones().get(i))){
-                            relacionDebil = diagrama.getRelaciones().get(i).isRelacionDebil();
-                            nombreRelacionMover = diagrama.getRelaciones().get(i).getNombre();
-                            
+                        if(areaFiguras((int)event.getX(), (int)event.getY(), i)& relacionEnAgregacion(diagrama.getRelaciones().get(i),posX,posY,0)){                           
                             relacionAuxiliar = diagrama.getRelaciones().get(i);
-                            diagrama.getRelaciones().remove(i);
                             relacionEncontradaMover = true;
+                            figuraEnMovimiento=true;
                         }
-                    }
-                    
-                    
-                    //Busquedad de atributos de entidades en el panel
-                    for(int i = 0; i<diagrama.getElementos().size(); i++){
-                        for(int j =0;j<diagrama.getElementos().get(i).getAtributos().size();j++){
-                            ArrayList<Integer> x=diagrama.getElementos().get(i).getAtributos().get(j).posicionesX();
-                            ArrayList<Integer> y=diagrama.getElementos().get(i).getAtributos().get(j).posicionesY();
-                            if (x.get(0) <= posX && x.get(1) >= posX && y.get(2) <= posY && y.get(3) >= posY) {
-                               
-                                tipoAtributoMover = diagrama.getElementos().get(i).getAtributos().get(j).getTipoAtributo();
-                                nombreAtributoMover=diagrama.getElementos().get(i).getAtributos().get(j).getNombre();
-                                atributoAuxiliar = diagrama.getElementos().get(i).getAtributos().get(j);
-                                comboBoxEntidadesRelaciones=diagrama.getElementos().get(i).getAtributos().get(j).getNombreOrigenAtributo();
-                                 removerAtributoEnDiagrama(atributoAuxiliar);
-
-                                diagrama.getElementos().get(i).getAtributos().remove(j);
+                    } 
+                    for(int i = 0; i<diagrama.getAtributos().size();i++){
+                        if(atributoEnAgregacion(diagrama.getAtributos().get(i),posX,posY,0)){
+                            
+                            ArrayList<Integer> x=diagrama.getAtributos().get(i).posicionesX();
+                            ArrayList<Integer> y=diagrama.getAtributos().get(i).posicionesY();
+                            if (x.get(0) <= posX && x.get(1) >= posX && y.get(2) <= posY && y.get(3) >= posY) {                                
+                                atributoAuxiliar = diagrama.getAtributos().get(i);
                                 atributoEncontradoMover = true;
-                                indiceEntidadAtributo=i;
-                                atributoEnEntidadMover = true;
-                                
-
-
-                            }                            
+                                figuraEnMovimiento=true;
+                            } 
                         }
-                         
-                    }
-                    
-                    //Busqueda atributos de relación
-                    for(int i = 0; i<diagrama.getRelaciones().size(); i++){
-                        for(int j =0;j<diagrama.getRelaciones().get(i).getAtributos().size();j++){
-                            ArrayList<Integer> x=diagrama.getRelaciones().get(i).getAtributos().get(j).posicionesX();
-                            ArrayList<Integer> y=diagrama.getRelaciones().get(i).getAtributos().get(j).posicionesY();
-                            if (x.get(0) <= posX && x.get(1) >= posX && y.get(2) <= posY && y.get(3) >= posY) {
-                                
-                                tipoAtributoMover = diagrama.getRelaciones().get(i).getAtributos().get(j).getTipoAtributo();
-                                nombreAtributoMover=diagrama.getRelaciones().get(i).getAtributos().get(j).getNombre();
-                                atributoAuxiliar = diagrama.getRelaciones().get(i).getAtributos().get(j);
-                                comboBoxEntidadesRelaciones=diagrama.getRelaciones().get(i).getAtributos().get(j).getNombreOrigenAtributo();
-                                removerAtributoEnDiagrama(atributoAuxiliar);
-
-                                diagrama.getRelaciones().get(i).getAtributos().remove(j);
-                                atributoEncontradoMover = true;
-                                indiceRelacionAtributo=i;
-                                atributoEnRelacionMover=true;
-                                
-
-
-                            }                            
-                        }   
-                    }
-                    
-                    //Busquedad de atributo de atrbitos de relacion
-                    for(int i=0; i< diagrama.getRelaciones().size();i++){
-                        for(int j = 0; j < diagrama.getRelaciones().get(i).getAtributos().size();j++){
-                            if(diagrama.getRelaciones().get(i).getAtributos().get(j).getTipoAtributo().equals("Compuesto")){
-                                for(int k = 0; k<diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().size();k++){
-                                ArrayList<Integer> x=diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getFigura().getPosicionesX();
-                                ArrayList<Integer> y=diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getFigura().getPosicionesY();
-                                if (x.get(0) <= posX && x.get(1) >= posX && y.get(2) <= posY && y.get(3) >= posY) {
-
-                                    tipoAtributoMover = diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getTipoAtributo();
-                                    nombreAtributoMover=diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getNombre();
-                                    atributoAuxiliar = diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k);
-                                    comboBoxEntidadesRelaciones=diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().get(k).getNombreOrigenAtributo();
-                                    removerAtributoEnDiagrama(atributoAuxiliar);
-                                    diagrama.getRelaciones().get(i).getAtributos().get(j).getAtributos().remove(k);
-                                    atributoEncontradoMover = true;
-                                    indiceRelacionAtributo=i;
-                                    indiceRelacionAtributoAtributo=j;
-                                    atributoEnAtributoMover=true;
-                                    atributoEnRelacionMover=true;
-
-
-                                }                             
-                                }
-                            }
-                        }
-                    }
-                    //Busqueda de herencias en panel
+                    }                    
                     for(int i = 0; i< diagrama.getHerencias().size();i++){
                         ArrayList<Integer> x = diagrama.getHerencias().get(i).posicionesXFigura();
                         ArrayList<Integer> y = diagrama.getHerencias().get(i).posicionesYFigura();
                         if(x.get(0)<=posX && posX<=x.get(1) && y.get(2)<=posY && posY<=y.get(3)){
                             herenciaEncontradaMover = true;
-                            herenciaAuxiliar = diagrama.getHerencias().get(i);
-                            tipoHerenciaMover = diagrama.getHerencias().get(i).getTipoHerencia();
-                            diagrama.getHerencias().remove(i);
-                            
+                            herenciaAuxiliar = diagrama.getHerencias().get(i);  
+                            figuraEnMovimiento=true;
                         }
-                    }
-
-                    //Busqueda de agregacion en el panel de dibujo
+                    }  
                     for (int i=0; i<diagrama.getElementos().size();i++){
                         if(diagrama.getElementos().get(i) instanceof Agregacion){
-                            if(!agregacionEnAgregacion((Agregacion)diagrama.getElementos().get(i))){
+                            if(agregacionEnAgregacion((Agregacion)diagrama.getElementos().get(i))){
                                 ArrayList<Integer> x=diagrama.getElementos().get(i).getPosicionesX();
                                 ArrayList<Integer> y=diagrama.getElementos().get(i).getPosicionesY();
                                 if (x.get(0) < posX && x.get(1) > posX && y.get(0) < posY && y.get(x.size()-1) > posY) {
-
-                                        nombreAgregacionMover=diagrama.getElementos().get(i).getNombre();
-                                        relacionAgregacion = ((Agregacion)diagrama.getElementos().get(i)).getRelacion();
+                                    if(figuraEnMovimiento==false){
+                                        System.out.println("Entre");
                                         agregacionAuxiliar=(Agregacion)diagrama.getElementos().get(i);
-                                        diagrama.getElementos().remove(i);
                                         agregacionEncontradaMover = true;
-
+                                    }
 
                                 }
                             }
                     
                         }                    
-                    }
-                    //Atributos de atributos compuestos de entidades
-                    for(int i=0; i< diagrama.getElementos().size();i++){
-                        for(int j = 0; j < diagrama.getElementos().get(i).getAtributos().size();j++){
-                            if(diagrama.getElementos().get(i).getAtributos().get(j).getTipoAtributo().equals("Compuesto")){
-                                for(int k = 0; k<diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().size();k++){
-                                ArrayList<Integer> x=diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getFigura().getPosicionesX();
-                                ArrayList<Integer> y=diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getFigura().getPosicionesY();
-                                if (x.get(0) <= posX && x.get(1) >= posX && y.get(2) <= posY && y.get(3) >= posY) {
-
-                                    tipoAtributoMover = diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getTipoAtributo();
-                                    nombreAtributoMover=diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getNombre();
-                                    atributoAuxiliar = diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k);
-                                    comboBoxEntidadesRelaciones=diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().get(k).getNombreOrigenAtributo();
-                                    diagrama.getElementos().get(i).getAtributos().get(j).getAtributos().remove(k);
-                                    atributoEncontradoMover = true;
-                                    indiceEntidadAtributo=i;
-                                    indiceEntidadAtributoAtributo=j;
-                                    atributoEnAtributoMover=true;
-                                    atributoEnEntidadMover=true;
+                    } 
 
 
-
-                                }                             
-                                }
-                            }
-                        }
-                    }
                 }
-                else{
-                    
+                else{                    
                     if(entidadEncontradaMover){
-                                                
-                        Entidad nueva = new Entidad(entidadDebil,(int)event.getX(),(int)event.getY(),nombreEntidadMover);
-                        nueva.crearFigura();
-                        
-                        
-                        for(int i = 0; i<entidadAuxiliar.getAtributos().size();i++){
-                            nueva.getAtributos().add(entidadAuxiliar.getAtributos().get(i));
+                        if(entidadEnAgregacion(entidadAuxiliar,posX,posY,1)){
+                            entidadAuxiliar.actualizarPosicion(posX, posY);   
                         }
-                        nueva.crearLineasunionAtributos();
-                        if(sobreposicionEntidad(nueva)){
-
-                            moverEntidadEnElementos(nueva);
-                            diagrama.getElementos().add(nueva);
-
-                            actualizarPanel();
-                            entidadAuxiliar=nueva;
-                            diagrama.getElementos().remove(diagrama.getElementos().size()-1);
-                            
-                            }
-                        }                         
                     }
                     if(relacionEncontradaMover){
-                        
-                        Relacion nueva = new Relacion(relacionDebil,(int)event.getX(),(int)event.getY(),nombreRelacionMover); 
-                        nueva.setStringCardinalidades(relacionAuxiliar.getStringCardinalidades());
-                        nueva.setParticipacion(relacionAuxiliar.getParticipacion());
-                        for(int i = 0; i<relacionAuxiliar.getElementos().size();i++){
-                            nueva.getElementos().add(relacionAuxiliar.getElementos().get(i));
+                        if(relacionEnAgregacion(relacionAuxiliar,posX,posY,1)){
+                            relacionAuxiliar.actualizarPosicion(posX, posY); 
                         }
-                        nueva.crearRelacion();
-                         
-                        for(int i = 0; i<relacionAuxiliar.getAtributos().size();i++){
-                            nueva.getAtributos().add(relacionAuxiliar.getAtributos().get(i));
-                        }
-
-                        nueva.crearLineasunionAtributos(); 
-                        if(sobreposicionRelacion(nueva)){    
-                            diagrama.getRelaciones().add(nueva);
-
-                            actualizarPanel();
-
-                            relacionAuxiliar=nueva;
-                            diagrama.getRelaciones().remove(diagrama.getRelaciones().size()-1);
-                        }
-                        
                     }
                     if(herenciaEncontradaMover){
-                        ArrayList<Entidad> hijas = new ArrayList<>();                        
-                        for(int i = 0; i < herenciaAuxiliar.getEntidadesHijas().size();i++){
-                            hijas.add(herenciaAuxiliar.getEntidadesHijas().get(i));
-                        }
-                        
-                        
-                        Herencia nueva = new Herencia(herenciaAuxiliar.getEntidadPadre(),hijas,tipoHerenciaMover,(int)event.getX(),(int)event.getY());
-                        nueva.crearHerencia();
-
-                        if(sobreposicionHerencia(nueva)){
-
-                            diagrama.getHerencias().add(nueva);
-
-                            actualizarPanel();
-                            herenciaAuxiliar = nueva;
-                            diagrama.getHerencias().remove(diagrama.getHerencias().size()-1);
-                            
-                        }                        
+                        herenciaAuxiliar.actualizarPosicion(posX, posY);                  
                     }
-                    if(agregacionEncontradaMover){
-                                                
-                        Agregacion nueva = new Agregacion(relacionAgregacion,nombreAgregacionMover,(int)event.getX(),(int)event.getY());
-                        nueva.crearFigura();
-                        
-                        if(sobreposicionEntidad(nueva)){
-                        moverAgregacionEnElementos(nueva);
-                            diagrama.getElementos().add(nueva);
-                            actualizarRelacionesDiagrama();
-                            actualizarPanel();
-                            agregacionAuxiliar=nueva;
-                            diagrama.getElementos().remove(diagrama.getElementos().size()-1);                       
-                        
-                            actualizarRelacionesDiagrama();
-                        }
-                                              
+                    if(agregacionEncontradaMover){                                       
+                        agregacionAuxiliar.actualizarPosicion(posX, posY);                                              
                     }                    
                     if(atributoEncontradoMover){
-                        if(atributoEnEntidadMover){
-                            if(atributoEnAtributoMover){
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Compuesto",comboBoxEntidadesRelaciones);
-                                    
-                                if(sobreposicionAtributo(nueva)){
- 
-                                    diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().get(indiceEntidadAtributoAtributo).agregarAtributo(nueva);
-                                     diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().get(indiceEntidadAtributoAtributo).crearLineasunionAtributos();
-
-                                     actualizarPanel();      
-                                     atributoAuxiliar = nueva;
-                                     removerAtributoEnDiagrama(atributoAuxiliar);
-                                  
-                                     int tamano = diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().get(indiceEntidadAtributoAtributo).getAtributos().size()-1;
-                                     diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().get(indiceEntidadAtributoAtributo).getAtributos().remove(tamano);                                 
-
-                                }
- 
-                            }else{
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Entidad",comboBoxEntidadesRelaciones);
-                                for(int i = 0;i<atributoAuxiliar.getAtributos().size();i++){
-                                    nueva.getAtributos().add(atributoAuxiliar.getAtributos().get(i));
-                                }
-                                nueva.crearLineasunionAtributos();
-                                if(sobreposicionAtributo(nueva)){
-                                    diagrama.getElementos().get(indiceEntidadAtributo).agregarAtributo(nueva);
-                                    diagrama.getElementos().get(indiceEntidadAtributo).crearLineasunionAtributos();
-                                 
-                                    diagrama.getAtributos().add(nueva);
-                                                                                                          
-                                    panelDibujo.getChildren().clear();
-                                    actualizarPanel();      
-                                    atributoAuxiliar = nueva;
-                                    removerAtributoEnDiagrama(atributoAuxiliar);
-                                    diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().remove(diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().size()-1);                            
- 
-                                }
-
-                            }
-
+                        if(atributoEnAgregacion(atributoAuxiliar,posX,posY,1)){
+                            atributoAuxiliar.actualizarPosicion(posX, posY);  
                         }
-                        if(atributoEnRelacionMover){
-                            if(atributoEnAtributoMover){
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Compuesto",comboBoxEntidadesRelaciones);
-
-                                if(sobreposicionAtributo(nueva)){
-
-                                    diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().get(indiceRelacionAtributoAtributo).agregarAtributo(nueva);
-                                    diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().get(indiceRelacionAtributoAtributo).crearLineasunionAtributos();
-
-                                    actualizarPanel(); 
-                                    atributoAuxiliar = nueva;
-                                    removerAtributoEnDiagrama(atributoAuxiliar);
-
-                                    int tamano = diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().get(indiceRelacionAtributoAtributo).getAtributos().size()-1;
-                                    diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().get(indiceRelacionAtributoAtributo).getAtributos().remove(tamano);                                 
-
-                                                                    
-
-                                }
-
-                            }
-                            else{
-                                Atributo nueva = new Atributo(tipoAtributoMover,(int)event.getX(),(int)event.getY(),nombreAtributoMover,"Relación",comboBoxEntidadesRelaciones);
-
-                                for(int i = 0;i<atributoAuxiliar.getAtributos().size();i++){
-                                    nueva.getAtributos().add(atributoAuxiliar.getAtributos().get(i));
-                                }
-                                nueva.crearLineasunionAtributos();
-                                if(sobreposicionAtributo(nueva)){
-
-                                        diagrama.getAtributos().add(nueva);
-                                                                       
-                                    diagrama.getRelaciones().get(indiceRelacionAtributo).agregarAtributo(nueva);
-                                    diagrama.getRelaciones().get(indiceRelacionAtributo).crearLineasunionAtributos();
-                                    panelDibujo.getChildren().clear();
-                                    actualizarPanel();      
-                                    atributoAuxiliar = nueva;
-                                    removerAtributoEnDiagrama(atributoAuxiliar);
-                               
-                                    diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().remove(diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().size()-1);                                 
-                                }    
-                                
-   
-                            }
-                            
-                        }
-                    
-
                     }
-                           
+                    actualizarPanel();
+                }
             }
         }
-        
     }
     
     /**
@@ -663,7 +437,7 @@ public class FXMLDocumentController implements Initializable {
     public void actualizarPanel(){
         panelDibujo.getChildren().clear();
         for(int i = 0; i<diagrama.getElementos().size();i++){
-            diagrama.getElementos().get(i).crearLineasunionAtributos();
+            diagrama.getElementos().get(i).crearFigura();
             panelDibujo.getChildren().addAll(diagrama.getElementos().get(i).getDibujoFigura());
             
             if(puntosDeControl.isSelected()){
@@ -672,21 +446,24 @@ public class FXMLDocumentController implements Initializable {
         }
         
         for(int i = 0; i < diagrama.getRelaciones().size();i++){
-            diagrama.getRelaciones().get(i).crearLineasunionAtributos();
+                diagrama.getRelaciones().get(i).crearRelacion();
+            
             panelDibujo.getChildren().addAll(diagrama.getRelaciones().get(i).dibujoRelacion());
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(diagrama.getRelaciones().get(i).getFigura().getPuntosControl());
             } 
         }
         for(int i = 0; i<diagrama.getHerencias().size();i++){
+            diagrama.getHerencias().get(i).crearHerencia();
             panelDibujo.getChildren().addAll(diagrama.getHerencias().get(i).dibujoHerencia());
         }
         for(int i = 0; i<diagrama.getAtributos().size();i++){
-            diagrama.getAtributos().get(i).crearLineasunionAtributos();
+            diagrama.getAtributos().get(i).crearAtributo();
             panelDibujo.getChildren().addAll(diagrama.getAtributos().get(i).dibujoAtributo());
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(diagrama.getAtributos().get(i).getFigura().getPuntosControl());
                 for(int j = 0; j<diagrama.getAtributos().get(i).getAtributos().size();j++){
+                    diagrama.getAtributos().get(i).getAtributos().get(j).crearAtributo();
                     panelDibujo.getChildren().addAll(diagrama.getAtributos().get(i).getAtributos().get(j).getFigura().getPuntosControl());
                 }
                 
@@ -700,36 +477,196 @@ public class FXMLDocumentController implements Initializable {
      * @param entidad Entidad que se busca en las agregaciones.
      * @return true si la encuentra y false si no la encuentra.
      */
-    private boolean entidadEnAgregacion(Entidad entidad){
-         
+    private boolean entidadEnAgregacion(Entidad entidad,int posX,int posY,int limitacion){
+        if(limitacion==0){ 
+            boolean encontrado=true;
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                    if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
+                    if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
+                        ArrayList<Integer> n=agregacion.getPosicionesX();
+                        ArrayList<Integer> n2=agregacion.getPosicionesY();
+                        encontrado=false;
+                        if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY && n2.get(3)+5 >= posY){
+                            return true;
+                        }
+                    }  
+                }
+            }
+            return encontrado==true;
+        }
+        else{
+            boolean encontrado=true;
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                    if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
+                    if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
+                        ArrayList<Integer> n=agregacion.getPosicionesX();
+                        ArrayList<Integer> n2=agregacion.getPosicionesY();
+                        encontrado=false;
+                        if(n.get(0)+5 <= posX  && n2.get(0)+40 <= posY ){
+                            return true;
+                        }
+                    }  
+                }
+            }
+            return encontrado==true;
+        }    
+    }
+    private boolean atributoEnAgregacion(Atributo atributo,int posX,int posY,int limitacion){
+        boolean encontrado=true;
+
+        
         for(int i = 0; i<diagrama.getElementos().size();i++){
-                if(diagrama.getElementos().get(i) instanceof Agregacion){
-                Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
-                if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
-                    return true;
-                }  
+                    double dist=Math.sqrt(Math.pow(atributo.getFigura().getPosicionesY().get(0)-atributo.getFigura().getPosicionesY().get(2), 2));
+            if(diagrama.getElementos().get(i) instanceof Agregacion){
+                Agregacion agregacion =(Agregacion)diagrama.getElementos().get(i);
+                for(int j = 0; j < agregacion.getRelacion().getAtributos().size();j++){
+                    Atributo atributo1 = agregacion.getRelacion().getAtributos().get(j);
+                    if(atributo1.equals(atributo)){
+                        ArrayList<Integer> n=agregacion.getPosicionesX();
+                        ArrayList<Integer> n2=agregacion.getPosicionesY();
+                        encontrado=false;
+                        if(limitacion==0){
+                            if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY-dist && n2.get(3)+5 >= posY){
+                                return true;
+                            }   
+                        }
+                        if(limitacion==1){
+                            if(n.get(0)+5 <= posX  && n2.get(0)+40 <= posY-dist ){
+                                return true;
+                            }
+                        }
+                        
+                    }
+                    for(int k=0;k<atributo1.getAtributos().size();k++){
+                        atributo1=atributo1.getAtributos().get(k);
+                        if(atributo1.equals(atributo)){
+                            ArrayList<Integer> n=agregacion.getPosicionesX();
+                            ArrayList<Integer> n2=agregacion.getPosicionesY();
+                            encontrado=false;
+                            if(limitacion==0){
+                                if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY-dist && n2.get(3)+5 >= posY){
+                                    return true;
+                                }   
+                            }
+                            if(limitacion==1){
+                                if(n.get(0)+5 <= posX  && n2.get(0)+40 <= posY -dist){
+                                    return true;
+                                }
+                            }                          
+
+                        }
+                    }
+                    
+                }
+                for(int j = 0;j<agregacion.getRelacion().getElementos().size();j++){
+                    if(agregacion.getRelacion().getElementos().get(j) instanceof Entidad){
+                        for(int k = 0; k < ((Entidad)agregacion.getRelacion().getElementos().get(j)).getAtributos().size();k++){
+                            Atributo atributo1 = ((Entidad)agregacion.getRelacion().getElementos().get(j)).getAtributos().get(k);
+                            if(atributo1.equals(atributo)){
+                                ArrayList<Integer> n=agregacion.getPosicionesX();
+                                ArrayList<Integer> n2=agregacion.getPosicionesY();
+                                encontrado=false;
+                                if(limitacion==0){
+                                    if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY-dist && n2.get(3)+5 >= posY){
+                                        return true;
+                                    }   
+                                }
+                                if(limitacion==1){
+                                    if(n.get(0)+5 <= posX  && n2.get(0)+40 <= posY-dist ){
+                                        return true;
+                                    }
+                                }
+                            }
+                            for(int l=0;l<atributo1.getAtributos().size();l++){
+                                atributo1=atributo1.getAtributos().get(l);
+                                if(atributo1.equals(atributo)){
+                                    ArrayList<Integer> n=agregacion.getPosicionesX();
+                                    ArrayList<Integer> n2=agregacion.getPosicionesY();
+                                    encontrado=false;
+                                    if(limitacion==0){
+                                        if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY-dist && n2.get(3)+5 >= posY){
+                                            return true;
+                                        }   
+                                    }
+                                    if(limitacion==1){
+                                        if(n.get(0)+5 <= posX  && n2.get(0)+40 <= posY-dist ){
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+
+                        }                        
+                    }
+                }
+                
+                
+                
+                
+                
+                
+                
+                
+                
             }
         }
-        return false;
+        
+        return encontrado==true;
+        
+        
         
     }
+    
+    
+    
+    
     /**
      * Revisa si una relacion esta agregada en una agregacion.
      * @param relacion Relacion que se busca en las agregaciones.
      * @return true si la encuentra y false si no la encuentra.
      */    
-    private boolean relacionEnAgregacion(Relacion relacion){
-         
-        for(int i = 0; i<diagrama.getElementos().size();i++){
-            if(diagrama.getElementos().get(i) instanceof Agregacion){
-                Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
-                if(agregacion.getRelacion().equals(relacion)){
-                    return true;
-                }  
+    private boolean relacionEnAgregacion(Relacion relacion,int posX,int posY,int limitacion){
+         if(limitacion==0){
+            boolean encontrado=true;
+
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
+                    if(agregacion.getRelacion().equals(relacion)){
+                        
+                        encontrado=false;
+                        ArrayList<Integer> n=agregacion.getPosicionesX();
+                        ArrayList<Integer> n2=agregacion.getPosicionesY();
+                        if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY && n2.get(3)+5 >= posY){
+                            return true;
+                        }
+                    }  
+                }
             }
-        }
-        return false;
-        
+            return encontrado==true;
+         }
+         else{
+            boolean encontrado=true;
+            for(int i = 0; i<diagrama.getElementos().size();i++){
+                if(diagrama.getElementos().get(i) instanceof Agregacion){
+                    
+                    Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
+                    
+                    if(agregacion.getRelacion().equals(relacion)){
+                        double dist = Math.sqrt(Math.pow(agregacion.getRelacion().getPosY()-agregacion.getRelacion().getFigura().getPosicionesY().get(2), 2));
+                        encontrado=false;
+                        ArrayList<Integer> n=agregacion.getPosicionesX();
+                        ArrayList<Integer> n2=agregacion.getPosicionesY();
+                        if(n.get(0)+5 <= posX && n2.get(0)+40 <= posY-dist){
+                            return true;
+                        }
+                    }  
+                }
+            }
+            return encontrado==true;             
+         }
     }    
     
     /**
@@ -739,87 +676,16 @@ public class FXMLDocumentController implements Initializable {
      */
     @FXML
     public void mouseNoPresionado(MouseEvent event){
-        if(moverFiguras){
-            if(entidadEncontradaMover){
-
-                diagrama.getElementos().add(entidadAuxiliar);
-                actualizarPanel();                                             
-
-                nombreEntidadMover = "";   
-                entidadDebil=false;
-                
-            }
-            if(relacionEncontradaMover){
-                        diagrama.getRelaciones().add(relacionAuxiliar);
-                        actualizarPanel(); 
-                        nombreRelacionMover = ""; 
-                        
-            }
-            if(herenciaEncontradaMover){
-                diagrama.getHerencias().add(herenciaAuxiliar);
-                
-                actualizarPanel();
-                tipoHerenciaMover = "";
-                
-            }
-            if(agregacionEncontradaMover){
-
-                diagrama.getElementos().add(agregacionAuxiliar);
-                actualizarPanel();                                             
-
-                nombreAgregacionMover = "";   
-
-                
-            }            
-            if(atributoEncontradoMover){
-
-                if(atributoEnEntidadMover){   
-                    if(atributoEnAtributoMover){
-                        diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().get(indiceEntidadAtributoAtributo).getAtributos().add(atributoAuxiliar);
-                        diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().get(indiceEntidadAtributoAtributo).crearLineasunionAtributos();
-                                                                
-                    }
-                    else{
-                        diagrama.getElementos().get(indiceEntidadAtributo).getAtributos().add(atributoAuxiliar);
-                        diagrama.getElementos().get(indiceEntidadAtributo).crearLineasunionAtributos();                                
-                    }
-                }
-                if(atributoEnRelacionMover){
-                    if(atributoEnAtributoMover){
-                        diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().get(indiceRelacionAtributoAtributo).getAtributos().add(atributoAuxiliar);
-                        diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().get(indiceRelacionAtributoAtributo).crearLineasunionAtributos();                                    
-                    }
-                    else{
-                        diagrama.getRelaciones().get(indiceRelacionAtributo).getAtributos().add(atributoAuxiliar);
-                        diagrama.getRelaciones().get(indiceRelacionAtributo).crearLineasunionAtributos(); 
-                                
-                            
-                            
-                    }
-                }
-                        
-                        
-                if(!atributoAuxiliar.getGuardadoEn().equals("Compuesto")){
-
-                    diagrama.getAtributos().add(atributoAuxiliar);
-             
-                }
-                atributoEnAtributoMover=false;
-                atributoEnRelacionMover=false;
-                atributoEnEntidadMover=false;
-                nombreAtributoMover = ""; 
-                            
-            }
-
+        if(moverFiguras==true){
             actualizarPanel();
             relacionEncontradaMover = false;
             entidadEncontradaMover= false;
             atributoEncontradoMover = false;
             herenciaEncontradaMover = false;
             agregacionEncontradaMover = false;
-            guardarDiagrama();
-        }
-        
+            figuraEnMovimiento=false;
+            guardarDiagrama();   
+        }    
     }
     
     /**
@@ -870,7 +736,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         }
-        return false;
+        return true;
         
         
     }
@@ -1324,6 +1190,22 @@ public class FXMLDocumentController implements Initializable {
             crearAgregacion = false;
     } 
 
+    
+    private void relacionEntidadDebil(String nombreEntidad) throws IOException{
+            Stage stage = new Stage();
+            stage.setTitle("Relación");
+            stage.setResizable(false);
+            FXMLLoader loader = new FXMLLoader();
+            AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Relaciones.fxml").openStream());
+            RelacionesController instanciaControlador = (RelacionesController)loader.getController();
+            instanciaControlador.recibirParametrosEntidadDebil(controlador, diagrama, nombreEntidad);
+            Scene scene = new Scene(root1);
+            stage.setScene(scene);
+            stage.alwaysOnTopProperty();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();         
+    }
+    
     @FXML
     private void ventanaRelacion() throws IOException{
         
@@ -1471,6 +1353,24 @@ public class FXMLDocumentController implements Initializable {
         this.actualizarPanel();
         
     }    
+    
+    
+    private void ventanaAtributosEntidad(String nombre, boolean debil) throws IOException{
+            Stage stage = new Stage();
+            stage.setTitle("Atributo");
+            stage.setResizable(false);
+            FXMLLoader loader = new FXMLLoader();
+            AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("Atributos.fxml").openStream());
+            AtributosController instanciaControlador = (AtributosController)loader.getController();
+            instanciaControlador.EntidadRecibirParametros(controlador,diagrama,nombre,debil);
+            Scene scene = new Scene(root1);
+            stage.setScene(scene);
+            stage.alwaysOnTopProperty();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();         
+        
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         controlador = this;

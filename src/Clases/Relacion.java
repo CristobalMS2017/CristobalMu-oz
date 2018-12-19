@@ -95,6 +95,7 @@ public class Relacion {
 
         this.lineasRelacion.clear();
         this.cardinalidades.clear();
+        this.lineasUnionAtributos.clear();
         if(this.relacionDebil){
             if(!((Entidad)elementos.get(0)).isDebil()){
                 Entidad auxiliar = ((Entidad)elementos.get(0));
@@ -142,18 +143,25 @@ public class Relacion {
                     Line linea = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i)),elementos.get(i).getPosicionesY().get(pc.pcEntidad(i)),
                                             figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
                     if(this.participacion.get(i).equals("Total")){
+                        int sumarY;
+                        if(figura.getPosicionesY().get(pc.pcFigura(i))<elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))){
+                            sumarY=3;
+                        }
+                        else{
+                            sumarY=-3;
+                        }
                         if(figura.getPosicionesX().get(pc.pcFigura(i))<elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))){
                             
-                                Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))-3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+3,
-                                                   figura.getPosicionesX().get(pc.pcFigura(i))-3,figura.getPosicionesY().get(pc.pcFigura(i))+3);                        
+                                Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))-3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+sumarY,
+                                                   figura.getPosicionesX().get(pc.pcFigura(i))-3,figura.getPosicionesY().get(pc.pcFigura(i))+sumarY);                        
                                this.lineasRelacion.add(linea2);                                
 
                             
                            
                         }
                         else{
-                            Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))+3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+3,
-                                                figura.getPosicionesX().get(pc.pcFigura(i))+3,figura.getPosicionesY().get(pc.pcFigura(i))+3);                        
+                            Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))+3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+sumarY,
+                                                figura.getPosicionesX().get(pc.pcFigura(i))+3,figura.getPosicionesY().get(pc.pcFigura(i))+sumarY);                        
                             this.lineasRelacion.add(linea2);                            
                         }
 
@@ -200,7 +208,8 @@ public class Relacion {
 
                 } 
             }            
-        }           
+        }
+        this.crearLineasunionAtributos();
     }
 
     public ArrayList<Line> getLineasRelacion() {
@@ -296,6 +305,5 @@ public class Relacion {
         this.posX=x;
         this.posY=y;
         this.crearRelacion();
-        this.crearLineasunionAtributos();
     }
 }
