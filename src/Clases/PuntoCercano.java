@@ -17,6 +17,7 @@ public class PuntoCercano {
     public PuntoCercano(Figura figura, ArrayList<Elemento> elementos) {
         this.figura = figura;
         this.elementos=elementos;
+        
         ordenarIndices();
     }
 

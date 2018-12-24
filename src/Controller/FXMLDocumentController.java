@@ -93,9 +93,9 @@ public class FXMLDocumentController implements Initializable {
      * Guarda el diagrama una ves que se haya hecho una modificaciíon
      */
     public void guardarDiagrama(){
-       /* listaDiagramas.removerPosteriores(desHacer);
+       listaDiagramas.removerPosteriores(desHacer);
         listaDiagramas.agregarDiagrama(diagrama);
-        desHacer = listaDiagramas.tamano()-1;*/
+        desHacer = listaDiagramas.tamano()-1;
     }
     
     
@@ -105,13 +105,13 @@ public class FXMLDocumentController implements Initializable {
      */
     @FXML
     private void deshacer(){
-        /*
+       
         desHacer++;
         if(desHacer>=listaDiagramas.tamano()){
             desHacer = listaDiagramas.tamano()-1;
         }        
         diagrama =listaDiagramas.retornarDiagrama(desHacer);
-        actualizarPanel();   */     
+        actualizarPanel();     
     }
     /**
      * Se decrementa la variable desHacer y
@@ -119,7 +119,6 @@ public class FXMLDocumentController implements Initializable {
      */    
     @FXML
     private void rehacer(){
-        /*
         desHacer--;
         if(desHacer<0){
             desHacer=0;
@@ -127,7 +126,7 @@ public class FXMLDocumentController implements Initializable {
 
         diagrama =listaDiagramas.retornarDiagrama(desHacer);
         actualizarPanel();
-        */
+        
     }
     
     private void modificarCardinalidad(double posX,double posY){
@@ -178,10 +177,8 @@ public class FXMLDocumentController implements Initializable {
                 panelDibujo.getChildren().addAll(nueva.getPuntosDeControl());
             }
             diagrama.getElementos().add(nueva);  
-            ventanaAtributosEntidad(textoEntidad,entidadDebil); 
-
             guardarDiagrama(); 
-            
+            ventanaAtributosEntidad(textoEntidad,entidadDebil);             
         }
         if(crearRelacion){
             Relacion nueva = new Relacion(relacionDebil,(int)event.getX(),(int)event.getY(),textoRelacion);
@@ -271,7 +268,8 @@ public class FXMLDocumentController implements Initializable {
                     }
                     diagrama.getAtributos().add(nueva);
                 }
-                guardarDiagrama(); 
+                guardarDiagrama();
+                
         }
         
         actualizarPanel();
@@ -389,7 +387,6 @@ public class FXMLDocumentController implements Initializable {
                                 ArrayList<Integer> y=diagrama.getElementos().get(i).getPosicionesY();
                                 if (x.get(0) < posX && x.get(1) > posX && y.get(0) < posY && y.get(x.size()-1) > posY) {
                                     if(figuraEnMovimiento==false){
-                                        System.out.println("Entre");
                                         agregacionAuxiliar=(Agregacion)diagrama.getElementos().get(i);
                                         agregacionEncontradaMover = true;
                                     }
@@ -483,14 +480,26 @@ public class FXMLDocumentController implements Initializable {
             for(int i = 0; i<diagrama.getElementos().size();i++){
                     if(diagrama.getElementos().get(i) instanceof Agregacion){
                     Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
-                    if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
-                        ArrayList<Integer> n=agregacion.getPosicionesX();
-                        ArrayList<Integer> n2=agregacion.getPosicionesY();
-                        encontrado=false;
-                        if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY && n2.get(3)+5 >= posY){
-                            return true;
-                        }
-                    }  
+                    if((agregacion.getRelacion().getElementos().size())==2){
+                        if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
+                            ArrayList<Integer> n=agregacion.getPosicionesX();
+                            ArrayList<Integer> n2=agregacion.getPosicionesY();
+                            encontrado=false;
+                            if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY && n2.get(3)+5 >= posY){
+                                return true;
+                            }
+                        } 
+                    }
+                    else{
+                        if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
+                            ArrayList<Integer> n=agregacion.getPosicionesX();
+                            ArrayList<Integer> n2=agregacion.getPosicionesY();
+                            encontrado=false;
+                            if(n.get(0)-5 <= posX && n.get(1)+5 >= posX && n2.get(0)-5 <= posY && n2.get(3)+5 >= posY){
+                                return true;
+                            }
+                        }                        
+                    }
                 }
             }
             return encontrado==true;
@@ -500,7 +509,7 @@ public class FXMLDocumentController implements Initializable {
             for(int i = 0; i<diagrama.getElementos().size();i++){
                     if(diagrama.getElementos().get(i) instanceof Agregacion){
                     Agregacion agregacion = (Agregacion)diagrama.getElementos().get(i);
-                    if((agregacion.getRelacion().getElementos().get(0).equals(entidad))||(agregacion.getRelacion().getElementos().get(1).equals(entidad))){
+                    if((agregacion.getRelacion().getElementos().get(0).equals(entidad))){
                         ArrayList<Integer> n=agregacion.getPosicionesX();
                         ArrayList<Integer> n2=agregacion.getPosicionesY();
                         encontrado=false;
@@ -829,7 +838,7 @@ public class FXMLDocumentController implements Initializable {
              if(enviar!= null){
                  String nombre = enviar.getName();
                  String extencion = nombre.substring(nombre.lastIndexOf(".")+1,enviar.getName().length());
-                 System.out.println(extencion);
+
                 if("png".equals(extencion)){
                     WritableImage wimi = new WritableImage(1274,683);
                     panelDibujo.snapshot(null, wimi);
@@ -1163,7 +1172,7 @@ public class FXMLDocumentController implements Initializable {
         stage.alwaysOnTopProperty();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
-        
+
     }
 
     
@@ -1172,6 +1181,7 @@ public class FXMLDocumentController implements Initializable {
             this.elementosDisponibles = new ArrayList<>();
             elementosDisponibles.add(elementos.get(0));
             elementosDisponibles.add(elementos.get(1));
+            this.participacion=participacion;
         }
         else{
             this.participacion=participacion;

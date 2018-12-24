@@ -70,7 +70,10 @@ public class RelacionesController implements Initializable {
                     this.entidadFuerte.getItems().add(diagrama.getElementos().get(i).getNombre());
                 }
             }
-        }        
+        } 
+                 
+         this.participacion.add("Parcial");
+         this.participacion.add("Total");
         
     }
     /**
@@ -188,7 +191,8 @@ public class RelacionesController implements Initializable {
                             elementosSeleccionados.add(diagrama.getElementos().get(i));                            
                         }       
                     }  
-                
+
+
             }
             else{
                 for(int i=0;i<this.entidadesDisponibles.getItems().size();i++){
@@ -212,11 +216,14 @@ public class RelacionesController implements Initializable {
     @FXML
     private void Aceptar(){
         
-
+        
         if(validarNombreParaRelacion()){
             ArrayList<Elemento> elementosSeleccionados = elementosSeleccionados();
-
+            
             if((elementosSeleccionados.size())<=2){
+                if(this.participacion.get(0)==null){
+                    mensaje("es null");
+                }
                 if(textoRelacion.getText().isEmpty()){
                     controlador1.creacionRelacion(tipoDebil,nombreRelacionVacia(),this.participacion,this.diagrama,elementosSeleccionados);
                 } 

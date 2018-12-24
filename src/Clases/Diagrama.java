@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Clase diagrama
  * @author Cristobal Muñoz Salinas
  */
-public class Diagrama {
+public class Diagrama implements Cloneable {
     private ArrayList<Elemento> elementos;
 
     private ArrayList<Relacion> relaciones;
@@ -198,4 +198,16 @@ public class Diagrama {
         return (this.getAtributos().size()+this.getElementos().size()+this.getHerencias().size()+this.getRelaciones().size());
     }
     
+    
+    @Override
+    public Diagrama clone() throws CloneNotSupportedException{
+        Diagrama obj=(Diagrama)super.clone();
+        obj.atributos = (ArrayList<Atributo>)obj.atributos.clone();
+        obj.elementos = (ArrayList<Elemento>)obj.elementos.clone();
+        obj.herencias = (ArrayList<Herencia>)obj.herencias.clone();
+        obj.relaciones = (ArrayList<Relacion>)obj.relaciones.clone();
+        
+
+        return obj;
+    }
 }

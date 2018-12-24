@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
@@ -19,11 +20,15 @@
             <Button layoutX="39.0" layoutY="181.0" mnemonicParsing="false" onAction="#ventanaHerencia" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Herencia" />
             <Text fill="WHITE" layoutX="99.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Crear" />
             <Button layoutX="32.0" layoutY="397.0" mnemonicParsing="false" onAction="#ventanaModificarDiagrama" prefHeight="39.0" prefWidth="164.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Modificar y/o eliminar" />
-            <Button disable="true" layoutX="32.0" layoutY="442.0" mnemonicParsing="false" onAction="#rehacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Undo" />
-            <Button disable="true" layoutX="120.0" layoutY="442.0" mnemonicParsing="false" onAction="#deshacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Redo" />
+            <Button layoutX="32.0" layoutY="442.0" mnemonicParsing="false" onAction="#rehacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Undo" />
+            <Button layoutX="120.0" layoutY="442.0" mnemonicParsing="false" onAction="#deshacer" prefHeight="32.0" prefWidth="76.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Redo" />
             <Button layoutX="38.0" layoutY="224.0" mnemonicParsing="false" onAction="#ventanaAgregacion" prefHeight="32.0" prefWidth="152.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Agregación" />
          </children>
       </Pane>
-      <Pane fx:id="panelDibujo" layoutX="228.0" layoutY="3.0" onMouseClicked="#crear" onMouseDragged="#moverEnPanel" onMouseReleased="#mouseNoPresionado" prefHeight="683.0" prefWidth="1050.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0" />
+      <ScrollPane fx:id="panelScroll" layoutX="228.0" layoutY="3.0" prefHeight="663.0" prefWidth="1050.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
+         <content>
+            <Pane fx:id="panelDibujo" onMouseClicked="#crear" onMouseDragged="#moverEnPanel" onMouseReleased="#mouseNoPresionado" prefHeight="683.0" prefWidth="1050.0" />
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>

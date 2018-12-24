@@ -172,5 +172,15 @@ public class Atributo {
         this.crearAtributo();
         
     }    
-    
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        Object obj=null;
+        try{
+            obj=super.clone();
+        }
+        catch(CloneNotSupportedException ex){
+            System.out.println("no duplicado");
+        }
+        return obj;
+    }    
 }

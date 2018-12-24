@@ -6,7 +6,8 @@
 package Clases;
 
 import java.util.ArrayList;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * Clae RespaldoDiagrama
  * Se utiliza para la función "undo" y "redo".
@@ -27,7 +28,8 @@ public class RespaldoDiagrama {
         if(diagramas.size()==10){
             diagramas.remove(0);
         }
-        Diagrama a = crearCopiaDiagrama(diagrama);
+        Diagrama a = this.crearCopiaDiagrama(diagrama);
+
         diagramas.add(a);
         
     }
@@ -39,25 +41,63 @@ public class RespaldoDiagrama {
      * @return Copia del diagrama.
      */
     public Diagrama crearCopiaDiagrama(Diagrama diagrama){
+
+        
         ArrayList<Atributo> copiaAtributos = new ArrayList<>();
         ArrayList<Elemento> copiaElementos = new ArrayList<>();
         ArrayList<Relacion> copiaRelaciones = new ArrayList<>();
-        ArrayList<Herencia> copiaHerencias = new ArrayList<>();
+        ArrayList<Herencia> copiaHerencias = new ArrayList<>();        
+        
         
         for(int i =0; i< diagrama.getAtributos().size();i++){
-            copiaAtributos.add(copiaAtributo(diagrama.getAtributos().get(i)));
+            if(!diagrama.getAtributos().get(i).getGuardadoEn().equals("Compuesto")){
+                copiaAtributos.add(copiaAtributo(diagrama.getAtributos().get(i)));
+            } 
+        }
+        for(int i = 0; i< copiaAtributos.size();i++){
+            for(int j = 0; j<copiaAtributos.get(i).getAtributos().size();j++){
+                copiaAtributos.add(copiaAtributos.get(i).getAtributos().get(j));
+            }
         }
         for(int i = 0;i<diagrama.getElementos().size();i++){
             if(diagrama.getElementos().get(i) instanceof Entidad){
                 copiaElementos.add(copiarEntidad((Entidad)diagrama.getElementos().get(i),copiaAtributos));
             }
+            if(diagrama.getElementos().get(i) instanceof Agregacion){
+                if(((Agregacion)diagrama.getElementos().get(i)).getRelacion().getElementos().size()<=copiaElementos.size()){
+                    Relacion agregarRelacion = copiaRelacion(((Agregacion)diagrama.getElementos().get(i)).getRelacion(),copiaAtributos,copiaElementos);
+                    copiaRelaciones.add(agregarRelacion);
+                    Agregacion agregarAgregacion=copiarAgregacion((Agregacion)diagrama.getElementos().get(i),copiaRelaciones);
+                    copiaElementos.add(agregarAgregacion);
+                }
+                
+                
+            }
         }
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
-            copiaRelaciones.add(copiaRelacion(diagrama.getRelaciones().get(i),copiaAtributos,copiaElementos));
-        }
+            boolean creada = false;
+            for(int j = 0; j<copiaRelaciones.size();j++){
+                if(copiaRelaciones.get(j)!=null){
+                    if(diagrama.getRelaciones().get(i).getNombre().equals(copiaRelaciones.get(j).getNombre())){
+                        creada=true;
+                }
+                }
+                
+            }
+            if(creada==false){
+                Relacion agregar =copiaRelacion(diagrama.getRelaciones().get(i),copiaAtributos,copiaElementos);
+                copiaRelaciones.add(agregar);
+            }
+             
+                
+                         
+        }        
+        
         for(int i = 0; i< diagrama.getHerencias().size();i++){
             copiaHerencias.add(copiaHerencia(diagrama.getHerencias().get(i),copiaElementos));
-        }
+        }   
+
+        
         
         Diagrama agregar = new Diagrama();
         agregar.setAtributos(copiaAtributos);
@@ -65,12 +105,26 @@ public class RespaldoDiagrama {
         agregar.setHerencias(copiaHerencias);
         agregar.setRelaciones(copiaRelaciones);
         
-        
-        
-        if(diagramas.size()==10){
+        if(diagramas.size()==11){
             diagramas.remove(0);
         }
+
         return agregar;
+    }
+    private Agregacion copiarAgregacion(Agregacion agregacion,ArrayList<Relacion> relaciones){
+        int posx = agregacion.getPosX();
+        int posy = agregacion.getPosY();
+        String nombre = agregacion.getNombre();
+        Relacion relacionAgregacion = agregacion.getRelacion();
+        for(int i = 0; i<relaciones.size();i++){
+            if(relacionAgregacion.getNombre().equals(relaciones.get(i).getNombre())){
+                Relacion relacion=relaciones.get(i);
+                Agregacion copia = new Agregacion(relacion,nombre,posx,posy);                
+                copia.crearFigura();                
+                return copia;
+            }
+        }
+        return null;
     }
     private Herencia copiaHerencia(Herencia herencia,ArrayList<Elemento> elementosDiagrama){
         Elemento padre = null;
@@ -94,14 +148,8 @@ public class RespaldoDiagrama {
         Herencia copia = new Herencia((Entidad)padre,hijas,tipo,x,y);
         copia.crearHerencia();
         return copia;
-            
-        
-        
-        
-        
-        
     }
-    private Relacion copiaRelacion(Relacion relacion, ArrayList<Atributo> atributosDiagrama,ArrayList<Elemento> entidadesDiagrama){
+    private Relacion copiaRelacion(Relacion relacion,ArrayList<Atributo> atributosDiagrama,ArrayList<Elemento> entidadesDiagrama){
         boolean debil = relacion.isRelacionDebil();
         int x = relacion.getPosX();
         int y = relacion.getPosY();
@@ -109,14 +157,6 @@ public class RespaldoDiagrama {
 
         Relacion copia = new Relacion(debil,x,y,nombre);
         
-        ArrayList<String> cardinalidades = new ArrayList<>();
-        cardinalidades.add(relacion.getStringCardinalidades().get(0));
-        cardinalidades.add(relacion.getStringCardinalidades().get(1));
-        copia.setStringCardinalidades(cardinalidades);
-        ArrayList<String> participacion = new ArrayList<>();
-        participacion.add(relacion.getParticipacion().get(0));
-        participacion.add(relacion.getParticipacion().get(1));
-        copia.setParticipacion(participacion);
         for(int i = 0; i<relacion.getElementos().size();i++){
             for(int j = 0; j<entidadesDiagrama.size();j++){
                 if(relacion.getElementos().get(i).getNombre().equals(entidadesDiagrama.get(j).getNombre())){
@@ -130,12 +170,17 @@ public class RespaldoDiagrama {
                     copia.getAtributos().add(atributosDiagrama.get(j));
                 }
             }
-        }   
-
-
+        }
+        ArrayList<String> participacion = new ArrayList<>();
+        participacion.add(relacion.getParticipacion().get(0));
+        participacion.add(relacion.getParticipacion().get(1));
+        copia.setParticipacion(participacion);        
         copia.crearRelacion();
         copia.crearLineasunionAtributos();
-        return copia;        
+        return copia;          
+        
+        
+        
     }
     private Atributo copiaAtributo(Atributo atributo){        
         String tipo = atributo.getTipoAtributo();
@@ -163,12 +208,13 @@ public class RespaldoDiagrama {
         
         for(int i = 0; i<entidad.getAtributos().size();i++){
             for(int j = 0; j<atributosDiagrama.size();j++){
-                if(atributosDiagrama.get(j).getNombre().equals(entidad.getAtributos().get(i).getNombre())){
+                if(atributosDiagrama.get(j).getNombreOrigenAtributo().equals(entidad.getNombre()) && atributosDiagrama.get(j).getNombre().equals(entidad.getAtributos().get(i).getNombre())){
                     copia.getAtributos().add(atributosDiagrama.get(j));
+                    
                 }
             }
         }
-        copia.crearLineasunionAtributos();
+        copia.crearFigura();
         return copia;
         
         
@@ -186,7 +232,9 @@ public class RespaldoDiagrama {
      */
     public Diagrama retornarDiagrama(int i){
 
-        return crearCopiaDiagrama(diagramas.get(i));
+        Diagrama retornar = this.crearCopiaDiagrama(diagramas.get(i));
+
+        return retornar;
     }
     
     /**

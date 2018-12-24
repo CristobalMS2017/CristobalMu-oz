@@ -24,6 +24,7 @@ public class Agregacion extends Elemento {
         this.posY = posY;
         ordenarElementos();
         
+        
     }    
     private void ordenarElementos(){
         ArrayList<Integer> sumar = buscarElementosBordes(true);
@@ -186,13 +187,13 @@ public class Agregacion extends Elemento {
                 retornar.add((int)distancia(dx,posX)+5);
             }
             else{
-                retornar.add(5);
+                retornar.add(0);
             }
             if(dy<posY){
                 retornar.add((int)distancia(dy,posY)+5);
             }
             else{
-                retornar.add(5);
+                retornar.add(0);
             }       
             return retornar;
        }
@@ -235,5 +236,15 @@ public class Agregacion extends Elemento {
         this.ordenarElementos();
         this.crearFigura();
     }
-    
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        Object obj=null;
+        try{
+            obj=super.clone();
+        }
+        catch(CloneNotSupportedException ex){
+            System.out.println("no duplicado");
+        }
+        return obj;
+    }    
 }

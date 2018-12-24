@@ -138,6 +138,7 @@ public class Relacion {
            
 
             if(elementos.size()==2){
+                
                 PuntoCercano pc = new PuntoCercano(this.figura,this.elementos); 
                  for(int i = 0; i<elementos.size();i++){
                     Line linea = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i)),elementos.get(i).getPosicionesY().get(pc.pcEntidad(i)),
@@ -306,4 +307,15 @@ public class Relacion {
         this.posY=y;
         this.crearRelacion();
     }
+    @Override
+    public Object clone() throws CloneNotSupportedException{
+        Object obj=null;
+        try{
+            obj=super.clone();
+        }
+        catch(CloneNotSupportedException ex){
+            System.out.println("no duplicado");
+        }
+        return obj;
+    }    
 }
