@@ -182,23 +182,38 @@ public class AtributosController implements Initializable {
             
         }
         if(destinoAtributo.getValue().equals("Relación")){
-            
+            for(int i = 0; i<diagrama.getRelaciones().size();i++){
+                if(diagrama.getRelaciones().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
+                    for(int j=0;j<(diagrama.getRelaciones().get(i)).getAtributos().size();j++){
+                        if(diagrama.getRelaciones().get(i).getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
+                            mensaje("Nombre registrado anteriormente en atributos del elemento seleccionado"
+                                    + "\nPor favor, intente nuevamente.");
+                            return false;
+                        }
+                    }
+                }
+            }            
         }
         if(destinoAtributo.getValue().equals("Atributo")){
-            
-        }
-        /*
-        for(int i=0;i<diagrama.getAtributos().size();i++){
-            if(diagrama.getAtributos().get(i).getNombre().equals(textoAtributo.getText())){
-                return false;
-            }
-            for(int j=0; j<diagrama.getAtributos().get(i).getAtributos().size();j++){
-                if(diagrama.getAtributos().get(i).getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
-                    return false;
+            for(int i = 0; i<diagrama.getAtributos().size();i++){
+                if(diagrama.getAtributos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){
+                    if(!diagrama.getAtributos().get(i).getNombre().equals(textoAtributo.getText())){
+                        for(int j=0;j<(diagrama.getAtributos().get(i)).getAtributos().size();j++){
+                            if((diagrama.getAtributos().get(i)).getAtributos().get(j).getNombre().equals(textoAtributo.getText())){
+                                mensaje("Nombre registrado anteriormente en atributos del elemento seleccionado"
+                                        + "\nPor favor, intente nuevamente.");
+                                return false;
+                            }
+                        }
+                    }
+                    else{
+                        mensaje("Nombre registrado en atributo padre. "
+                                + "\nPor favor, intente con otro nombre.");
+                        return false;
+                    }
                 }
-            }
-            
-        }*/
+            }            
+        }
         return true;
     } 
     private void removerAtributoEnDiagrama(Atributo atributo){

@@ -86,7 +86,7 @@ public class FXMLDocumentController implements Initializable {
     private boolean relacionDebil;
     ArrayList<String> participacion;
     boolean figuraEnMovimiento=false;
-    
+    boolean guardarDiagrama = false;
     
     
     /**
@@ -177,10 +177,10 @@ public class FXMLDocumentController implements Initializable {
                 panelDibujo.getChildren().addAll(nueva.getPuntosDeControl());
             }
             diagrama.getElementos().add(nueva);  
-            guardarDiagrama(); 
             ventanaAtributosEntidad(textoEntidad,entidadDebil);             
         }
         if(crearRelacion){
+            
             Relacion nueva = new Relacion(relacionDebil,(int)event.getX(),(int)event.getY(),textoRelacion);
             for(int i = 0; i<elementosDisponibles.size();i++){
                     nueva.getElementos().add(elementosDisponibles.get(i));
@@ -196,6 +196,7 @@ public class FXMLDocumentController implements Initializable {
                     herenciaAuxiliar.getTipoHerencia(),(int)event.getX(),(int)event.getY());
             nueva.crearHerencia();
             diagrama.getHerencias().add(nueva);
+            verificarAtributosHerencia();
             guardarDiagrama(); 
             
         }
@@ -218,7 +219,7 @@ public class FXMLDocumentController implements Initializable {
                             diagrama.getAtributos().add(nueva);
                             if(entidadDebil){
                                 relacionEntidadDebil(comboBoxEntidadesRelaciones);
-                                entidadDebil=false;
+                                
                             }
                             
                         }
@@ -268,7 +269,12 @@ public class FXMLDocumentController implements Initializable {
                     }
                     diagrama.getAtributos().add(nueva);
                 }
-                guardarDiagrama();
+                verificarAtributosHerencia();
+                if(!entidadDebil){
+                    guardarDiagrama();
+                }
+                entidadDebil=false;
+                
                 
         }
         
@@ -885,248 +891,59 @@ public class FXMLDocumentController implements Initializable {
              
 
              }
-             
-        
-
-  
-    }  
-    private boolean sobreposicionHerencia(Herencia herencia){
-        
-        
-        return true;
-    }    
-    private boolean sobreposicionAtributo(Atributo atributo){
-    /*        for(int i=0;i<diagrama.getEntidades().size();i++){
-                ArrayList<Integer> x=diagrama.getEntidades().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> y=diagrama.getEntidades().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<atributo.getFigura().getPosicionesX().size();j++){
-                    int posX = atributo.getFigura().getPosicionesX().get(j);
-                    int posY = atributo.getFigura().getPosicionesY().get(j);
-                    if (x.get(0)-5 <= posX && x.get(1)+5 >= posX && y.get(0)-5 <= posY && y.get(3)+5 >= posY) {
-                            return false;
-                        }
-                }    
-            } 
-            for(int j=0;j<atributo.getFigura().getPosicionesX().size();j++){
-                int posX=atributo.getFigura().getPosicionesX().get(j);
-                int posY = atributo.getFigura().getPosicionesY().get(j);
-                for (int i=0; i<diagrama.getRelaciones().size();i++){
-                    ArrayList<Integer> x=diagrama.getRelaciones().get(i).getFigura().getPosicionesX();
-                    ArrayList<Integer> y=diagrama.getRelaciones().get(i).getFigura().getPosicionesY();
-                    if (diagrama.getRelaciones().get(i).getEntidad().size()==3){
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(0) > posY) {
-                            return false;
-                        }                         
-                    }
-                    else{
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(3) > posY) {
-                            return false;
-                        }                         
-                    }
-
-                } 
-            }  
-
-            ArrayList<Integer> x=atributo.getFigura().getPosicionesX();
-            ArrayList<Integer> y=atributo.getFigura().getPosicionesY();
-            for(int i=0;i<diagrama.getEntidades().size();i++){
-                ArrayList<Integer> Ex=diagrama.getEntidades().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> Ey=diagrama.getEntidades().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<Ex.size();j++){
-                    int posX = Ex.get(j);
-                    int posY = Ey.get(j);
-                    if (x.get(0) <= posX && x.get(1) >= posX && y.get(0) <= posY && y.get(3) >= posY) {
-                            return false;
-                        }
-                }    
-            } 
-
-            for(int i=0;i<diagrama.getAtributos().size();i++){
-                ArrayList<Integer> Ex=diagrama.getAtributos().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> Ey=diagrama.getAtributos().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<Ex.size();j++){
-                    int posX = Ex.get(j);
-                    int posY = Ey.get(j);
-                    if (x.get(0) <= posX && x.get(1)>= posX && y.get(2) <= posY && y.get(3) >= posY) {
-                            return false;
-                        }
-                }    
-            }             
-
-*/
-        return true;
-    }    
-
-    private boolean sobreposicionRelacion(Relacion relacion){
-        /*    for(int i=0;i<diagrama.getEntidades().size();i++){
-                ArrayList<Integer> x=diagrama.getEntidades().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> y=diagrama.getEntidades().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<relacion.getFigura().getPosicionesX().size();j++){
-                    int posX = relacion.getFigura().getPosicionesX().get(j);
-                    int posY = relacion.getFigura().getPosicionesY().get(j);
-                    if (x.get(0)-5 <= posX && x.get(1)+5 >= posX && y.get(0)-5 <= posY && y.get(3)+5 >= posY) {
-                            return false;
-                        }
-                }    
-            }
-            for(int j=0;j<relacion.getFigura().getPosicionesX().size();j++){
-                int posX=relacion.getFigura().getPosicionesX().get(j);
-                int posY = relacion.getFigura().getPosicionesY().get(j);
-                for (int i=0; i<diagrama.getRelaciones().size();i++){
-                    ArrayList<Integer> x=diagrama.getRelaciones().get(i).getFigura().getPosicionesX();
-                    ArrayList<Integer> y=diagrama.getRelaciones().get(i).getFigura().getPosicionesY();
-                    if (diagrama.getRelaciones().get(i).getEntidad().size()==3){
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(0) > posY) {
-                            return false;
-                        }                         
-                    }
-                    else{
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(3) > posY) {
-                            return false;
-                        }                         
-                    }
-
-                } 
-            }
-            ArrayList<Integer> x=relacion.getFigura().getPosicionesX();
-            ArrayList<Integer> y=relacion.getFigura().getPosicionesY();
-            for(int j=0;j<diagrama.getRelaciones().size();j++){
-                ArrayList<Integer> rX=diagrama.getRelaciones().get(j).getFigura().getPosicionesX();
-                ArrayList<Integer> rY=diagrama.getRelaciones().get(j).getFigura().getPosicionesY();
-                for (int i=0; i<rX.size();i++){
-                    int posX = rX.get(i);
-                    int posY = rY.get(i);
-                    if (relacion.getEntidad().size()==3){
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(0) > posY) {
-                            return false;
-                        }                         
-                    }
-                    else{
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(3) > posY) {
-                            return false;
-                        }                         
-                    }
-
-                } 
-            }
-            for(int j=0;j<diagrama.getEntidades().size();j++){
-                ArrayList<Integer> rX=diagrama.getEntidades().get(j).getFigura().getPosicionesX();
-                ArrayList<Integer> rY=diagrama.getEntidades().get(j).getFigura().getPosicionesY();
-                for (int i=0; i<rX.size();i++){
-                    int posX = rX.get(i);
-                    int posY = rY.get(i);
-                    if (relacion.getEntidad().size()==3){
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(0) > posY) {
-                            return false;
-                        }                         
-                    }
-                    else{
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(3) > posY) {
-                            return false;
-                        }                         
-                    }
-
-                } 
-            }
-            for(int j=0;j<diagrama.getAtributos().size();j++){
-                ArrayList<Integer> rX=diagrama.getAtributos().get(j).getFigura().getPosicionesX();
-                ArrayList<Integer> rY=diagrama.getAtributos().get(j).getFigura().getPosicionesY();
-                for (int i=0; i<rX.size();i++){
-                    int posX = rX.get(i);
-                    int posY = rY.get(i);
-                    if (relacion.getEntidad().size()==3){
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(0) > posY) {
-                            return false;
-                        }                         
-                    }
-                    else{
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(3) > posY) {
-                            return false;
-                        }                         
-                    }
-
-                } 
-               
-            }             
-            */
-            return true;   
-            }
-      
-    private boolean sobreposicionEntidad(Elemento entidad){
-            for(int i=0;i<diagrama.getElementos().size();i++){
-                ArrayList<Integer> x=diagrama.getElementos().get(i).getPosicionesX();
-                ArrayList<Integer> y=diagrama.getElementos().get(i).getPosicionesY();
-                for(int j=0;j<entidad.getPosicionesX().size();j++){
-                    int posX = entidad.getPosicionesX().get(j);
-                    int posY = entidad.getPosicionesY().get(j);
-                    if (x.get(0)-5 <= posX && x.get(1)+5 >= posX && y.get(0)-5 <= posY && y.get(3)+5 >= posY) {
-                            return false;
-                        }
-                }    
-            } 
-            /*
-            for(int j=0;j<entidad.getFigura().getPosicionesX().size();j++){
-                int posX=entidad.getFigura().getPosicionesX().get(j);
-                int posY = entidad.getFigura().getPosicionesY().get(j);
-                for (int i=0; i<diagrama.getRelaciones().size();i++){
-                    ArrayList<Integer> x=diagrama.getRelaciones().get(i).getFigura().getPosicionesX();
-                    ArrayList<Integer> y=diagrama.getRelaciones().get(i).getFigura().getPosicionesY();
-                    if (diagrama.getRelaciones().get(i).getEntidad().size()==3){
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(0) > posY) {
-                            return false;
-                        }                         
-                    }
-                    else{
-                        if (x.get(0) < posX && x.get(1) > posX && y.get(2) < posY && y.get(3) > posY) {
-                            return false;
-                        }                         
-                    }
-
-                } 
-            }  
-            ArrayList<Integer> x=entidad.getFigura().getPosicionesX();
-            ArrayList<Integer> y=entidad.getFigura().getPosicionesY();
-            for(int i=0;i<diagrama.getEntidades().size();i++){
-                ArrayList<Integer> Ex=diagrama.getEntidades().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> Ey=diagrama.getEntidades().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<entidad.getFigura().getPosicionesX().size();j++){
-                    int posX = Ex.get(j);
-                    int posY = Ey.get(j);
-                    if (x.get(0)-5 <= posX && x.get(1)+5 >= posX && y.get(0)-5 <= posY && y.get(3)+5 >= posY) {
-                            return false;
-                        }
-                }    
-            }
-            for(int i=0;i<diagrama.getRelaciones().size();i++){
-                ArrayList<Integer> Ex=diagrama.getRelaciones().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> Ey=diagrama.getRelaciones().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<Ex.size();j++){
-                    int posX = Ex.get(j);
-                    int posY = Ey.get(j);
-                    if (x.get(0)-5 <= posX && x.get(1)+5 >= posX && y.get(0)-5 <= posY && y.get(3)+5 >= posY) {
-                            return false;
-                        }
-                }    
-            } 
-            for(int i=0;i<diagrama.getAtributos().size();i++){
-                ArrayList<Integer> Ex=diagrama.getAtributos().get(i).getFigura().getPosicionesX();
-                ArrayList<Integer> Ey=diagrama.getAtributos().get(i).getFigura().getPosicionesY();
-                for(int j=0;j<Ex.size();j++){
-                    int posX = Ex.get(j);
-                    int posY = Ey.get(j);
-                    if (x.get(0)-5 <= posX && x.get(1)+5 >= posX && y.get(0)-5 <= posY && y.get(3)+5 >= posY) {
-                            return false;
-                        }
-                }    
-            }             
-            */
-        return true;    
-            
-    }
-
- 
- 
+    } 
     
+    private void eliminarAtributoEnDiagrama(Atributo atributo){
+        
+        for(int i=0;i<diagrama.getAtributos().size();i++){
+            if(diagrama.getAtributos().get(i).equals(atributo)){
+                diagrama.getAtributos().remove(i);
+            }
+        }
+        
+    }
+    private void eliminarAtributosEntidadesHijasPadre(ArrayList<Atributo> atributosPadre,Entidad entidad){
+        for(int i = 0 ; i< diagrama.getHerencias().size();i++){
+            if(diagrama.getHerencias().get(i).getEntidadPadre().equals(entidad)){
+                
+                for(int  j = 0 ; j<diagrama.getHerencias().get(i).getEntidadesHijas().size();j++){
+                    Entidad entidadHija = diagrama.getHerencias().get(i).getEntidadesHijas().get(j);
+                    for(int k  = 0 ; k<atributosPadre.size();k++){
+                        for(int l = 0 ; l<entidadHija.getAtributos().size();l++){
+                            if(atributosPadre.get(k).getNombre().equals(entidadHija.getAtributos().get(l).getNombre())){
+                                eliminarAtributoEnDiagrama(entidadHija.getAtributos().get(l));
+                                entidadHija.getAtributos().remove(l);
+                                entidadHija.crearLineasunionAtributos();
+                                l=l-1;
+                            }
+                        }
+                    }
+                    eliminarAtributosEntidadesHijasPadre(atributosPadre,entidadHija);
+                }
+            }
+        }
+        
+    }
+    private void verificarAtributosHerencia(){
+        for(int i = 0; i<diagrama.getHerencias().size();i++){
+            Entidad padre = diagrama.getHerencias().get(i).getEntidadPadre();
+            ArrayList<Atributo> atributosPadre = padre.getAtributos();
+            for(int j=0;j<diagrama.getHerencias().get(i).getEntidadesHijas().size();j++){
+                Entidad entidadHija = diagrama.getHerencias().get(i).getEntidadesHijas().get(j);
+                for(int k = 0; k<atributosPadre.size();k++){
+                    for(int l = 0;l<entidadHija.getAtributos().size();l++){
+                        if(atributosPadre.get(k).getNombre().equals(entidadHija.getAtributos().get(l).getNombre())){
+                            eliminarAtributoEnDiagrama(entidadHija.getAtributos().get(l));
+                            entidadHija.getAtributos().remove(l);
+                            entidadHija.crearLineasunionAtributos();
+                            l=l-1;
+                        }
+                    }
+                }
+                eliminarAtributosEntidadesHijasPadre(atributosPadre,entidadHija);
+            }    
+        }
+    }
     /**
      * Activa los puntos de control de las entidades y relaciones.
      */

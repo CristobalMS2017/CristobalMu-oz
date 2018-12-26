@@ -84,6 +84,9 @@ public class RelacionesController implements Initializable {
     public void recibirParametros(FXMLDocumentController controlador,Diagrama diagrama){
         this.diagrama=diagrama;
         this.controlador1=controlador;   
+        tipoRelacion.setValue("Fuerte");
+        tipoRelacion.setDisable(true);
+        this.tipoRelacion();        
         for(int i = 0; i<diagrama.getElementos().size();i++){
             if(diagrama.getElementos().get(i) instanceof Entidad){
                 if(!((Entidad)diagrama.getElementos().get(i)).isDebil()){

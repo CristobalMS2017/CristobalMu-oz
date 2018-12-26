@@ -6,6 +6,7 @@
 package Controller;
 
 import Clases.Agregacion;
+import Clases.Atributo;
 import Clases.Diagrama;
 import Clases.Entidad;
 import Clases.Relacion;
@@ -154,7 +155,7 @@ public class ModificarDiagramaController implements Initializable {
             if(((String)tipoOrigenAtributo.getValue()).equals("Entidad")&tipoOrigenAtributo.getValue()!=null){
                 for(int i = 0; i<diagrama.getElementos().size();i++){
                     if(((String)origenAtributo.getValue()).equals(diagrama.getElementos().get(i).getNombre())){
-                        for(int j = 0; j<((Entidad)diagrama.getElementos().get(i)).getAtributos().size();j++){
+                        for(int j = 1; j<((Entidad)diagrama.getElementos().get(i)).getAtributos().size();j++){
                             comboBoxAtributo.getItems().add(((Entidad)diagrama.getElementos().get(i)).getAtributos().get(j).getNombre());
                         }
                     }
@@ -428,7 +429,15 @@ public class ModificarDiagramaController implements Initializable {
         }
         
     }    
-    
+    private void eliminarAtributoEnDiagrama(Atributo atributo){
+        for(int i = 0; i<diagrama.getAtributos().size();i++){
+            if(diagrama.getAtributos().get(i).equals(atributo)){
+                diagrama.getAtributos().remove(i);
+                i=i-1;
+            }
+        }
+        
+    }
     
     
     /**
@@ -439,11 +448,13 @@ public class ModificarDiagramaController implements Initializable {
     @FXML
     private void modificarEntidad(){
         if(diagrama.getElementos().get(entidadSeleccionada) instanceof Entidad){
-            for(int i = 1; i<((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().size();i++){
+            for(int i = 0; i<((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().size();i++){
                 if(!listaAtributosEntidad.getItems().isEmpty()){
                     if(listaAtributosEntidad.getItems().get(i).isSelected()==false){
-                        ((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().get(i);
-                        ((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().remove(i);
+                        this.eliminarAtributoEnDiagrama(((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().get(i+1));
+                        
+                        ((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().remove(i+1);
+                        ((Entidad)diagrama.getElementos().get(entidadSeleccionada)).crearLineasunionAtributos();
 
                     }
                 }
