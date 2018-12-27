@@ -23,54 +23,7 @@ public class Figura {
     private Text textoFigura;
     
     private ArrayList<Integer> puntosOcupados= new ArrayList<>();
-    public void crearFigura(boolean debil,int tipo,String nombre, int posX,int posY){
-
-        if (tipo == -1){//Rectangulo
-            int agrandar=nombre.length()*5;
-            posicionesX.add(posX);
-            posicionesY.add(posY);
-            posicionesX.add(posX+80+agrandar);      
-            posicionesY.add(posY);
-            posicionesX.add(posX);
-            posicionesY.add(posY+40);
-            posicionesX.add(posX+80+agrandar);
-            posicionesY.add(posY+40);
-            
-            puntoMedioX = posX+(80+agrandar)/2;
-            puntoMedioY = posY+20;
-
-            
-
-           
-            lineas.add(new Line(posX, posY, posX+80+agrandar, posY));
-            lineas.add(new Line(posX+80+agrandar, posY, posX+80+agrandar, posY+40));
-            lineas.add(new Line(posX+80+agrandar, posY+40, posX, posY+40));
-            lineas.add(new Line(posX, posY+40, posX, posY)); 
-            
-            if(debil){
-                lineas.add(new Line(posX+3, posY+3, posX+80+agrandar-3, posY+3));
-                lineas.add(new Line(posX+80+agrandar-3, posY+3, posX+80+agrandar-3, posY+40-3));
-                lineas.add(new Line(posX+80+agrandar-3, posY+40+-3, posX+3, posY+40-3));
-                lineas.add(new Line(posX+3, posY+40-3, posX+3, posY+3)); 
-                            
-            }
-
-            crearPuntosDeControl();
-            
-            textoFigura = new Text(posX,puntoMedioY,nombre);
-            textoFigura.setWrappingWidth(80+agrandar);
-            textoFigura.setTextAlignment(TextAlignment.CENTER);            
-            textoFigura.setFont(new Font(14));
-            
-            
-            
-            
-            
-            
-
-        }
-        if(tipo == 2 || tipo == 1){//Rombo
-            
+    public void crearFigura(boolean debil,String nombre, int posX,int posY){           
             int agrandar=nombre.length()*4;
             puntoMedioX = posX+(50+agrandar)/2;
             puntoMedioY = posY;             
@@ -105,7 +58,7 @@ public class Figura {
             textoFigura.setTextAlignment(TextAlignment.CENTER);  
             textoFigura.setFont(new Font(14)); 
            
-        }         
+                 
     }
     private void crearPuntosDeControl(){
         for(int i=0; i<posicionesX.size();i++){

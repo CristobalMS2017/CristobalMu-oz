@@ -157,8 +157,7 @@ public class Herencia {
     
     
     /**
-     * Se crea las lineas y curvas de la herencia
-     * @return 
+     * Se crea las lineas y curvas de la herencia 
      */
     public void crearHerencia(){
         unionesEntidades.clear();
@@ -280,17 +279,4 @@ public class Herencia {
         this.crearHerencia();
         
     }    
-    
-    @Override
-    public Object clone() throws CloneNotSupportedException{
-        Object obj=null;
-        try{
-            obj=super.clone();
-        }
-        catch(CloneNotSupportedException ex){
-            System.out.println("no duplicado");
-        }
-        return obj;
-    }    
-    
 }

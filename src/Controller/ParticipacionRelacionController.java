@@ -34,7 +34,8 @@ public class ParticipacionRelacionController implements Initializable {
     @FXML private Button cerrarVentana;
 
     private RelacionesController controlador1;
-
+    boolean modificacion = false;
+    private ModificarDiagramaController controladorModificacion;
 
     /**
      * Se recibe el controlador y diagrama principal.
@@ -60,20 +61,53 @@ public class ParticipacionRelacionController implements Initializable {
         this.participacion2.getItems().addAll("Total","Parcial");
 
     }
+    public void recibirParametrosModificacion(ModificarDiagramaController controlador,String relacion,Diagrama diagrama){
+        controladorModificacion=controlador;
+        modificacion=true;
+        for(int i = 0; i<diagrama.getRelaciones().size();i++){
+            if(relacion.equals(diagrama.getRelaciones().get(i).getNombre())){
+                if(diagrama.getRelaciones().get(i).getElementos().size()==1){
+                    this.elemento1.setText(diagrama.getRelaciones().get(i).getElementos().get(0).getNombre());
+                    this.elemento2.setText(diagrama.getRelaciones().get(i).getElementos().get(0).getNombre());            
+                }
+                else{
+                    this.elemento1.setText(diagrama.getRelaciones().get(i).getElementos().get(0).getNombre());
+                    this.elemento2.setText(diagrama.getRelaciones().get(i).getElementos().get(1).getNombre());            
+                }
+
+                
+            }
+            
+        }
+                        this.relacion1.setText(relacion);
+                this.relacion2.setText(relacion);
+                this.participacion1.getItems().addAll("Total","Parcial");
+                this.participacion2.getItems().addAll("Total","Parcial"); 
+        
+    }
     @FXML
     private void aceptar(){
-        if((this.participacion1.getValue()!=null) && (this.participacion2.getValue()!=null)){
-            ArrayList<String> participacion = new ArrayList<>();
-            participacion.add((String)this.participacion1.getValue());
-            participacion.add((String)this.participacion2.getValue());
-            this.controlador1.obtenerParticipacion(participacion);
-            Stage stage = (Stage)cerrarVentana.getScene().getWindow();
-            stage.close();   
+            if((this.participacion1.getValue()!=null) && (this.participacion2.getValue()!=null)){
+                ArrayList<String> participacion = new ArrayList<>();
+                participacion.add((String)this.participacion1.getValue());
+                participacion.add((String)this.participacion2.getValue());
+                if(modificacion){
+           
+                    this.controladorModificacion.modificacionParticipacion(participacion);
+                }
+                else{
+                    this.controlador1.obtenerParticipacion(participacion);
+                }
+                
+                Stage stage = (Stage)cerrarVentana.getScene().getWindow();
+                stage.close();   
+
+            }
+            else{
+                mensaje("Complete los datos solicitados.");
+            }            
         
-        }
-        else{
-            mensaje("Complete los datos solicitados.");
-        }
+
     }
     /**
      * Funcion que permite crear una ventana de alerta
@@ -93,6 +127,8 @@ public class ParticipacionRelacionController implements Initializable {
     
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {

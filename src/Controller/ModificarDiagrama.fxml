@@ -50,7 +50,7 @@
                         <Text layoutX="216.0" layoutY="159.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Atributos" />
                         <Button layoutX="43.0" layoutY="281.0" mnemonicParsing="false" onAction="#modificarRelacion" prefHeight="33.0" prefWidth="119.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Modificar Relación" />
                         <Button layoutX="169.0" layoutY="281.0" mnemonicParsing="false" onAction="#eliminarRelacion" prefHeight="33.0" prefWidth="110.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Eliminar Relación" />
-                        <Button layoutX="91.0" layoutY="113.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="151.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Participación" />
+                        <Button layoutX="91.0" layoutY="113.0" mnemonicParsing="false" onAction="#ventanaParticipacion" prefHeight="25.0" prefWidth="151.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Participación" />
                      </children>
                   </AnchorPane>
             </content>

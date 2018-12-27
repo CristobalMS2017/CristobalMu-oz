@@ -6,8 +6,6 @@
 package Clases;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  * Clae RespaldoDiagrama
  * Se utiliza para la función "undo" y "redo".

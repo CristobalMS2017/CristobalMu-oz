@@ -107,7 +107,7 @@ public class Relacion {
                 elementos.remove(1);
                 elementos.add(auxiliar);                
             }
-            figura.crearFigura(true,elementos.size(), this.nombre, this.getPosX(), this.getPosY());
+            figura.crearFigura(true, this.nombre, this.getPosX(), this.getPosY());
             PuntoCercano pc = new PuntoCercano(this.figura,this.elementos);  
             
             Line linea = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(0)),elementos.get(0).getPosicionesY().get(pc.pcEntidad(0)),
@@ -134,9 +134,7 @@ public class Relacion {
             
         }        
         else{
-            figura.crearFigura(false,elementos.size(), this.nombre, this.getPosX(), this.getPosY());                     
-           
-
+            figura.crearFigura(false, this.nombre, this.getPosX(), this.getPosY());                     
             if(elementos.size()==2){
                 
                 PuntoCercano pc = new PuntoCercano(this.figura,this.elementos); 

@@ -36,6 +36,7 @@ public class Entidad extends Elemento {
         this.crearLineasunionAtributos();
     }    
     
+    @Override
     public void crearFigura(){
         this.posicionesX.clear();
         this.posicionesY.clear();

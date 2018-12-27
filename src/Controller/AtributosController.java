@@ -121,13 +121,6 @@ public class AtributosController implements Initializable {
         }
     }
     private boolean validarNombreParaAtributo(){
-        
-        
-        
-        
-        
-        
-        
         if(destinoAtributo.getValue().equals("Entidad")){
             for(int i = 0; i<diagrama.getElementos().size();i++){
                 if(diagrama.getElementos().get(i).getNombre().equals(entidadesAtributosRelaciones.getValue())){

@@ -51,17 +51,10 @@ public class FXMLDocumentController implements Initializable {
     private String textoAgregacion;
     @FXML private CheckBox puntosDeControl; //Activa y desactiva los puntos de control.    
     @FXML private ArrayList<Elemento> elementosDisponibles;//Guarda las entidades seleccionadas para crear una relación.
-
-    
-    
     private String tipoAtributo;//Guarda el tipo de atributo
-
     private String comboBoxEntidadesRelaciones;//Guarda el nombre del elemento en que se guardará el atributo.
     private String destinoAtributo;//Guarda el destino del atributo(en entidad, relación o atributo).
     private Diagrama diagrama = new Diagrama(); //se crea un diagrama donde se guardan las entidades y relaciones.
-
-
-
     private boolean crearEntidad = false;//Permite saber si el usuario seleccionó el boton para crear una entidad
     private boolean moverFiguras = true;//Se utiliza para activar o desactivar el movimiento de las figuras(entidades, relaciones, atributos y herencias).
     private boolean crearRelacion = false;//Permite saber si el usuario seleccionó el botón para crear una relacion.
@@ -80,17 +73,17 @@ public class FXMLDocumentController implements Initializable {
     private Herencia herenciaAuxiliar;//Guarda la herencia original antes de ser movida.
     private Relacion relacionAgregacion; //se guarda la relacion que sera parte de la agregación.
     private Agregacion agregacionAuxiliar;//Guarda la agregacion original antes de ser movida.
-    FXMLDocumentController controlador;
+    FXMLDocumentController controlador;//Controlador de la ventana principal
     RespaldoDiagrama listaDiagramas = new RespaldoDiagrama();//Guarda los diagramas con el proposito de rehacer y deshacer.
     int desHacer = 0;//Guarda la posción del diagrama al que se llamó para volver a crearlo o rehacerlo.
     private boolean relacionDebil;
     ArrayList<String> participacion;
     boolean figuraEnMovimiento=false;
-    boolean guardarDiagrama = false;
+    boolean guardarDiagrama = false;//se utiliza al momento de crear una entidad debil o fuerte.
     
     
     /**
-     * Guarda el diagrama una ves que se haya hecho una modificaciíon
+     * Guarda el diagrama una vez que se haya hecho una modificaciíon
      */
     public void guardarDiagrama(){
        listaDiagramas.removerPosteriores(desHacer);
@@ -128,13 +121,18 @@ public class FXMLDocumentController implements Initializable {
         actualizarPanel();
         
     }
-    
+    /**
+     * Revisa si en la posición donde se hizo doble click hay una cardinalidad
+     * y cambia el tipo.
+     * @param posX posición x del doble click
+     * @param posY posición y del doble click
+     */
     private void modificarCardinalidad(double posX,double posY){
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
             for(int j=0; j<diagrama.getRelaciones().get(i).getCardinalidades().size();j++){
                 double x=diagrama.getRelaciones().get(i).getCardinalidades().get(j).getX();
                 double y=diagrama.getRelaciones().get(i).getCardinalidades().get(j).getY();
-                if((x-10)<=posX &&(x+20)>=posX&&(y+10)>=posY&&(y-20)<=posY){
+                if((x-10)<=posX &&(x+20)>=posX&&(y+10)>=posY&&(y-20)<=posY){                    
                     if(diagrama.getRelaciones().get(i).getCardinalidades().get(j).getText().equals("N")){
                         diagrama.getRelaciones().get(i).getStringCardinalidades().set(j,"1");
                         diagrama.getRelaciones().get(i).getCardinalidades().get(j).setText("1");
@@ -287,7 +285,12 @@ public class FXMLDocumentController implements Initializable {
         crearHerencia = false;
         crearAgregacion = false;
     }
-
+    /**
+     * Revisa si un atributo pertenece a una relación contenida en 
+     * una agregacion. Si es asi, se actualizará el tamaño de la agregacion encontrada.
+     * @param relacion relacion que contiene el nuevo atributo.
+     * @param atributo atributo recien creado.
+     */
     private void atributoAnadidoRelacionAgregacion(Relacion relacion,Atributo atributo){
             for(int i = 0; i<diagrama.getElementos().size();i++){
                 if(diagrama.getElementos().get(i) instanceof Agregacion){
@@ -304,6 +307,12 @@ public class FXMLDocumentController implements Initializable {
                 }
             }         
     }
+    /**
+     * Revisa si un atributo pertenece a una Entidad contenida en 
+     * una agregacion. Si es asi, se actualizará el tamaño de la agregacion encontrada.
+     * @param entidad entidad que contiene el nuevo atributo.
+     * @param atributo atributo recien creado.
+     */    
     private void atributoAnadidoEntidadAgregacion(Entidad entidad,Atributo atributo){
             for(int i = 0; i<diagrama.getElementos().size();i++){
                 if(diagrama.getElementos().get(i) instanceof Agregacion){
@@ -476,7 +485,9 @@ public class FXMLDocumentController implements Initializable {
     }   
     
     /**
-     * Revisa si una entidad esta agregada en una agregacion.
+     * Revisa si una entidad esta agregada en una agregacion. Si lo esta,
+     * se procede a bloquear las agregaciones, con el proposito de que
+     * la entidad pueda moverse dentro de una de estas.
      * @param entidad Entidad que se busca en las agregaciones.
      * @return true si la encuentra y false si no la encuentra.
      */
@@ -528,6 +539,15 @@ public class FXMLDocumentController implements Initializable {
             return encontrado==true;
         }    
     }
+    /**
+     * Revisa si un atributo  esta contenido en una agregacion. Si lo esta,
+     * se procede a bloquear las agregaciones, con el proposito de que
+     * el atributo pueda moverse dentro de una de estas.
+     * @param atributo Atributo que se busca en las agregaciones.
+     * @param limitacion si es 0 revisa si el atributo se encuentra dentro de la agregación
+     *                   si es 1 revisa si el atributo esta dentro de los limites de la agregacion.
+     * @return true si la encuentra y false si no la encuentra.
+     */    
     private boolean atributoEnAgregacion(Atributo atributo,int posX,int posY,int limitacion){
         boolean encontrado=true;
 
@@ -615,28 +635,11 @@ public class FXMLDocumentController implements Initializable {
 
                         }                        
                     }
-                }
-                
-                
-                
-                
-                
-                
-                
-                
-                
+                }   
             }
-        }
-        
-        return encontrado==true;
-        
-        
-        
-    }
-    
-    
-    
-    
+        }        
+        return encontrado==true;       
+    }    
     /**
      * Revisa si una relacion esta agregada en una agregacion.
      * @param relacion Relacion que se busca en las agregaciones.
@@ -730,17 +733,11 @@ public class FXMLDocumentController implements Initializable {
         }
         return false;
     }    
-    private boolean dentroDelPanel(ArrayList<Integer> x,ArrayList<Integer> y){
-        int contador = 0;
-        for(int i = 0; i<x.size();i++){
-            if(0<=x.get(i) && x.get(i)<=1050 && 0<=y.get(i) && y.get(i)<= 687){
-                contador++;
-            }            
-        }
-        return contador==x.size();
-        
-
-    }
+    /**
+     * Revisa si una agregación se encuentra en otra.
+     * @param agregacion agregacion buscada
+     * @return 
+     */
     private boolean agregacionEnAgregacion(Agregacion agregacion){
         
         for(int i = 0; i<diagrama.getElementos().size();i++){
@@ -752,48 +749,8 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         return true;
-        
-        
-    }
-    private void moverAgregacionEnElementos(Agregacion agregacion){
-        for(int i =0; i<diagrama.getRelaciones().size();i++){
-            for(int j = 0; j<diagrama.getRelaciones().get(i).getElementos().size(); j++){
-                if(diagrama.getRelaciones().get(i).getElementos().get(j).getNombre().equals(agregacion.getNombre())){
-                    
-                    diagrama.getRelaciones().get(i).getElementos().set(j, agregacion);
-                    diagrama.getRelaciones().get(i).crearRelacion();
-                }
-            }
-        }        
-    }
-    private void moverEntidadEnElementos(Entidad entidad){
-        for(int i =0; i<diagrama.getRelaciones().size();i++){
-            for(int j = 0; j<diagrama.getRelaciones().get(i).getElementos().size(); j++){
-                if(diagrama.getRelaciones().get(i).getElementos().get(j).getNombre().equals(entidad.getNombre())){
-                    
-                    diagrama.getRelaciones().get(i).getElementos().set(j, entidad);
-                    diagrama.getRelaciones().get(i).crearRelacion();
-                }
-            }
-        }
-        for(int i =0; i<diagrama.getHerencias().size();i++){
-            if(entidad.getNombre().equals(diagrama.getHerencias().get(i).getEntidadPadre().getNombre())){
-                diagrama.getHerencias().get(i).setEntidadPadre(entidad);
-                diagrama.getHerencias().get(i).crearHerencia();
-            }
-            
-            for(int j = 0; j<diagrama.getHerencias().get(i).getEntidadesHijas().size(); j++){
-                if(diagrama.getHerencias().get(i).getEntidadesHijas().get(j).getNombre().equals(entidad.getNombre())){
-                    
-                    diagrama.getHerencias().get(i).getEntidadesHijas().set(j, entidad);
-                    diagrama.getHerencias().get(i).crearHerencia();
-                }
-            }
-        }
-        
-    }
-    
 
+    } 
     /**
      * Limpia el panel de dibujo por completo
      * tambien se limpia el diagrama
@@ -814,25 +771,9 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }     
-
-    private void removerAtributoEnDiagrama(Atributo atributo){
-
-            for(int i  = 0; i<diagrama.getAtributos().size(); i++){
-                if(atributo.getGuardadoEn().equals(diagrama.getAtributos().get(i).getGuardadoEn())){
-                    if(atributo.getNombreOrigenAtributo().equals(diagrama.getAtributos().get(i).getNombreOrigenAtributo())){
-                        if(atributo.getNombre().equals(diagrama.getAtributos().get(i).getNombre())){
-                            diagrama.getAtributos().remove(i);
-                        }
-                    }
-                }
-            }            
-        
-        
-
-    }
-     
+    
     /**
-     * Exporta el panel en un formato determinado
+     * Exporta el panel en un formato determinado (PDF O PNG).
      */
     @FXML
     private void exportarPanel(){
@@ -840,59 +781,55 @@ public class FXMLDocumentController implements Initializable {
 
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("PDF", "*.pdf"),
                 new FileChooser.ExtensionFilter("PNG", "*.png"));                                   
-             File enviar = fileChooser.showSaveDialog(panelDibujo.getScene().getWindow());
-             if(enviar!= null){
-                 String nombre = enviar.getName();
-                 String extencion = nombre.substring(nombre.lastIndexOf(".")+1,enviar.getName().length());
+        File enviar = fileChooser.showSaveDialog(panelDibujo.getScene().getWindow());
+        if(enviar!= null){
+            String nombre = enviar.getName();
+            String extencion = nombre.substring(nombre.lastIndexOf(".")+1,enviar.getName().length());
 
-                if("png".equals(extencion)){
-                    WritableImage wimi = new WritableImage(1274,683);
-                    panelDibujo.snapshot(null, wimi);
-                    try{
-                        ImageIO.write(SwingFXUtils.fromFXImage(wimi, null),"png",enviar);
+            if("png".equals(extencion)){
+                WritableImage wimi = new WritableImage(1274,683);
+                panelDibujo.snapshot(null, wimi);
+                try{
+                    ImageIO.write(SwingFXUtils.fromFXImage(wimi, null),"png",enviar);
 
-                    }catch (IOException s){
-                        mensaje("Error: "+s);
-                    }                 
-                } 
-                if("pdf".equals(extencion)){
-                    File file = new File("CanvasImage.png");
-                     WritableImage wim = new WritableImage(626,681);
-                     panelDibujo.snapshot(null, wim);
-                     try{
-                         ImageIO.write(SwingFXUtils.fromFXImage(wim, null),"png",file);
-
-                     }catch (IOException s){
-                         mensaje("Error: "+s);
-                     }                    
-                    
-                    
-                    PDDocument doc    = new PDDocument();
-                    PDPage page = new PDPage();
-                    PDImageXObject pdimage;
-                    PDPageContentStream content;
-                    try {
-                        pdimage = PDImageXObject.createFromFile("CanvasImage.png",doc);
-                        content = new PDPageContentStream(doc, page);
-                        content.drawImage(pdimage, -15, 100);
-                        content.close();
-                        doc.addPage(page);
-                        doc.save(enviar.getPath());
-                        doc.close();
-                        file.delete();
-                    } catch (IOException ex) {
-                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-                        
-                       
-                    }
-             }
-             
-
-             
-
-             }
+                }catch (IOException s){
+                    mensaje("Error: "+s);
+                }                 
+            } 
+            if("pdf".equals(extencion)){
+                File file = new File("CanvasImage.png");
+                WritableImage wim = new WritableImage(626,681);
+                panelDibujo.snapshot(null, wim);
+                try{
+                    ImageIO.write(SwingFXUtils.fromFXImage(wim, null),"png",file);
+                }catch (IOException s){
+                    mensaje("Error: "+s);
+                }                    
+        
+                PDDocument doc    = new PDDocument();
+                PDPage page = new PDPage();
+                PDImageXObject pdimage;
+                PDPageContentStream content;
+                try {
+                    pdimage = PDImageXObject.createFromFile("CanvasImage.png",doc);
+                    content = new PDPageContentStream(doc, page);
+                    content.drawImage(pdimage, -15, 100);
+                    content.close();
+                    doc.addPage(page);
+                    doc.save(enviar.getPath());
+                    doc.close();
+                    file.delete();
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);      
+                }
+            }
+        }
     } 
     
+    /**
+     * Elimina un atributo en el diagrama
+     * @param atributo 
+     */
     private void eliminarAtributoEnDiagrama(Atributo atributo){
         
         for(int i=0;i<diagrama.getAtributos().size();i++){
@@ -902,6 +839,12 @@ public class FXMLDocumentController implements Initializable {
         }
         
     }
+    /**
+     * revisa todas las herencias creadas y verifica el nombre
+     * de los atributos de hijas y padre(Que no tengan el mismo nombre que los atributos del padre).
+     * @param atributosPadre
+     * @param entidad 
+     */
     private void eliminarAtributosEntidadesHijasPadre(ArrayList<Atributo> atributosPadre,Entidad entidad){
         for(int i = 0 ; i< diagrama.getHerencias().size();i++){
             if(diagrama.getHerencias().get(i).getEntidadPadre().equals(entidad)){
@@ -924,6 +867,10 @@ public class FXMLDocumentController implements Initializable {
         }
         
     }
+    /**
+     * Verifica si los atributos de entidades hijas no
+     * tienen los mismos nombres que los atributos del padre.
+     */
     private void verificarAtributosHerencia(){
         for(int i = 0; i<diagrama.getHerencias().size();i++){
             Entidad padre = diagrama.getHerencias().get(i).getEntidadPadre();
@@ -960,7 +907,14 @@ public class FXMLDocumentController implements Initializable {
     public void mensaje(String texto){
         JOptionPane.showMessageDialog(null, texto);
     }
-
+    
+    
+    /**
+     * Obtiene los datos de la entidad enviados desde la ventana entidad.
+     * @param nombreEntidad nombre para la nueva entidad
+     * @param debil boleano que dice si es entidad debil o fuerte
+     * @param diagrama 
+     */
     public void obtenerEntidad(String nombreEntidad,boolean debil,Diagrama diagrama){
         this.diagrama=diagrama;
         textoEntidad=nombreEntidad;
@@ -992,7 +946,14 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
-    
+    /**
+     * Obtiene los datos para la creación de una relación, enviados desde la ventana relación.
+     * @param debil revisa si la relación es para entidad débil.
+     * @param nombreRelacion nombre para la nueva relación
+     * @param participacion participaciones de los elementos (total o parcial).
+     * @param diagrama
+     * @param elementos elementos que perteneceran a la nueva relación.
+     */
     public void creacionRelacion(boolean debil,String nombreRelacion,ArrayList<String> participacion,Diagrama diagrama,ArrayList<Elemento> elementos){
         if(debil){
             this.elementosDisponibles = new ArrayList<>();
@@ -1017,7 +978,11 @@ public class FXMLDocumentController implements Initializable {
             crearAgregacion = false;
     } 
 
-    
+    /**
+     * Acceso a ventana de creación de relación para entidad débil.
+     * @param nombreEntidad nombre entidad débil.
+     * @throws IOException 
+     */
     private void relacionEntidadDebil(String nombreEntidad) throws IOException{
             Stage stage = new Stage();
             stage.setTitle("Relación");
@@ -1033,6 +998,10 @@ public class FXMLDocumentController implements Initializable {
             stage.show();         
     }
     
+    /**
+     * ventana para pedir datos de relación.
+     * @throws IOException 
+     */
     @FXML
     private void ventanaRelacion() throws IOException{
         
@@ -1057,6 +1026,10 @@ public class FXMLDocumentController implements Initializable {
 
         
     }
+    /**
+     * ventana para la creación de un atributo.
+     * @throws IOException 
+     */
     @FXML
     private void ventanaAtributo() throws IOException{
         
@@ -1080,7 +1053,11 @@ public class FXMLDocumentController implements Initializable {
         }
 
         
-    }    
+    }   
+    /**
+     * Ventana para la creación de una herencia
+     * @throws IOException 
+     */
     @FXML
     private void ventanaHerencia() throws IOException{
         
@@ -1105,7 +1082,14 @@ public class FXMLDocumentController implements Initializable {
         
     }     
     
-    
+    /**
+     * Se obtienen los datos para la creación de un atributo envidados desde el controlador de la ventana.
+     * @param tipo tipo de atributo
+     * @param destino destino del atributo
+     * @param comboBox elemento al que pertenecera
+     * @param diagrama
+     * @param textoAtributo nombre del atributo
+     */
     @FXML
     public void creacionAtributo(String tipo, String destino, String comboBox,Diagrama diagrama,String textoAtributo){
         this.tipoAtributo=tipo;
@@ -1120,7 +1104,10 @@ public class FXMLDocumentController implements Initializable {
             crearHerencia = false;
             crearAgregacion = false;
     }    
-
+    /**
+     * Ventana para la modificación de elementos.
+     * @throws IOException 
+     */
     @FXML
     private void ventanaModificarDiagrama() throws IOException{
         
@@ -1137,6 +1124,10 @@ public class FXMLDocumentController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();              
     }
+    /**
+     * ventana para la creación de una agregación
+     * @throws IOException 
+     */
     @FXML
     private void ventanaAgregacion() throws IOException{
         
@@ -1154,7 +1145,12 @@ public class FXMLDocumentController implements Initializable {
             stage.show();              
     }    
     
-    
+    /**
+     * Se obtienen los datos para la creación de una herencia, enviados desde el controlador de la ventana
+     * @param padre entidad padre
+     * @param hijas Arreglo de entidades hijas
+     * @param tipo tipo de herencia
+     */
     public void creacionHerencia(Entidad padre,ArrayList<Entidad> hijas,String tipo){
         herenciaAuxiliar = new Herencia(padre,hijas,tipo,0,0);
             crearEntidad=false;
@@ -1164,6 +1160,11 @@ public class FXMLDocumentController implements Initializable {
             crearHerencia = true;
             crearAgregacion = false;
     }
+    /**
+     * Se obtienen los datos para la creación de una agregación, enviados desde el controlador de la ventana.
+     * @param relacion
+     * @param nombre 
+     */
     public void crearAgregacion(Relacion relacion,String nombre){
         this.relacionAgregacion=relacion;
         this.textoAgregacion=nombre;
@@ -1175,13 +1176,22 @@ public class FXMLDocumentController implements Initializable {
             crearAgregacion = true;
         
     }
+    /**
+     * se modifica el diagrama actual en otros controladores
+     * @param diagrama 
+     */
     public void modificarDiagrama(Diagrama diagrama){
         this.diagrama=diagrama;
         this.actualizarPanel();
         
     }    
     
-    
+    /**
+     * Accede a la ventana de atributos, con los datos de entidades debiles o fuertes recien creadas.
+     * @param nombre nombre de la entidad
+     * @param debil si es debil o no
+     * @throws IOException 
+     */
     private void ventanaAtributosEntidad(String nombre, boolean debil) throws IOException{
             Stage stage = new Stage();
             stage.setTitle("Atributo");

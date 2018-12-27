@@ -5,7 +5,6 @@
  */
 package Controller;
 
-import Clases.Agregacion;
 import Clases.Diagrama;
 import Clases.Elemento;
 import Clases.Entidad;
@@ -54,7 +53,12 @@ public class RelacionesController implements Initializable {
     
     
     
-    
+    /**
+     * recibe los parametros de una entidad débil
+     * @param controlador
+     * @param diagrama
+     * @param entidadDebil 
+     */
     public void recibirParametrosEntidadDebil(FXMLDocumentController controlador,Diagrama diagrama,String entidadDebil){
         this.diagrama=diagrama;
         this.controlador1=controlador;

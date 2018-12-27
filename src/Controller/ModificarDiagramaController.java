@@ -10,10 +10,14 @@ import Clases.Atributo;
 import Clases.Diagrama;
 import Clases.Entidad;
 import Clases.Relacion;
+import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -21,6 +25,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javax.swing.JOptionPane;
 
@@ -34,6 +39,7 @@ public class ModificarDiagramaController implements Initializable {
     
     
     FXMLDocumentController controlador1;
+    ModificarDiagramaController controlador;
     Diagrama diagrama;
     @FXML private AnchorPane root;
     @FXML private Button cerrarVentana;
@@ -64,6 +70,9 @@ public class ModificarDiagramaController implements Initializable {
     private int entidadSeleccionada;
     private int relacionSeleccionada;
     private int herenciaSeleccionada;
+    private boolean modificacionParticipacion=false;
+    private ArrayList<String> participacionModificada;
+    
     
     
     
@@ -298,10 +307,6 @@ public class ModificarDiagramaController implements Initializable {
 
     }    
     
-    
-    
-    
-    
     /**
      * Se cierra la ventana
      */
@@ -346,6 +351,16 @@ public class ModificarDiagramaController implements Initializable {
         }
     }
     
+    /**
+     * Se utiliza para la ventana de modificaciones
+     * @param participacion 
+     */
+    public void modificacionParticipacion(ArrayList<String> participacion){
+        this.modificacionParticipacion=true;
+        this.participacionModificada=participacion;
+        
+        
+    }
     private void eliminarAgregacionEnRelacion(Agregacion agregacion){
         for(int i = 0; i<diagrama.getRelaciones().size();i++){
             boolean encontrado=false;
@@ -508,11 +523,15 @@ public class ModificarDiagramaController implements Initializable {
         if(!"".equals(nombre)){
             diagrama.getRelaciones().get(relacionSeleccionada).setNombre(nombre);
         }
+        if(this.modificacionParticipacion){
+            diagrama.getRelaciones().get(relacionSeleccionada).setParticipacion(participacionModificada);
+        }
         diagrama.getRelaciones().get(relacionSeleccionada).crearRelacion();
         diagrama.getRelaciones().get(relacionSeleccionada).crearLineasunionAtributos();
         if(diagrama.getRelaciones().get(relacionSeleccionada).getElementos().isEmpty()){
             diagrama.getRelaciones().remove(relacionSeleccionada);
         }
+
         
         //reiniciar la sección de relaciones con los datos actualizados
         modificarNombreRelacion.clear();
@@ -593,13 +612,11 @@ public class ModificarDiagramaController implements Initializable {
         comboBoxAtributo.getItems().clear();
         comboBoxAtributo.setValue("");
         modificarNombreAtributo.clear();
-    
-        
-        
-        
         
     }
-    
+    public void obtenerDatosParticipacion(ArrayList<String> participacion){
+        modificacionParticipacion=true;
+    }
     /**
      * Se modifica la herencia seleccionada en la sección herencia. En esta se modifica el
      * tipo de herencia (si es que el usuario lo pide) y se eliminan entidades hijas(si es que
@@ -741,7 +758,26 @@ public class ModificarDiagramaController implements Initializable {
         comboBoxAtributo.setValue("");
         modificarNombreAtributo.clear(); 
     }
-    
+    @FXML
+    private void ventanaParticipacion() throws IOException{
+        if(comboBoxRelacion.getValue()!=null){
+            Stage stage = new Stage();
+            stage.setTitle("Participación");
+            stage.setResizable(false);
+            FXMLLoader loader = new FXMLLoader();
+            AnchorPane root1 = (AnchorPane)loader.load(getClass().getResource("ParticipacionRelacion.fxml").openStream());
+            ParticipacionRelacionController instanciaControlador = (ParticipacionRelacionController)loader.getController();
+            instanciaControlador.recibirParametrosModificacion(controlador,(String)comboBoxRelacion.getValue(), diagrama);
+            Scene scene = new Scene(root1);
+            stage.setScene(scene);
+            stage.alwaysOnTopProperty();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+        }
+        else{
+            mensaje("Debe seleccionar una relación.");
+        }
+    }     
     
     
     
@@ -759,7 +795,7 @@ public class ModificarDiagramaController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         tipoOrigenAtributo.getItems().addAll("Entidad","Relación","Atributo Compuesto (Entidad)","Atributo Compuesto (Relación)");
-        
+        controlador=this;
     }    
     
 }

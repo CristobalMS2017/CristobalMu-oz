@@ -235,16 +235,5 @@ public class Agregacion extends Elemento {
     public void atributoAnadido(){
         this.ordenarElementos();
         this.crearFigura();
-    }
-    @Override
-    public Object clone() throws CloneNotSupportedException{
-        Object obj=null;
-        try{
-            obj=super.clone();
-        }
-        catch(CloneNotSupportedException ex){
-            System.out.println("no duplicado");
-        }
-        return obj;
-    }    
+    }  
 }

@@ -36,16 +36,7 @@ public class Diagrama implements Cloneable {
 
     public void setHerencias(ArrayList<Herencia> herencias) {
         this.herencias = herencias;
-    }
-        public void agregarHerencias(ArrayList<Herencia> a){
-        herencias =a;
-    }   
-    public void agregarRelaciones(ArrayList<Relacion> a){
-        relaciones =a;
-    }  
-    public void agregarAtributos(ArrayList<Atributo> a){
-        atributos =a;
-    }          
+    }       
     
 
     public ArrayList<Herencia> getHerencias() {
@@ -71,11 +62,7 @@ public class Diagrama implements Cloneable {
 
     public ArrayList<Atributo> getAtributos() {
         return atributos;
-    }
-    public void eliminarAtributo(String origen,Atributo atributo){   
-    }
-    
-    
+    }    
     public void eliminarElemento(Elemento elemento){
         if(elemento instanceof Entidad){
             Entidad entidad=(Entidad)elemento;
@@ -125,12 +112,6 @@ public class Diagrama implements Cloneable {
             this.elementos.remove(elemento);
         }
     }
-    
-    public void modificarNombreEntidad(){
-        
-    }
-    
-    
     public void eliminarRelacion(Relacion relacion){
         for(int i = 0; i< this.relaciones.size();i++){
             if(this.relaciones.get(i).equals(relacion)){
@@ -180,10 +161,7 @@ public class Diagrama implements Cloneable {
             if(this.getAtributos().get(i).equals(atributo)){
                 this.atributos.remove(i);
             }
-        }
-        
-        
-        
+        } 
     }
 
     public void setElementos(ArrayList<Elemento> elementos) {
@@ -196,18 +174,5 @@ public class Diagrama implements Cloneable {
     
     public int cantidadElementosDiagrama(){
         return (this.getAtributos().size()+this.getElementos().size()+this.getHerencias().size()+this.getRelaciones().size());
-    }
-    
-    
-    @Override
-    public Diagrama clone() throws CloneNotSupportedException{
-        Diagrama obj=(Diagrama)super.clone();
-        obj.atributos = (ArrayList<Atributo>)obj.atributos.clone();
-        obj.elementos = (ArrayList<Elemento>)obj.elementos.clone();
-        obj.herencias = (ArrayList<Herencia>)obj.herencias.clone();
-        obj.relaciones = (ArrayList<Relacion>)obj.relaciones.clone();
-        
-
-        return obj;
     }
 }
