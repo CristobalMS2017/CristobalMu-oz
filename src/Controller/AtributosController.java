@@ -160,8 +160,13 @@ public class AtributosController implements Initializable {
                             for(int k = 0; k<diagrama.getHerencias().get(j).getEntidadesHijas().size();k++){
                                 for(int l = 0; l<diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().size();l++){
                                     if(diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().get(l).getNombre().equals(textoAtributo.getText())){
-                                        this.removerAtributoEnDiagrama(diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().get(l));
-                                        diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().remove(l);
+                                        if(l!=0){
+                                            this.removerAtributoEnDiagrama(diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().get(l));
+                                            diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().remove(l);
+                                        }
+                                        else{
+                                            diagrama.getHerencias().get(j).getEntidadesHijas().get(k).getAtributos().get(l).setNombre(this.nombreAtributoVacio());
+                                        }
                                         return true;
                                     }
                                 }
@@ -169,10 +174,7 @@ public class AtributosController implements Initializable {
                         }
                     }
                 }
-            }
-            
-            
-            
+            }  
         }
         if(destinoAtributo.getValue().equals("Relación")){
             for(int i = 0; i<diagrama.getRelaciones().size();i++){

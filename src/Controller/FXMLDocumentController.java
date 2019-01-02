@@ -141,6 +141,7 @@ public class FXMLDocumentController implements Initializable {
                         diagrama.getRelaciones().get(i).getStringCardinalidades().set(j,"N");
                         diagrama.getRelaciones().get(i).getCardinalidades().get(j).setText("N");
                     }
+                    guardarDiagrama();
                 }
             }
         }
@@ -458,8 +459,7 @@ public class FXMLDocumentController implements Initializable {
         }
         
         for(int i = 0; i < diagrama.getRelaciones().size();i++){
-                diagrama.getRelaciones().get(i).crearRelacion();
-            
+            diagrama.getRelaciones().get(i).crearRelacion();
             panelDibujo.getChildren().addAll(diagrama.getRelaciones().get(i).dibujoRelacion());
             if(puntosDeControl.isSelected()){
                 panelDibujo.getChildren().addAll(diagrama.getRelaciones().get(i).getFigura().getPuntosControl());
@@ -550,10 +550,8 @@ public class FXMLDocumentController implements Initializable {
      */    
     private boolean atributoEnAgregacion(Atributo atributo,int posX,int posY,int limitacion){
         boolean encontrado=true;
-
-        
         for(int i = 0; i<diagrama.getElementos().size();i++){
-                    double dist=Math.sqrt(Math.pow(atributo.getFigura().getPosicionesY().get(0)-atributo.getFigura().getPosicionesY().get(2), 2));
+            double dist=Math.sqrt(Math.pow(atributo.getFigura().getPosicionesY().get(0)-atributo.getFigura().getPosicionesY().get(2), 2));
             if(diagrama.getElementos().get(i) instanceof Agregacion){
                 Agregacion agregacion =(Agregacion)diagrama.getElementos().get(i);
                 for(int j = 0; j < agregacion.getRelacion().getAtributos().size();j++){
@@ -575,8 +573,8 @@ public class FXMLDocumentController implements Initializable {
                         
                     }
                     for(int k=0;k<atributo1.getAtributos().size();k++){
-                        atributo1=atributo1.getAtributos().get(k);
-                        if(atributo1.equals(atributo)){
+                        Atributo atributo2=atributo1.getAtributos().get(k);
+                        if(atributo2.equals(atributo)){
                             ArrayList<Integer> n=agregacion.getPosicionesX();
                             ArrayList<Integer> n2=agregacion.getPosicionesY();
                             encontrado=false;
@@ -600,6 +598,7 @@ public class FXMLDocumentController implements Initializable {
                         for(int k = 0; k < ((Entidad)agregacion.getRelacion().getElementos().get(j)).getAtributos().size();k++){
                             Atributo atributo1 = ((Entidad)agregacion.getRelacion().getElementos().get(j)).getAtributos().get(k);
                             if(atributo1.equals(atributo)){
+                                
                                 ArrayList<Integer> n=agregacion.getPosicionesX();
                                 ArrayList<Integer> n2=agregacion.getPosicionesY();
                                 encontrado=false;
@@ -615,8 +614,8 @@ public class FXMLDocumentController implements Initializable {
                                 }
                             }
                             for(int l=0;l<atributo1.getAtributos().size();l++){
-                                atributo1=atributo1.getAtributos().get(l);
-                                if(atributo1.equals(atributo)){
+                                Atributo atributo2=atributo1.getAtributos().get(l);
+                                if(atributo2.equals(atributo)){
                                     ArrayList<Integer> n=agregacion.getPosicionesX();
                                     ArrayList<Integer> n2=agregacion.getPosicionesY();
                                     encontrado=false;
@@ -696,13 +695,17 @@ public class FXMLDocumentController implements Initializable {
     public void mouseNoPresionado(MouseEvent event){
         if(moverFiguras==true){
             actualizarPanel();
-            relacionEncontradaMover = false;
-            entidadEncontradaMover= false;
-            atributoEncontradoMover = false;
-            herenciaEncontradaMover = false;
-            agregacionEncontradaMover = false;
-            figuraEnMovimiento=false;
-            guardarDiagrama();   
+            if(relacionEncontradaMover ||entidadEncontradaMover||atributoEncontradoMover||herenciaEncontradaMover||
+                    agregacionEncontradaMover){
+                relacionEncontradaMover = false;
+                entidadEncontradaMover= false;
+                atributoEncontradoMover = false;
+                herenciaEncontradaMover = false;
+                agregacionEncontradaMover = false;
+                figuraEnMovimiento=false;
+                guardarDiagrama(); 
+            }
+  
         }    
     }
     
@@ -763,7 +766,8 @@ public class FXMLDocumentController implements Initializable {
             diagrama.getElementos().clear();
             diagrama.getRelaciones().clear();
             diagrama.getAtributos().clear();  
-            diagrama.getHerencias().clear(); 
+            diagrama.getHerencias().clear();
+            guardarDiagrama();
 
         }
         else{
@@ -854,10 +858,17 @@ public class FXMLDocumentController implements Initializable {
                     for(int k  = 0 ; k<atributosPadre.size();k++){
                         for(int l = 0 ; l<entidadHija.getAtributos().size();l++){
                             if(atributosPadre.get(k).getNombre().equals(entidadHija.getAtributos().get(l).getNombre())){
-                                eliminarAtributoEnDiagrama(entidadHija.getAtributos().get(l));
-                                entidadHija.getAtributos().remove(l);
-                                entidadHija.crearLineasunionAtributos();
-                                l=l-1;
+                                if(l!=0){
+                                    eliminarAtributoEnDiagrama(entidadHija.getAtributos().get(l));
+                                    entidadHija.getAtributos().remove(l);
+                                    entidadHija.crearLineasunionAtributos();
+                                    l=l-1;                                    
+                                }
+                                else{
+                                    entidadHija.getAtributos().get(l).setNombre(nombreAtributoVacio());
+                                    
+                                }
+
                             }
                         }
                     }
@@ -868,10 +879,36 @@ public class FXMLDocumentController implements Initializable {
         
     }
     /**
+     * Se crea un nombre por defecto si es que el usuario no ingresó un nombre para el atributo.
+     * @return retorna el nombre por defecto.
+     */
+    private String nombreAtributoVacio(){
+        boolean disponible=true;
+        int numeroAtributos=0;
+        for(int i = 0; i< diagrama.getAtributos().size();i++){
+            numeroAtributos +=diagrama.getAtributos().get(i).getAtributos().size()+1;
+        }
+        
+        for(int i = 0; i<numeroAtributos;i++){
+            String nombre = "Atributo "+(i+1);
+            for(int j=0;j<diagrama.getAtributos().size();j++){
+                if(diagrama.getAtributos().get(j).nombrePorDefectoRepetido(nombre)){
+                    j=diagrama.getAtributos().size();
+                    disponible=false;
+                }
+            }
+            if(disponible){
+                return nombre;
+            }
+            disponible = true;
+        }
+        return "Atributo 0";
+    }    
+    /**
      * Verifica si los atributos de entidades hijas no
      * tienen los mismos nombres que los atributos del padre.
      */
-    private void verificarAtributosHerencia(){
+    public void verificarAtributosHerencia(){
         for(int i = 0; i<diagrama.getHerencias().size();i++){
             Entidad padre = diagrama.getHerencias().get(i).getEntidadPadre();
             ArrayList<Atributo> atributosPadre = padre.getAtributos();
@@ -880,10 +917,16 @@ public class FXMLDocumentController implements Initializable {
                 for(int k = 0; k<atributosPadre.size();k++){
                     for(int l = 0;l<entidadHija.getAtributos().size();l++){
                         if(atributosPadre.get(k).getNombre().equals(entidadHija.getAtributos().get(l).getNombre())){
-                            eliminarAtributoEnDiagrama(entidadHija.getAtributos().get(l));
-                            entidadHija.getAtributos().remove(l);
-                            entidadHija.crearLineasunionAtributos();
-                            l=l-1;
+                            if(l!=0){
+                                eliminarAtributoEnDiagrama(entidadHija.getAtributos().get(l));
+                                entidadHija.getAtributos().remove(l);
+                                entidadHija.crearLineasunionAtributos();
+                                l=l-1;                                
+                            }
+                            else{
+                                entidadHija.getAtributos().get(l).setNombre(nombreAtributoVacio());
+                            }
+
                         }
                     }
                 }
@@ -1211,7 +1254,7 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         controlador = this;
-        
+        guardarDiagrama();
         
        
     }  

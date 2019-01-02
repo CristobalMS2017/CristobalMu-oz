@@ -76,6 +76,9 @@ public class Relacion {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+        for(int i = 0; i< this.atributos.size();i++){
+            this.atributos.get(i).setNombreOrigenAtributo(nombre);
+        }
         this.crearRelacion();
     }
     public Figura getFigura() {
@@ -101,16 +104,54 @@ public class Relacion {
                 Entidad auxiliar = ((Entidad)elementos.get(0));
                 elementos.remove(0);
                 elementos.add(auxiliar);
+                String p = participacion.get(0);
+                participacion.remove(0);
+                participacion.add(p);
             }
             if(((Entidad)elementos.get(1)).isDebil()){
                 Entidad auxiliar = ((Entidad)elementos.get(1));
                 elementos.remove(1);
                 elementos.add(auxiliar);                
+                String p = participacion.get(1);
+                participacion.remove(1);
+                participacion.add(p);            
             }
+            this.participacion.set(0, "Total");
             figura.crearFigura(true, this.nombre, this.getPosX(), this.getPosY());
             PuntoCercano pc = new PuntoCercano(this.figura,this.elementos);  
-            
-            Line linea = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(0)),elementos.get(0).getPosicionesY().get(pc.pcEntidad(0)),
+                 for(int i = 0; i<elementos.size();i++){
+                    Line linea = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i)),elementos.get(i).getPosicionesY().get(pc.pcEntidad(i)),
+                                            figura.getPosicionesX().get(pc.pcFigura(i)),figura.getPosicionesY().get(pc.pcFigura(i)));
+                    this.lineasRelacion.add(linea);
+                    if(this.participacion.get(i).equals("Total")){
+                        int sumarY;
+                        if(figura.getPosicionesY().get(pc.pcFigura(i))<elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))){
+                            sumarY=3;
+                        }
+                        else{
+                            sumarY=-3;
+                        }
+                        if(figura.getPosicionesX().get(pc.pcFigura(i))<elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))){
+                            
+                                Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))-3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+sumarY,
+                                                   figura.getPosicionesX().get(pc.pcFigura(i))-3,figura.getPosicionesY().get(pc.pcFigura(i))+sumarY);                        
+                               this.lineasRelacion.add(linea2);                                
+
+                            
+                           
+                        }
+                        else{
+                            Line linea2 = new Line(elementos.get(i).getPosicionesX().get(pc.pcEntidad(i))+3,elementos.get(i).getPosicionesY().get(pc.pcEntidad(i))+sumarY,
+                                                figura.getPosicionesX().get(pc.pcFigura(i))+3,figura.getPosicionesY().get(pc.pcFigura(i))+sumarY);                        
+                            this.lineasRelacion.add(linea2);                            
+                        }
+
+                    
+                    }
+                 }
+
+
+            /*Line linea = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(0)),elementos.get(0).getPosicionesY().get(pc.pcEntidad(0)),
             figura.getPosicionesX().get(pc.pcFigura(0)),figura.getPosicionesY().get(pc.pcFigura(0)));
                      int puntoCuartoX = (elementos.get(0).getPosicionesX().get(pc.pcEntidad(0))-figura.getPosicionesX().get(pc.pcFigura(0)))/8;
                     int puntoCuartoY = (elementos.get(0).getPosicionesY().get(pc.pcEntidad(0))-figura.getPosicionesY().get(pc.pcFigura(0)))/8;
@@ -118,17 +159,23 @@ public class Relacion {
                     ;                
             Line linea2 = new Line(elementos.get(0).getPosicionesX().get(pc.pcEntidad(0))+3,elementos.get(0).getPosicionesY().get(pc.pcEntidad(0)),
             figura.getPosicionesX().get(pc.pcFigura(0))+3,figura.getPosicionesY().get(pc.pcFigura(0)));
-       
+            
+            
             Line linea3 = new Line(elementos.get(1).getPosicionesX().get(pc.pcEntidad(1)),elementos.get(1).getPosicionesY().get(pc.pcEntidad(1)),
             figura.getPosicionesX().get(pc.pcFigura(1)),figura.getPosicionesY().get(pc.pcFigura(1)));            
                     puntoCuartoY = (elementos.get(1).getPosicionesY().get(pc.pcEntidad(1))-figura.getPosicionesY().get(pc.pcFigura(1)))/8;
                     cardinalidades.add(new Text(figura.getPosicionesX().get(pc.pcFigura(1)),figura.getPosicionesY().get(pc.pcFigura(1))+puntoCuartoY,stringCardinalidades.get(1)));
-                                    
+            if(this.participacion.get(1).equals("Total")){
+            Line linea4 = new Line(elementos.get(1).getPosicionesX().get(pc.pcEntidad(1))+3,elementos.get(1).getPosicionesY().get(pc.pcEntidad(1)),
+            figura.getPosicionesX().get(pc.pcFigura(1))+3,figura.getPosicionesY().get(pc.pcFigura(1)));            
+                   lineasRelacion.add(linea4);
+                    
+            }                        
             
             
             lineasRelacion.add(linea3);
             lineasRelacion.add(linea2);
-            lineasRelacion.add(linea);       
+            lineasRelacion.add(linea);  */     
          
             
             

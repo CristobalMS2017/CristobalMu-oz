@@ -20,8 +20,7 @@ public class Atributo {
     private FiguraAtributos figura;
     private String tipoAtributo;
     private ArrayList<Atributo> atributos = new ArrayList<>();
-    private ArrayList<Line> lineasUnionAtributos = new ArrayList<>();
-    
+    private ArrayList<Line> lineasUnionAtributos = new ArrayList<>();    
     private String guardadoEn;
     private String nombreOrigenAtributo;
     
@@ -147,6 +146,9 @@ public class Atributo {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+        for(int i = 0; i<this.atributos.size();i++){
+            this.atributos.get(i).setNombreOrigenAtributo(nombre);
+        }
         crearAtributo();
     }
     
@@ -172,4 +174,9 @@ public class Atributo {
         this.crearAtributo();
         
     }       
+
+    public void setNombreOrigenAtributo(String nombreOrigenAtributo) {
+        this.nombreOrigenAtributo = nombreOrigenAtributo;
+    }
+    
 }

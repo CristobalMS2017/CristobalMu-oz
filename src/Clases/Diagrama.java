@@ -64,27 +64,50 @@ public class Diagrama implements Cloneable {
         return atributos;
     }    
     public void eliminarElemento(Elemento elemento){
+            for(int i = 0; i<this.relaciones.size();i++){
+                if(this.relaciones.get(i).getElementos().size()==1 && this.relaciones.get(i).getElementos().get(0).equals(elemento)){
+                    this.eliminarAgregaciones(relaciones.get(i));
+                    this.relaciones.remove(i);
+                    i=0;
+
+                    
+                }
+                else{
+                    if(this.relaciones.get(i).isRelacionDebil()){
+                        if(this.relaciones.get(i).getElementos().get(1).equals((Entidad)elemento)){
+                            Entidad entidad = (Entidad)this.relaciones.get(i).getElementos().get(0);
+                            this.eliminarAgregaciones(relaciones.get(i));
+                            this.relaciones.remove(i);
+                            eliminarElemento(entidad);
+                            
+                        }
+                        else{
+                            this.eliminarAgregaciones(relaciones.get(i));
+                            this.relaciones.remove(i);
+                        }
+                        
+                        i=0;
+                    }
+                    else{
+                        boolean eliminar=false;
+                        for(int j = 0; j<this.getRelaciones().get(i).getElementos().size();j++){
+                            if(this.relaciones.get(i).getElementos().get(j).equals(elemento)){
+                                eliminar=true;
+                            }
+                        }
+                        if(eliminar){
+                            this.eliminarAgregaciones(relaciones.get(i));
+                            this.relaciones.remove(i);
+                        }
+                    }                    
+
+                }
+            }        
+        
+        
         if(elemento instanceof Entidad){
             Entidad entidad=(Entidad)elemento;
             eliminarArregloDeAtributos(entidad.getAtributos());
-            for(int i = 0; i<this.elementos.size();i++){
-                if(entidad.equals(this.elementos.get(i))){
-                    this.elementos.remove(i);
-                }            
-            }
-            for(int i = 0; i<this.relaciones.size();i++){
-                if(this.relaciones.get(i).getElementos().size()==1 && this.relaciones.get(i).getElementos().get(0).equals(entidad)){
-                    this.relaciones.remove(i);
-                }
-                else{
-                    for(int j = 0; j<this.getRelaciones().get(i).getElementos().size();j++){
-                        if(this.relaciones.get(i).getElementos().get(j).equals(entidad)){
-                            this.relaciones.get(i).getElementos().remove(j);
-                        }
-                    }
-                }
-            }
-
             for(int i = 0; i<this.herencias.size();i++){
                 if(this.herencias.get(i).getEntidadPadre().equals(entidad)){
                     this.herencias.remove(i);
@@ -108,9 +131,15 @@ public class Diagrama implements Cloneable {
                 }            
             }  
         }
-        else{
-            this.elementos.remove(elemento);
-        }
+            for(int i = 0; i<this.elementos.size();i++){
+                if(elemento.equals(this.elementos.get(i))){
+                    this.elementos.remove(i);
+                    i=0;
+                }            
+            }        
+
+        
+        
     }
     public void eliminarRelacion(Relacion relacion){
         for(int i = 0; i< this.relaciones.size();i++){
@@ -126,8 +155,33 @@ public class Diagrama implements Cloneable {
             }
         }         
     }
-    
-    
+    public void eliminarAgregaciones(Relacion relacion){
+        for(int i = 0; i< this.elementos.size();i++){
+            if(elementos.get(i) instanceof Agregacion){
+                if(((Agregacion)elementos.get(i)).getRelacion().equals(relacion)){
+                    eliminarAgregacionEnRelacion(((Agregacion)elementos.get(i)));
+                    elementos.remove(i);
+                    i=i-1;
+                }
+            }
+        }   
+    }     
+    public void eliminarAgregacionEnRelacion(Agregacion agregacion){
+        for(int i = 0; i<relaciones.size();i++){
+            boolean encontrado=false;
+            for(int j = 0; j<relaciones.get(i).getElementos().size();j++){                
+                if(relaciones.get(i).getElementos().get(j).equals(agregacion)){
+                    encontrado=true;                     
+                }
+            }
+            if(encontrado){
+                eliminarAgregaciones(relaciones.get(i));
+                relaciones.remove(i);
+                i=i-1;
+            }
+        }
+        
+    }    
     private void eliminarArregloDeAtributos(ArrayList<Atributo> atributos){
         for(int i =0; i<atributos.size();i++){
             for(int j = 0; j<atributos.get(i).getAtributos().size();j++){

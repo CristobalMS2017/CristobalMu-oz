@@ -152,9 +152,7 @@ public class RespaldoDiagrama {
         int x = relacion.getPosX();
         int y = relacion.getPosY();
         String nombre = relacion.getNombre();
-
-        Relacion copia = new Relacion(debil,x,y,nombre);
-        
+        Relacion copia = new Relacion(debil,x,y,nombre);        
         for(int i = 0; i<relacion.getElementos().size();i++){
             for(int j = 0; j<entidadesDiagrama.size();j++){
                 if(relacion.getElementos().get(i).getNombre().equals(entidadesDiagrama.get(j).getNombre())){
@@ -169,10 +167,12 @@ public class RespaldoDiagrama {
                 }
             }
         }
-        ArrayList<String> participacion = new ArrayList<>();
-        participacion.add(relacion.getParticipacion().get(0));
-        participacion.add(relacion.getParticipacion().get(1));
-        copia.setParticipacion(participacion);        
+        copia.getParticipacion().clear();
+        copia.getParticipacion().add(relacion.getParticipacion().get(0));
+        copia.getParticipacion().add(relacion.getParticipacion().get(1));
+        copia.getStringCardinalidades().clear();
+        copia.getStringCardinalidades().add(relacion.getStringCardinalidades().get(0));
+        copia.getStringCardinalidades().add(relacion.getStringCardinalidades().get(1));
         copia.crearRelacion();
         copia.crearLineasunionAtributos();
         return copia;          

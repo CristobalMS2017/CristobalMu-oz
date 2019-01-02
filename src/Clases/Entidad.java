@@ -32,6 +32,9 @@ public class Entidad extends Elemento {
     @Override
     public void setNombre(String nombre) {
         this.nombre = nombre;
+        for(int i = 0; i<this.atributos.size();i++){
+            atributos.get(i).setNombreOrigenAtributo(nombre);
+        }
 
         this.crearLineasunionAtributos();
     }    
