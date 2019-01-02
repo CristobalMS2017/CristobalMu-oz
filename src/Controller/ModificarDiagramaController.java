@@ -374,8 +374,10 @@ public class ModificarDiagramaController implements Initializable {
             
             for(int i =0; i<diagrama.getRelaciones().size();i++){
                 if(comboBoxRelacion.getValue().equals(diagrama.getRelaciones().get(i).getNombre())){
+                    
                     diagrama.eliminarAgregaciones(diagrama.getRelaciones().get(i));
                     diagrama.eliminarRelacion(diagrama.getRelaciones().get(i));
+                    
                 }
             }
             modificarNombreRelacion.clear();
@@ -458,20 +460,6 @@ public class ModificarDiagramaController implements Initializable {
     @FXML
     private void modificarEntidad(){
         boolean modificada=false;
-        if(diagrama.getElementos().get(entidadSeleccionada) instanceof Entidad){
-            for(int i = 0; i<((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().size();i++){
-                if(!listaAtributosEntidad.getItems().isEmpty()){
-                    if(listaAtributosEntidad.getItems().get(i).isSelected()==false){
-                        this.eliminarAtributoEnDiagrama(((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().get(i+1));
-                        
-                        ((Entidad)diagrama.getElementos().get(entidadSeleccionada)).getAtributos().remove(i+1);
-                        ((Entidad)diagrama.getElementos().get(entidadSeleccionada)).crearLineasunionAtributos();
-                        modificada=true;
-                    }
-                }
-
-            }
-        }
         diagrama.getElementos().get(entidadSeleccionada).crearFigura();
         String nombre = (String)modificarNombreEntidad.getText();
         if(!"".equals(nombre)){ 

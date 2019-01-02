@@ -28,8 +28,8 @@
                         <Text layoutX="131.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Seleccione" />
                         <TextField fx:id="modificarNombreEntidad" layoutX="91.0" layoutY="127.0" prefHeight="25.0" prefWidth="145.0" style="-fx-border-color: rgb(105,162,146);" />
                         <Text layoutX="115.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Modificar Nombre" />
-                        <ListView fx:id="listaAtributosEntidad" layoutX="88.0" layoutY="182.0" prefHeight="79.0" prefWidth="151.0" style="-fx-border-color: rgb(105,162,146);" />
-                        <Text layoutX="141.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Atributos" />
+                        <ListView fx:id="listaAtributosEntidad" layoutX="88.0" layoutY="182.0" prefHeight="79.0" prefWidth="151.0" style="-fx-border-color: rgb(105,162,146);" visible="false" />
+                        <Text layoutX="141.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: rgb(23,52,44);" text="Atributos" visible="false" />
                         <Button layoutX="49.0" layoutY="279.0" mnemonicParsing="false" onAction="#modificarEntidad" prefHeight="34.0" prefWidth="110.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Modificar" />
                         <Button layoutX="165.0" layoutY="279.0" mnemonicParsing="false" onAction="#eliminarEntidad" prefHeight="34.0" prefWidth="108.0" style="-fx-background-color: rgb(105,162,146); -fx-text-fill: white;" text="Eliminar" />
                      </children>

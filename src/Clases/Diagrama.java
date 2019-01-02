@@ -144,7 +144,11 @@ public class Diagrama implements Cloneable {
     public void eliminarRelacion(Relacion relacion){
         for(int i = 0; i< this.relaciones.size();i++){
             if(this.relaciones.get(i).equals(relacion)){
+                for(int j = 0 ; j<this.relaciones.get(i).getAtributos().size();j++){
+                    this.eliminarAtributo(this.relaciones.get(i).getAtributos().get(j));
+                }
                 this.relaciones.remove(i);
+                i=i-1;
             }
         } 
     }
@@ -213,7 +217,12 @@ public class Diagrama implements Cloneable {
     public void eliminarAtributo(Atributo atributo){
         for(int i =0; i< this.getAtributos().size();i++){
             if(this.getAtributos().get(i).equals(atributo)){
+                
+                for(int j = 0 ; j<this.getAtributos().get(i).getAtributos().size();j++){
+                    this.eliminarAtributo(this.getAtributos().get(i).getAtributos().get(j));
+                }
                 this.atributos.remove(i);
+                i=i-1;
             }
         } 
     }
